@@ -168,6 +168,17 @@ export default function App() {
     [db.books, readingBookId],
   );
 
+  useEffect(() => {
+    if (readingBook) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [readingBook]);
+
   const readingProgress = useMemo(
     () =>
       readingBook
@@ -242,18 +253,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8FAF9] text-[#111C17]">
-      <TopBar
-        config={db.config}
-        session={session}
-        tabs={navTabs}
-        activeTab={activeTab}
-        theme={theme}
-        onSelectTheme={handleSetTheme}
-        onToggleTheme={handleToggleTheme}
-        onSelectTab={handleSelectTab}
-        onOpenLogin={() => setLoginOpen(true)}
-        onLogout={handleLogout}
-      />
+      {!readingBook && (
+        <TopBar
+          config={db.config}
+          session={session}
+          tabs={navTabs}
+          activeTab={activeTab}
+          theme={theme}
+          onSelectTheme={handleSetTheme}
+          onToggleTheme={handleToggleTheme}
+          onSelectTab={handleSelectTab}
+          onOpenLogin={() => setLoginOpen(true)}
+          onLogout={handleLogout}
+        />
+      )}
 
       {loading ? (
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 space-y-6">

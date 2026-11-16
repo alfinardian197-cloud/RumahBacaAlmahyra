@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
+  ArrowLeft,
   Award,
   BookOpen,
   BookmarkCheck,
@@ -17,7 +18,6 @@ import {
   Star,
   Volume2,
   VolumeX,
-  X,
 } from 'lucide-react';
 import type {
   AlmahyraDatabase,
@@ -80,7 +80,7 @@ export function BookReaderModal({
 
   const [activeTab, setActiveTab] = useState<ReaderTab>('read');
   const [pageIdx, setPageIdx] = useState(0);
-  const [fontScale, setFontScale] = useState<'normal' | 'large' | 'xlarge'>('normal');
+  const [fontScale, setFontScale] = useState<'normal' | 'large' | 'xlarge'>('large');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechRate, setSpeechRate] = useState(1);
   const [speechMessage, setSpeechMessage] = useState('');
@@ -96,6 +96,20 @@ export function BookReaderModal({
   const [starRating, setStarRating] = useState(5);
   const [completedNotice, setCompletedNotice] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const stopSpeech = useCallback(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  const handleExitReader = useCallback(() => {
+    stopSpeech();
+    storyAudioEngine.stop();
+    setIsMusicPlaying(false);
+    onClose();
+  }, [onClose, stopSpeech]);
 
   useEffect(() => {
     if (!book) {
@@ -127,14 +141,45 @@ export function BookReaderModal({
       stopSpeech();
       storyAudioEngine.stop();
     };
-  }, []);
+  }, [stopSpeech]);
 
-  function stopSpeech() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    setIsSpeaking(false);
-  }
+  const handleTurnPage = useCallback(
+    async (nextIdx: number) => {
+      if (!book) return;
+      stopSpeech();
+      const clamped = Math.max(0, Math.min(pages.length - 1, nextIdx));
+      setPageIdx(clamped);
+      await onRecordReading({
+        bookId: book.id,
+        lastPage: clamped,
+        totalPages: pages.length,
+      });
+    },
+    [book, onRecordReading, pages.length, stopSpeech],
+  );
+
+  useEffect(() => {
+    if (!book) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isTyping =
+        target?.tagName === 'INPUT' ||
+        target?.tagName === 'TEXTAREA' ||
+        target?.tagName === 'SELECT';
+      if (e.key === 'Escape') {
+        handleExitReader();
+        return;
+      }
+      if (isTyping || activeTab !== 'read') return;
+      if (e.key === 'ArrowRight' && pageIdx < pages.length - 1) {
+        void handleTurnPage(pageIdx + 1);
+      } else if (e.key === 'ArrowLeft' && pageIdx > 0) {
+        void handleTurnPage(pageIdx - 1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, book, handleExitReader, handleTurnPage, pageIdx, pages.length]);
 
   const handleToggleMusic = () => {
     if (!soundtrack) return;
@@ -170,17 +215,6 @@ export function BookReaderModal({
   );
   const quizPercent =
     quizQuestions.length > 0 ? Math.round((quizCorrectCount / quizQuestions.length) * 100) : 100;
-
-  const handleTurnPage = async (nextIdx: number) => {
-    stopSpeech();
-    const clamped = Math.max(0, Math.min(pages.length - 1, nextIdx));
-    setPageIdx(clamped);
-    await onRecordReading({
-      bookId: book.id,
-      lastPage: clamped,
-      totalPages: pages.length,
-    });
-  };
 
   const handleToggleSpeech = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -237,47 +271,135 @@ export function BookReaderModal({
     }
   };
 
+  // Large, relaxed line-height typography sized for one-screen reading without eye strain
   const fontSizeClass =
     fontScale === 'xlarge'
-      ? 'text-lg sm:text-xl leading-relaxed'
+      ? 'text-[19px] sm:text-[22px] lg:text-[24px] leading-[1.82]'
       : fontScale === 'large'
-        ? 'text-base sm:text-lg leading-relaxed'
-        : 'text-sm sm:text-base leading-relaxed';
+        ? 'text-[17px] sm:text-[19px] lg:text-[21px] leading-[1.78]'
+        : 'text-[15px] sm:text-[17px] lg:text-[18px] leading-[1.72]';
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-5 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex h-dvh w-screen flex-col overflow-hidden bg-[#FBF7EE] text-[#1C2820] dark:bg-[#0C1611] dark:text-[#ECF3EE]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="reader-modal-title"
     >
-      <div className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white shadow-2xl">
-        {/* Top Modal Header */}
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[#E2E8E5] bg-[#F8FAF9] px-5 py-4">
-          <div className="min-w-0 flex-1 space-y-1">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[#4A5D54]">
+      {/* Top Distraction-Free Reader Header */}
+      <header className="shrink-0 border-b border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-6 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2.5">
+          {/* Left: Back Button & Compact Meta */}
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={handleExitReader}
+              aria-label="Kembali keluar dari mode membaca"
+              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1C2820] shadow-xs transition-colors hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] dark:hover:bg-[#21382D]"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>Kembali</span>
+            </button>
+
+            <div className="hidden sm:flex items-center gap-2 text-xs text-[#546358] dark:text-[#A4B9AE] min-w-0">
               <span className="font-mono-tabular font-semibold">{book.kodeBuku}</span>
               <span aria-hidden="true">·</span>
-              <span className="font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
+              <span className="font-semibold truncate" style={{ color: 'var(--brand-primary-ink)' }}>
                 {book.kategori}
               </span>
               <span aria-hidden="true">·</span>
-              <span>{book.jenjangPembaca ?? 'Semua Usia'}</span>
-              <span aria-hidden="true">·</span>
-              <span>{book.estimasiMenit ?? 5} menit</span>
+              <span className="whitespace-nowrap">{book.jenjangPembaca ?? 'Semua Usia'}</span>
             </div>
-            <h2
-              id="reader-modal-title"
-              className="font-display text-lg font-bold text-[#111C17] sm:text-xl"
-            >
-              {book.judul}
-            </h2>
-            <p className="text-xs text-[#4A5D54]">
-              Penulis: {book.penulis} {book.lisensi ? `· ${book.lisensi}` : ''}
-            </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Center/Right: Mode Tabs & Quick Actions */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-1 rounded-xl border border-[#DFD7C4] bg-[#ECE6D8] p-0.5 dark:border-[#243B30] dark:bg-[#0F1C16]">
+              <button
+                type="button"
+                onClick={() => setActiveTab('read')}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                  activeTab === 'read'
+                    ? 'text-white shadow-xs'
+                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                }`}
+                style={activeTab === 'read' ? { backgroundColor: db.config.primaryColor } : undefined}
+              >
+                <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Cerita</span>
+              </button>
+
+              {book.pdfUrl && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('pdf')}
+                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                    activeTab === 'pdf'
+                      ? 'text-white shadow-xs'
+                      : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                  }`}
+                  style={activeTab === 'pdf' ? { backgroundColor: db.config.primaryColor } : undefined}
+                >
+                  <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>PDF</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('quiz')}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                  activeTab === 'quiz'
+                    ? 'text-white shadow-xs'
+                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                }`}
+                style={activeTab === 'quiz' ? { backgroundColor: db.config.primaryColor } : undefined}
+              >
+                <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Kuis</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('journal')}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                  activeTab === 'journal'
+                    ? 'text-white shadow-xs'
+                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                }`}
+                style={activeTab === 'journal' ? { backgroundColor: db.config.accentColor } : undefined}
+              >
+                <NotebookPen className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden xs:inline sm:inline">E-Paspor</span>
+              </button>
+            </div>
+
+            {activeTab === 'read' && (
+              <div className="hidden md:inline-flex items-center rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
+                {(
+                  [
+                    { id: 'normal', label: 'A' },
+                    { id: 'large', label: 'A+' },
+                    { id: 'xlarge', label: 'A++' },
+                  ] as const
+                ).map((sz) => (
+                  <button
+                    key={sz.id}
+                    type="button"
+                    onClick={() => setFontScale(sz.id)}
+                    aria-label={`Ukuran huruf ${sz.label}`}
+                    className={`rounded-lg px-2 py-1 font-bold transition-colors ${
+                      fontScale === sz.id
+                        ? 'bg-[#136B36] text-white'
+                        : 'text-[#546358] dark:text-[#A4B9AE]'
+                    }`}
+                  >
+                    {sz.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <button
               type="button"
               onClick={() =>
@@ -289,54 +411,41 @@ export function BookReaderModal({
                 })
               }
               aria-pressed={isFavorite}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+              aria-label={isFavorite ? 'Hapus dari favorit' : 'Simpan ke favorit'}
+              className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                 isFavorite
-                  ? 'border-rose-300 bg-rose-50 text-rose-700'
-                  : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+                  ? 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-950/40 dark:text-rose-200'
+                  : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]'
               }`}
             >
               <Heart className={`h-3.5 w-3.5 ${isFavorite ? 'fill-current' : ''}`} />
-              {isFavorite ? 'Difavoritkan' : 'Favorit'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                stopSpeech();
-                storyAudioEngine.stop();
-                setIsMusicPlaying(false);
-                onClose();
-              }}
-              aria-label="Tutup pembaca buku"
-              className="rounded-xl border border-[#DCE4DF] bg-white p-2 text-[#4A5D54] hover:bg-[#F2F6F4] hover:text-[#111C17]"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden lg:inline">{isFavorite ? 'Difavoritkan' : 'Favorit'}</span>
             </button>
           </div>
-        </header>
+        </div>
 
-        {/* Story-Matched Background Music & Instrument Strip */}
+        {/* Story-Matched Background Music & Narration Sub-Strip */}
         {soundtrack && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E2E8E5] bg-[#F2F6F4] px-5 py-2.5 text-xs">
-            <div className="flex items-center gap-2.5 min-w-0">
+          <div className="mx-auto mt-2 flex max-w-6xl flex-wrap items-center justify-between gap-2 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7]/90 px-3 py-1.5 text-xs dark:border-[#243B30] dark:bg-[#162720]/90">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
               <span
-                className="flex h-7 w-7 items-center justify-center rounded-lg text-white shrink-0"
+                className="flex h-6 w-6 items-center justify-center rounded-lg text-white shrink-0"
                 style={{ backgroundColor: db.config.accentColor }}
               >
-                <Music className="h-3.5 w-3.5" aria-hidden="true" />
+                <Music className="h-3 w-3" aria-hidden="true" />
               </span>
-              <div className="min-w-0">
-                <p className="font-semibold text-[#111C17] truncate">
+              <div className="min-w-0 truncate">
+                <span className="font-semibold text-[#1C2820] dark:text-[#ECF3EE]">
                   Musik Cerita: {soundtrack.title}
-                </p>
-                <p className="text-[11px] text-[#4A5D54] truncate">
-                  Instrumen: {soundtrack.instrumentsLabel} · {soundtrack.moodLabel}
-                </p>
+                </span>
+                <span className="hidden sm:inline text-[#546358] dark:text-[#A4B9AE]">
+                  {' '}· Instrumen: {soundtrack.instrumentsLabel} ({soundtrack.moodLabel})
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <label className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-[#4A5D54]">
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="hidden lg:inline-flex items-center gap-1.5 text-[11px] text-[#546358] dark:text-[#A4B9AE]">
                 <span>Volume</span>
                 <input
                   type="range"
@@ -350,7 +459,7 @@ export function BookReaderModal({
                     storyAudioEngine.setVolume(nextVol);
                   }}
                   aria-label="Atur volume musik cerita"
-                  className="w-20 accent-[#136B36]"
+                  className="w-16 accent-[#136B36]"
                 />
               </label>
 
@@ -358,91 +467,83 @@ export function BookReaderModal({
                 type="button"
                 onClick={handleToggleMusic}
                 aria-pressed={isMusicPlaying}
-                style={isMusicPlaying ? { backgroundColor: db.config.accentColor } : { backgroundColor: db.config.primaryColor }}
-                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
+                style={
+                  isMusicPlaying
+                    ? { backgroundColor: db.config.accentColor }
+                    : { backgroundColor: db.config.primaryColor }
+                }
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
               >
                 {isMusicPlaying ? (
                   <>
-                    <Pause className="h-3.5 w-3.5" aria-hidden="true" />
+                    <Pause className="h-3 w-3" aria-hidden="true" />
                     Jeda Musik Cerita
                   </>
                 ) : (
                   <>
-                    <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                    <Play className="h-3 w-3" aria-hidden="true" />
                     Putar Musik Cerita
                   </>
                 )}
               </button>
+
+              {activeTab === 'read' && (
+                <button
+                  type="button"
+                  onClick={handleToggleSpeech}
+                  className="inline-flex items-center gap-1 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-2.5 py-1 text-[11px] font-semibold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
+                >
+                  {isSpeaking ? (
+                    <>
+                      <VolumeX className="h-3 w-3 text-amber-600" aria-hidden="true" />
+                      Hentikan Narasi
+                    </>
+                  ) : (
+                    <>
+                      <Volume2
+                        className="h-3 w-3"
+                        style={{ color: 'var(--brand-primary-ink)' }}
+                        aria-hidden="true"
+                      />
+                      Audio Narasi
+                    </>
+                  )}
+                </button>
+              )}
+
+              {activeTab === 'read' && (
+                <select
+                  aria-label="Kecepatan suara narasi"
+                  value={speechRate}
+                  onChange={(e) => setSpeechRate(Number(e.target.value))}
+                  className="hidden sm:block rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-1.5 py-1 text-[11px] font-semibold text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
+                >
+                  <option value={0.9}>0.9x Santai</option>
+                  <option value={1}>1.0x Normal</option>
+                  <option value={1.15}>1.15x Cepat</option>
+                </select>
+              )}
             </div>
           </div>
         )}
+      </header>
 
-        {/* Sub-Navigation Tabs inside Reader */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E2E8E5] bg-white px-5 py-2.5">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setActiveTab('read')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeTab === 'read'
-                  ? 'text-white'
-                  : 'bg-[#F2F6F4] text-[#4A5D54] hover:text-[#111C17]'
-              }`}
-              style={activeTab === 'read' ? { backgroundColor: db.config.primaryColor } : undefined}
-            >
-              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-              Baca Buku ({pageIdx + 1}/{pages.length})
-            </button>
-
-            {book.pdfUrl && (
-              <button
-                type="button"
-                onClick={() => setActiveTab('pdf')}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  activeTab === 'pdf'
-                    ? 'text-white'
-                    : 'bg-[#F2F6F4] text-[#4A5D54] hover:text-[#111C17]'
-                }`}
-                style={activeTab === 'pdf' ? { backgroundColor: db.config.primaryColor } : undefined}
-              >
-                <FileText className="h-3.5 w-3.5" aria-hidden="true" />
-                Materi PDF
-              </button>
+      {/* Main Content Stage */}
+      {activeTab === 'read' && currentPageData ? (
+        <main className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col justify-center px-4 py-3 sm:px-8 sm:py-5">
+          <div className="mx-auto w-full max-w-6xl space-y-3 sm:space-y-4">
+            {speechMessage && (
+              <p className="rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-4 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
+                {speechMessage}
+              </p>
             )}
 
-            <button
-              type="button"
-              onClick={() => setActiveTab('quiz')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeTab === 'quiz'
-                  ? 'text-white'
-                  : 'bg-[#F2F6F4] text-[#4A5D54] hover:text-[#111C17]'
-              }`}
-              style={activeTab === 'quiz' ? { backgroundColor: db.config.primaryColor } : undefined}
-            >
-              <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              Kuis Bacaan ({quizQuestions.length})
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('journal')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeTab === 'journal'
-                  ? 'text-white'
-                  : 'bg-[#F2F6F4] text-[#4A5D54] hover:text-[#111C17]'
-              }`}
-              style={activeTab === 'journal' ? { backgroundColor: db.config.accentColor } : undefined}
-            >
-              <NotebookPen className="h-3.5 w-3.5" aria-hidden="true" />
-              Jurnal & Stempel E-Paspor
-            </button>
-          </div>
-
-          {/* Font size & Audio controls when in Reading tab */}
-          {activeTab === 'read' && (
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center rounded-lg border border-[#DCE4DF] bg-[#F8FAF9] p-0.5 text-[11px]">
+            {/* Mobile compact font-scale toggle */}
+            <div className="flex items-center justify-between gap-2 md:hidden">
+              <span className="text-[11px] font-semibold text-[#546358] dark:text-[#A4B9AE]">
+                {book.kategori} · {book.estimasiMenit ?? 5} mnt
+              </span>
+              <div className="inline-flex items-center rounded-lg border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
                 {(
                   [
                     { id: 'normal', label: 'A' },
@@ -454,421 +555,434 @@ export function BookReaderModal({
                     key={sz.id}
                     type="button"
                     onClick={() => setFontScale(sz.id)}
-                    className={`rounded-md px-2 py-1 font-semibold ${
+                    className={`rounded-md px-2 py-0.5 font-bold ${
                       fontScale === sz.id
-                        ? 'bg-white text-[#111C17] shadow-xs'
-                        : 'text-[#4A5D54]'
+                        ? 'bg-[#136B36] text-white'
+                        : 'text-[#546358] dark:text-[#A4B9AE]'
                     }`}
                   >
                     {sz.label}
                   </button>
                 ))}
               </div>
-
-              <button
-                type="button"
-                onClick={handleToggleSpeech}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4]"
-              >
-                {isSpeaking ? (
-                  <>
-                    <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
-                    Hentikan Audio
-                  </>
-                ) : (
-                  <>
-                    <Volume2 className="h-3.5 w-3.5" style={{ color: 'var(--brand-primary-ink)' }} aria-hidden="true" />
-                    Audio Narasi
-                  </>
-                )}
-              </button>
-
-              <select
-                aria-label="Kecepatan suara narasi"
-                value={speechRate}
-                onChange={(e) => setSpeechRate(Number(e.target.value))}
-                className="rounded-lg border border-[#DCE4DF] bg-white px-2 py-1 text-[11px] font-semibold text-[#111C17]"
-              >
-                <option value={0.9}>0.9x Santai</option>
-                <option value={1}>1.0x Normal</option>
-                <option value={1.15}>1.15x Cepat</option>
-              </select>
             </div>
-          )}
-        </div>
 
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
-          {speechMessage && (
-            <p className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-4 py-2.5 text-xs text-[#4A5D54]">
-              {speechMessage}
-            </p>
-          )}
-
-          {activeTab === 'read' && currentPageData && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:items-start">
-                {book.coverUrl && (
-                  <div className="md:col-span-4 space-y-2.5">
-                    <div className="overflow-hidden rounded-2xl border border-[#E2E8E5] bg-[#F2F6F4]">
-                      <img
-                        src={book.coverUrl}
-                        alt={`Ilustrasi ${book.judul}`}
-                        referrerPolicy="no-referrer"
-                        className="aspect-4/3 w-full object-cover"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between rounded-xl border border-[#E2E8E5] bg-[#F8FAF9] px-3 py-2 text-[11px] text-[#4A5D54]">
-                      <span className="inline-flex items-center gap-1 font-medium">
-                        <BookmarkCheck className="h-3.5 w-3.5" style={{ color: 'var(--brand-primary-ink)' }} />
-                        Penanda otomatis
-                      </span>
-                      <span className="font-mono-tabular font-semibold text-[#111C17]">
-                        Hal {pageIdx + 1}/{pages.length}
-                      </span>
-                    </div>
+            {/* Single-Screen Spread: Title + Illustration + Story Text Together */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-center md:gap-8 lg:gap-10">
+              {/* Illustration Pane */}
+              {book.coverUrl && (
+                <div className="md:col-span-5 space-y-2">
+                  <div className="overflow-hidden rounded-2xl border border-[#DFD7C4] bg-[#F3EFE4] shadow-md dark:border-[#243B30] dark:bg-[#13221B]">
+                    <img
+                      src={book.coverUrl}
+                      alt={`Ilustrasi ${book.judul}`}
+                      referrerPolicy="no-referrer"
+                      className="h-[23dvh] max-h-[210px] w-full object-cover md:h-auto md:max-h-[50dvh] md:aspect-4/3"
+                    />
                   </div>
-                )}
+                  <div className="hidden md:flex items-center justify-between rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-3.5 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
+                    <span className="inline-flex items-center gap-1.5 font-medium">
+                      <BookmarkCheck
+                        className="h-3.5 w-3.5 shrink-0"
+                        style={{ color: 'var(--brand-primary-ink)' }}
+                      />
+                      Penanda halaman tersimpan
+                    </span>
+                    <span className="truncate font-medium">Penulis: {book.penulis}</span>
+                  </div>
+                </div>
+              )}
 
-                <div className={book.coverUrl ? 'md:col-span-8 space-y-4' : 'md:col-span-12 space-y-4'}>
-                  <div
-                    className={`rounded-2xl border p-5 sm:p-6 space-y-4 ${
-                      isComic
-                        ? 'border-2 border-[#DCE4DF] bg-[#F8FAF9]'
-                        : 'border-[#E2E8E5] bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 border-b border-[#EEF3F0] pb-3">
-                      <h3 className="font-display text-base font-bold text-[#111C17] sm:text-lg">
-                        {currentPageData.judulBab}
-                      </h3>
-                      {isComic && (
-                        <span
-                          className="rounded-md px-2 py-0.5 text-[11px] font-bold text-white"
-                          style={{ backgroundColor: db.config.accentColor }}
-                        >
-                          Adegan Komik
-                        </span>
-                      )}
-                    </div>
-
-                    <p className={`text-[#111C17] whitespace-pre-line ${fontSizeClass}`}>
-                      {currentPageData.isi}
-                    </p>
-
-                    {currentPageData.pesanMoral && (
-                      <div className="rounded-xl border border-[#DCE4DF] bg-[#F2F6F4] p-4">
-                        <p className="text-xs font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
-                          Pesan Petualangan Literasi
-                        </p>
-                        <p className="mt-1 text-sm text-[#111C17]">
-                          {currentPageData.pesanMoral}
-                        </p>
-                      </div>
+              {/* Title + Story Text Pane */}
+              <article
+                className={`${
+                  book.coverUrl ? 'md:col-span-7' : 'md:col-span-10 md:col-start-2'
+                } rounded-3xl border border-[#E2DAC8] bg-[#FFFDF7] p-4 sm:p-6 lg:p-8 shadow-sm dark:border-[#243B30] dark:bg-[#122019] space-y-3 sm:space-y-4`}
+              >
+                <div className="space-y-1.5 border-b border-[#EDE6D6] pb-3 dark:border-[#21382E]">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span
+                      className="text-xs sm:text-sm font-bold tracking-wide"
+                      style={{ color: 'var(--brand-primary-ink)' }}
+                    >
+                      {currentPageData.judulBab}
+                    </span>
+                    {isComic && (
+                      <span
+                        className="rounded-md px-2 py-0.5 text-[11px] font-bold text-white"
+                        style={{ backgroundColor: db.config.accentColor }}
+                      >
+                        Adegan Komik
+                      </span>
                     )}
                   </div>
+                  <h2
+                    id="reader-modal-title"
+                    className="font-display text-xl sm:text-2xl lg:text-[28px] font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]"
+                  >
+                    {book.judul}
+                  </h2>
+                </div>
 
-                  {/* Page Turning Controls */}
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      disabled={pageIdx === 0}
-                      onClick={() => handleTurnPage(pageIdx - 1)}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE4DF] bg-white px-4 py-2 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4] disabled:opacity-45"
+                <p
+                  className={`font-normal text-[#212E26] dark:text-[#E2ECE5] whitespace-pre-line ${fontSizeClass}`}
+                >
+                  {currentPageData.isi}
+                </p>
+
+                {currentPageData.pesanMoral && (
+                  <div className="rounded-2xl border border-[#D4E0CB] bg-[#F1F6EC] p-3.5 sm:p-4 dark:border-[#294335] dark:bg-[#172A21]">
+                    <p
+                      className="text-xs font-bold uppercase tracking-wider"
+                      style={{ color: 'var(--brand-primary-ink)' }}
                     >
-                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                      Halaman Sebelumnya
-                    </button>
+                      Pesan Petualangan Literasi
+                    </p>
+                    <p className="mt-1 text-sm sm:text-base leading-relaxed text-[#1C2820] dark:text-[#ECF3EE]">
+                      {currentPageData.pesanMoral}
+                    </p>
+                  </div>
+                )}
+              </article>
+            </div>
+          </div>
+        </main>
+      ) : (
+        /* Non-Reading Tabs (PDF, Quiz, Journal & E-Paspor) */
+        <main className="flex-1 min-h-0 overflow-y-auto px-4 py-5 sm:px-8 sm:py-7">
+          <div className="mx-auto max-w-4xl space-y-6">
+            <div className="rounded-2xl border border-[#E2DAC8] bg-[#FFFDF7] px-5 py-3.5 dark:border-[#243B30] dark:bg-[#122019]">
+              <h2
+                id="reader-modal-title"
+                className="font-display text-lg sm:text-xl font-bold text-[#16221A] dark:text-[#F1F7F3]"
+              >
+                {book.judul}
+              </h2>
+              <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                Penulis: {book.penulis} {book.lisensi ? `· ${book.lisensi}` : ''}
+              </p>
+            </div>
 
+            {activeTab === 'pdf' && book.pdfUrl && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold text-[#1C2820] dark:text-[#ECF3EE]">
+                    Dokumen Materi Bacaan: {book.pdfNamaFile || book.judul}
+                  </p>
+                  <a
+                    href={book.pdfUrl}
+                    download={book.pdfNamaFile || `${book.kodeBuku}.pdf`}
+                    className="rounded-lg border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs font-semibold text-[#1C2820] hover:bg-[#F3EFE4] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
+                  >
+                    Unduh PDF Berizin
+                  </a>
+                </div>
+                <iframe
+                  title={`PDF ${book.judul}`}
+                  src={book.pdfUrl}
+                  className="h-[62dvh] w-full rounded-2xl border border-[#DFD7C4] bg-white dark:border-[#243B30]"
+                />
+              </div>
+            )}
+
+            {activeTab === 'quiz' && (
+              <div className="space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                      Kuis Pemahaman Bacaan
+                    </h3>
+                    <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                      Jawab pertanyaan berikut untuk menguji pemahamanmu sebelum mencatat E-Paspor Baca.
+                    </p>
+                  </div>
+                  {quizSubmitted && (
+                    <span
+                      className="rounded-xl px-3.5 py-1.5 font-mono-tabular text-xs font-bold text-white"
+                      style={{ backgroundColor: db.config.primaryColor }}
+                    >
+                      Skor Kamu: {quizPercent}% ({quizCorrectCount}/{quizQuestions.length})
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  {quizQuestions.map((q, qIdx) => (
+                    <div
+                      key={q.pertanyaan}
+                      className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-4 sm:p-5 space-y-3 dark:border-[#243B30] dark:bg-[#122019]"
+                    >
+                      <p className="text-sm sm:text-base font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                        {qIdx + 1}. {q.pertanyaan}
+                      </p>
+                      <div className="space-y-2">
+                        {q.pilihan.map((opt, optIdx) => {
+                          const selected = answers[qIdx] === optIdx;
+                          const isCorrectChoice = optIdx === q.jawabanBenar;
+                          return (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() =>
+                                setAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))
+                              }
+                              className={`flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm font-medium transition-colors ${
+                                quizSubmitted && isCorrectChoice
+                                  ? 'border-emerald-400 bg-emerald-50 text-emerald-900 dark:border-emerald-500/50 dark:bg-emerald-950/40 dark:text-emerald-200'
+                                  : quizSubmitted && selected && !isCorrectChoice
+                                    ? 'border-red-300 bg-red-50 text-red-800 dark:border-red-500/40 dark:bg-red-950/40 dark:text-red-200'
+                                    : selected
+                                      ? 'border-[#136B36] bg-[#F3EFE4] font-semibold text-[#16221A] dark:bg-[#1A2D24] dark:text-white'
+                                      : 'border-[#DFD7C4] bg-[#FBF7EE] text-[#4B5A50] hover:text-[#16221A] dark:border-[#243B30] dark:bg-[#0F1C16] dark:text-[#A4B9AE]'
+                              }`}
+                            >
+                              <span>{opt}</span>
+                              {selected && <CheckCircle2 className="h-4 w-4 shrink-0" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {quizSubmitted && (
+                        <p className="text-xs text-[#4B5A50] dark:text-[#A4B9AE]">
+                          <strong className="text-[#16221A] dark:text-[#F1F7F3]">Penjelasan:</strong>{' '}
+                          {q.penjelasan}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setQuizSubmitted(true)}
+                    style={{ backgroundColor: db.config.primaryColor }}
+                    className="rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95"
+                  >
+                    Periksa Jawaban Kuis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('journal')}
+                    style={{ backgroundColor: db.config.accentColor }}
+                    className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95"
+                  >
+                    Isi Jurnal & Klaim Stempel E-Paspor
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'journal' && (
+              <form onSubmit={handleCompleteReading} className="space-y-5">
+                <div className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                        Jurnal Membaca & Stempel Digital E-Paspor Baca
+                      </h3>
+                      <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                        Catat bagian favorit atau pesan cerita yang kamu tangkap untuk mendapatkan stempel digital E-Paspor Baca.
+                      </p>
+                    </div>
+                    <Award className="h-6 w-6 shrink-0" style={{ color: 'var(--brand-accent-ink)' }} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <span className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]">
+                      Penilaian Cerita (Bintang)
+                    </span>
                     <div className="flex items-center gap-1.5">
-                      {pages.map((p, idx) => (
+                      {[1, 2, 3, 4, 5].map((star) => (
                         <button
-                          key={p.judulBab}
+                          key={star}
                           type="button"
-                          onClick={() => handleTurnPage(idx)}
-                          aria-label={`Buka halaman ${idx + 1}`}
-                          className={`h-7 min-w-7 rounded-lg px-2 font-mono-tabular text-xs font-bold transition-colors ${
-                            idx === pageIdx
-                              ? 'text-white'
-                              : 'border border-[#DCE4DF] bg-white text-[#4A5D54] hover:text-[#111C17]'
-                          }`}
-                          style={idx === pageIdx ? { backgroundColor: db.config.primaryColor } : undefined}
+                          onClick={() => setStarRating(star)}
+                          aria-label={`Beri ${star} bintang`}
+                          className="rounded-lg p-1 hover:bg-[#F3EFE4] dark:hover:bg-[#1A2D24]"
                         >
-                          {idx + 1}
+                          <Star
+                            className={`h-5 w-5 ${
+                              star <= starRating
+                                ? 'fill-amber-400 text-amber-500'
+                                : 'text-[#CBD6D0] dark:text-[#3A5246]'
+                            }`}
+                          />
                         </button>
                       ))}
                     </div>
-
-                    {pageIdx < pages.length - 1 ? (
-                      <button
-                        type="button"
-                        onClick={() => handleTurnPage(pageIdx + 1)}
-                        style={{ backgroundColor: db.config.primaryColor }}
-                        className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white hover:opacity-95"
-                      >
-                        Halaman Berikutnya
-                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('quiz')}
-                        style={{ backgroundColor: db.config.accentColor }}
-                        className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white hover:opacity-95"
-                      >
-                        Lanjut ke Kuis & E-Paspor
-                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                      </button>
-                    )}
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === 'pdf' && book.pdfUrl && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-[#111C17]">
-                  Dokumen Materi Bacaan: {book.pdfNamaFile || book.judul}
-                </p>
-                <a
-                  href={book.pdfUrl}
-                  download={book.pdfNamaFile || `${book.kodeBuku}.pdf`}
-                  className="rounded-lg border border-[#DCE4DF] bg-white px-3 py-1.5 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4]"
-                >
-                  Unduh PDF Berizin
-                </a>
-              </div>
-              <iframe
-                title={`PDF ${book.judul}`}
-                src={book.pdfUrl}
-                className="h-[460px] w-full rounded-xl border border-[#DCE4DF] bg-white"
-              />
-            </div>
-          )}
-
-          {activeTab === 'quiz' && (
-            <div className="space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <h3 className="font-display text-lg font-bold text-[#111C17]">
-                    Kuis Pemahaman Bacaan
-                  </h3>
-                  <p className="text-xs text-[#4A5D54]">
-                    Jawab pertanyaan berikut untuk menguji pemahamanmu sebelum mencatat E-Paspor Baca.
-                  </p>
-                </div>
-                {quizSubmitted && (
-                  <span
-                    className="rounded-xl px-3.5 py-1.5 font-mono-tabular text-xs font-bold text-white"
-                    style={{ backgroundColor: db.config.primaryColor }}
-                  >
-                    Skor Kamu: {quizPercent}% ({quizCorrectCount}/{quizQuestions.length})
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                {quizQuestions.map((q, qIdx) => (
-                  <div
-                    key={q.pertanyaan}
-                    className="rounded-2xl border border-[#E2E8E5] bg-[#F8FAF9] p-4 space-y-3"
-                  >
-                    <p className="text-sm font-bold text-[#111C17]">
-                      {qIdx + 1}. {q.pertanyaan}
-                    </p>
-                    <div className="space-y-2">
-                      {q.pilihan.map((opt, optIdx) => {
-                        const selected = answers[qIdx] === optIdx;
-                        const isCorrectChoice = optIdx === q.jawabanBenar;
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() =>
-                              setAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))
-                            }
-                            className={`flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs font-medium transition-colors ${
-                              quizSubmitted && isCorrectChoice
-                                ? 'border-emerald-400 bg-emerald-50 text-emerald-900'
-                                : quizSubmitted && selected && !isCorrectChoice
-                                  ? 'border-red-300 bg-red-50 text-red-800'
-                                  : selected
-                                    ? 'border-[#136B36] bg-white font-semibold text-[#111C17]'
-                                    : 'border-[#DCE4DF] bg-white text-[#4A5D54] hover:text-[#111C17]'
-                            }`}
-                          >
-                            <span>{opt}</span>
-                            {selected && <CheckCircle2 className="h-4 w-4 shrink-0" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {quizSubmitted && (
-                      <p className="text-xs text-[#4A5D54]">
-                        <strong className="text-[#111C17]">Penjelasan:</strong> {q.penjelasan}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => setQuizSubmitted(true)}
-                  style={{ backgroundColor: db.config.primaryColor }}
-                  className="rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95"
-                >
-                  Periksa Jawaban Kuis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('journal')}
-                  style={{ backgroundColor: db.config.accentColor }}
-                  className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95"
-                >
-                  Isi Jurnal & Klaim Stempel E-Paspor
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'journal' && (
-            <form onSubmit={handleCompleteReading} className="space-y-5">
-              <div className="rounded-2xl border border-[#E2E8E5] bg-[#F8FAF9] p-5 space-y-4">
-                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-display text-lg font-bold text-[#111C17]">
-                      Jurnal Membaca & Stempel Digital E-Paspor Baca
-                    </h3>
-                    <p className="text-xs text-[#4A5D54]">
-                      Catat bagian favorit atau pesan cerita yang kamu tangkap untuk mendapatkan stempel digital E-Paspor Baca.
-                    </p>
-                  </div>
-                  <Award className="h-6 w-6 shrink-0" style={{ color: 'var(--brand-accent-ink)' }} />
-                </div>
-
-                <div className="space-y-1.5">
-                  <span className="block text-xs font-semibold text-[#111C17]">
-                    Penilaian Cerita (Bintang)
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setStarRating(star)}
-                        aria-label={`Beri ${star} bintang`}
-                        className="rounded-lg p-1 hover:bg-white"
-                      >
-                        <Star
-                          className={`h-5 w-5 ${
-                            star <= starRating
-                              ? 'fill-amber-400 text-amber-500'
-                              : 'text-[#CBD6D0]'
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="journal-note" className="block text-xs font-semibold text-[#111C17]">
-                    Catatan atau Kesan Pembaca
-                  </label>
-                  <textarea
-                    id="journal-note"
-                    rows={3}
-                    value={journalNote}
-                    onChange={(e) => setJournalNote(e.target.value)}
-                    placeholder="Contoh: Bagian favoritku adalah saat tokoh bekerja sama menolong sahabatnya!"
-                    className="mt-1.5 w-full rounded-xl border border-[#DCE4DF] bg-white px-3.5 py-2.5 text-sm text-[#111C17] focus:border-[#136B36] focus:outline-none"
-                  />
-                </div>
-
-                {completedNotice ? (
-                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-900 space-y-2">
-                    <p>{completedNotice}</p>
-                    {!session && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          onOpenLogin();
-                        }}
-                        className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#111C17] border border-[#DCE4DF]"
-                      >
-                        Masuk Akun Anggota Sekarang
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    {!session && (
-                      <p className="text-xs text-[#4A5D54]">
-                        Sedang membaca sebagai tamu. Masuk akun anggota agar +5 poin langsung masuk ke E-Paspor.
-                      </p>
-                    )}
-                    <button
-                      type="submit"
-                      disabled={saving}
-                      style={{ backgroundColor: db.config.primaryColor }}
-                      className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-60"
+                    <label
+                      htmlFor="journal-note"
+                      className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]"
                     >
-                      <Award className="h-4 w-4" aria-hidden="true" />
-                      {saving
-                        ? 'Menyimpan...'
-                        : 'Selesaikan & Dapatkan Stempel E-Paspor (+5 Poin)'}
-                    </button>
+                      Catatan atau Kesan Pembaca
+                    </label>
+                    <textarea
+                      id="journal-note"
+                      rows={3}
+                      value={journalNote}
+                      onChange={(e) => setJournalNote(e.target.value)}
+                      placeholder="Contoh: Bagian favoritku adalah saat tokoh bekerja sama menolong sahabatnya!"
+                      className="mt-1.5 w-full rounded-xl border border-[#DFD7C4] bg-[#FBF7EE] px-3.5 py-2.5 text-sm text-[#16221A] focus:border-[#136B36] focus:outline-none dark:border-[#243B30] dark:bg-[#0F1C16] dark:text-[#ECF3EE]"
+                    />
                   </div>
-                )}
-              </div>
-            </form>
-          )}
 
-          {/* Contextual Book Recommendations inside Reader */}
-          {recommendedBooks.length > 0 && (
-            <section className="border-t border-[#E2E8E5] pt-5 space-y-3">
-              <p className="flex items-center gap-1.5 text-xs font-bold text-[#111C17]">
-                <Sparkles className="h-3.5 w-3.5" style={{ color: 'var(--brand-accent-ink)' }} />
-                Rekomendasi Bacaan Berikutnya Untukmu
-              </p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {recommendedBooks.map((rec) => (
-                  <button
-                    key={rec.id}
-                    type="button"
-                    onClick={() => onSwitchBook(rec)}
-                    className="flex items-center gap-3 rounded-xl border border-[#E2E8E5] bg-[#F8FAF9] p-3 text-left transition-colors hover:border-[#BFD0C7]"
-                  >
-                    {rec.coverUrl && (
-                      <img
-                        src={rec.coverUrl}
-                        alt={rec.judul}
-                        referrerPolicy="no-referrer"
-                        className="h-14 w-16 rounded-lg object-cover shrink-0"
-                      />
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
-                        {rec.kategori} · {rec.estimasiMenit ?? 5} mnt
-                      </p>
-                      <p className="font-display text-sm font-bold text-[#111C17] truncate">
-                        {rec.judul}
-                      </p>
-                      <p className="text-xs text-[#4A5D54] truncate">{rec.penulis}</p>
+                  {completedNotice ? (
+                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-900 space-y-2 dark:border-emerald-500/40 dark:bg-emerald-950/40 dark:text-emerald-200">
+                      <p>{completedNotice}</p>
+                      {!session && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleExitReader();
+                            onOpenLogin();
+                          }}
+                          className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#111C17] border border-[#DCE4DF]"
+                        >
+                          Masuk Akun Anggota Sekarang
+                        </button>
+                      )}
                     </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      {!session && (
+                        <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                          Sedang membaca sebagai tamu. Masuk akun anggota agar +5 poin langsung masuk ke E-Paspor.
+                        </p>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={saving}
+                        style={{ backgroundColor: db.config.primaryColor }}
+                        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-60"
+                      >
+                        <Award className="h-4 w-4" aria-hidden="true" />
+                        {saving
+                          ? 'Menyimpan...'
+                          : 'Selesaikan & Dapatkan Stempel E-Paspor (+5 Poin)'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {/* Contextual Book Recommendations inside Quiz / Journal / PDF */}
+            {recommendedBooks.length > 0 && (
+              <section className="border-t border-[#E3DCCB] pt-5 space-y-3 dark:border-[#243B30]">
+                <p className="flex items-center gap-1.5 text-xs font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                  <Sparkles className="h-3.5 w-3.5" style={{ color: 'var(--brand-accent-ink)' }} />
+                  Rekomendasi Bacaan Berikutnya Untukmu
+                </p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {recommendedBooks.map((rec) => (
+                    <button
+                      key={rec.id}
+                      type="button"
+                      onClick={() => onSwitchBook(rec)}
+                      className="flex items-center gap-3 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-3 text-left transition-colors hover:border-[#BFD0C7] dark:border-[#243B30] dark:bg-[#122019]"
+                    >
+                      {rec.coverUrl && (
+                        <img
+                          src={rec.coverUrl}
+                          alt={rec.judul}
+                          referrerPolicy="no-referrer"
+                          className="h-14 w-16 rounded-lg object-cover shrink-0"
+                        />
+                      )}
+                      <div className="min-w-0">
+                        <p
+                          className="text-[11px] font-semibold"
+                          style={{ color: 'var(--brand-primary-ink)' }}
+                        >
+                          {rec.kategori} · {rec.estimasiMenit ?? 5} mnt
+                        </p>
+                        <p className="font-display text-sm font-bold text-[#16221A] dark:text-[#F1F7F3] truncate">
+                          {rec.judul}
+                        </p>
+                        <p className="text-xs text-[#546358] dark:text-[#A4B9AE] truncate">
+                          {rec.penulis}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        </main>
+      )}
+
+      {/* Bottom Sticky Page Navigation Footer */}
+      {activeTab === 'read' && (
+        <footer className="shrink-0 border-t border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-8 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-4">
+            <button
+              type="button"
+              disabled={pageIdx === 0}
+              onClick={() => handleTurnPage(pageIdx - 1)}
+              className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#ECE6D8] disabled:opacity-40 dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
+            >
+              <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="hidden sm:inline">Halaman Sebelumnya</span>
+              <span className="sm:hidden">Sebelumnya</span>
+            </button>
+
+            <div className="flex items-center gap-1.5 overflow-x-auto px-1">
+              <span className="text-xs font-semibold text-[#546358] dark:text-[#A4B9AE] sm:hidden font-mono-tabular whitespace-nowrap">
+                Hal {pageIdx + 1} / {pages.length}
+              </span>
+              <div className="hidden sm:flex items-center gap-1.5">
+                {pages.map((p, idx) => (
+                  <button
+                    key={`${p.judulBab}-${idx}`}
+                    type="button"
+                    onClick={() => handleTurnPage(idx)}
+                    aria-label={`Buka halaman ${idx + 1}`}
+                    aria-current={idx === pageIdx ? 'page' : undefined}
+                    className={`h-8 min-w-8 rounded-lg px-2.5 font-mono-tabular text-xs font-bold transition-colors ${
+                      idx === pageIdx
+                        ? 'text-white shadow-xs'
+                        : 'border border-[#D4CCB8] bg-[#FFFDF7] text-[#4B5A50] hover:text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#A4B9AE]'
+                    }`}
+                    style={idx === pageIdx ? { backgroundColor: db.config.primaryColor } : undefined}
+                  >
+                    {idx + 1}
                   </button>
                 ))}
               </div>
-            </section>
-          )}
-        </div>
-      </div>
+            </div>
+
+            {pageIdx < pages.length - 1 ? (
+              <button
+                type="button"
+                onClick={() => handleTurnPage(pageIdx + 1)}
+                style={{ backgroundColor: db.config.primaryColor }}
+                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95"
+              >
+                <span className="hidden sm:inline">Halaman Berikutnya</span>
+                <span className="sm:hidden">Berikutnya</span>
+                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveTab('quiz')}
+                style={{ backgroundColor: db.config.accentColor }}
+                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95"
+              >
+                <span className="hidden sm:inline">Lanjut ke Kuis & E-Paspor</span>
+                <span className="sm:hidden">Kuis & Paspor</span>
+                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

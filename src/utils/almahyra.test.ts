@@ -342,3 +342,34 @@ test('getStorySoundtrackProfile matches instruments to story categories and hydr
   assert.equal(migrated.members[0].nomorInduk, 'ALMA-001');
   assert.ok(migrated.config.heroTitle.startsWith('Rumah Baca Keluarga'));
 });
+
+test('getBookReadablePages splits overly long chapters across multiple pages cleanly', () => {
+  const longBook: Book = {
+    ...DEFAULT_DB.books[0],
+    id: 'bk-long',
+    isiBacaan: [
+      {
+        judulBab: 'Bab Panjang',
+        isi:
+          'Kalimat pertama bercerita tentang pagi cerah di Rumah Baca Almahyra saat anak-anak berkumpul dengan gembira. ' +
+          'Kalimat kedua menjelaskan bagaimana mereka memilih buku bergambar warna-warni dari rak bambu rendah yang tertata rapi. ' +
+          'Kalimat ketiga mengisahkan Tari membacakan kisah petualangan dengan suara lantang dan penuh semangat agar mudah diikuti. ' +
+          'Kalimat keempat menutup bagian ini dengan tepuk tangan meriah dari seluruh teman.',
+        pesanMoral: 'Membaca bersama menumbuhkan kebersamaan.',
+      },
+    ],
+  };
+
+  const splitPages = getBookReadablePages(longBook, 220);
+  assert.ok(splitPages.length >= 2);
+  assert.ok(splitPages[0].judulBab.includes('(1/'));
+  assert.equal(splitPages[0].pesanMoral, undefined);
+  assert.equal(
+    splitPages[splitPages.length - 1].pesanMoral,
+    'Membaca bersama menumbuhkan kebersamaan.',
+  );
+  const rejoined = splitPages.map((p) => p.isi).join(' ');
+  assert.ok(rejoined.includes('Kalimat pertama'));
+  assert.ok(rejoined.includes('Kalimat keempat'));
+});
+

@@ -30,25 +30,6 @@
     "lastSyncedAt": "",
     "autoSyncEnabled": false
   },
-  "categories": [
-    "Cerita Nusantara",
-    "Dongeng Dunia",
-    "Fabel dan Cerita Binatang",
-    "Komik Edukasi",
-    "Sains dan Pengetahuan",
-    "Sejarah dan Pahlawan",
-    "Lingkungan dan Alam",
-    "Kisah Inspiratif",
-    "Budaya Indonesia",
-    "Ensiklopedia Anak"
-  ],
-  "readerLevels": [
-    "PAUD",
-    "SD Awal",
-    "SD Lanjut",
-    "SMP",
-    "Semua Usia"
-  ],
   "admins": [
     {
       "id": "adm-super",
@@ -933,7 +914,128 @@
       "kategoriBuku": "Cerita Nusantara"
     }
   ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "hari": "Senin–Kamis",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Main & Baca Sore",
+      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
+      "zona": "Semua Zona",
+      "kuota": 25,
+      "pesertaTerdaftar": 18
+    },
+    {
+      "id": "sch-2",
+      "hari": "Jumat",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Jumat Tukar Sampah",
+      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
+      "zona": "Zona Sahabat Bumi",
+      "kuota": 20,
+      "pesertaTerdaftar": 14
+    },
+    {
+      "id": "sch-3",
+      "hari": "Sabtu",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Sabtu Dongeng",
+      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
+      "zona": "Zona Panggung Cerita",
+      "kuota": 30,
+      "pesertaTerdaftar": 26
+    },
+    {
+      "id": "sch-4",
+      "hari": "Minggu",
+      "waktu": "08.00–10.00 WIB",
+      "program": "Minggu Kreasi",
+      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
+      "zona": "Zona Kreativitas & Eksplorasi",
+      "kuota": 25,
+      "pesertaTerdaftar": 21
+    }
+  ],
+  "missions": [
+    {
+      "id": "mis-1",
+      "judul": "Pemburu Cerita",
+      "zona": "Zona Imajinasi",
+      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
+      "verifikasi": "Tanya jawab pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-2",
+      "judul": "Pencerita Cilik",
+      "zona": "Zona Panggung Cerita",
+      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
+      "verifikasi": "Cerita lisan 1–2 menit",
+      "poin": 5
+    },
+    {
+      "id": "mis-3",
+      "judul": "Seniman Buku",
+      "zona": "Zona Kreativitas",
+      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
+      "verifikasi": "Karya ditunjukkan kepada pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-4",
+      "judul": "Ilmuwan Cilik",
+      "zona": "Zona Pengetahuan",
+      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
+      "verifikasi": "Menjelaskan hasil pengamatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-5",
+      "judul": "Sahabat Bumi",
+      "zona": "Zona Sahabat Bumi",
+      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
+      "verifikasi": "Demonstrasi kegiatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-6",
+      "judul": "Teman Penolong",
+      "zona": "Semua Zona",
+      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
+      "verifikasi": "Konfirmasi fasilitator",
+      "poin": 3
+    }
+  ],
+  "categories": [
+    "Cerita Nusantara",
+    "Dongeng Dunia",
+    "Fabel dan Cerita Binatang",
+    "Komik Edukasi",
+    "Sains dan Pengetahuan",
+    "Sejarah dan Pahlawan",
+    "Lingkungan dan Alam",
+    "Kisah Inspiratif",
+    "Budaya Indonesia",
+    "Ensiklopedia Anak"
+  ],
+  "readerLevels": [
+    "PAUD",
+    "SD Awal",
+    "SD Lanjut",
+    "SMP",
+    "Semua Usia"
+  ],
   "readingProgress": [
+    {
+      "id": "rp-guest-bk-1",
+      "viewerKey": "guest",
+      "bookId": "bk-1",
+      "lastPage": 1,
+      "totalPages": 4,
+      "isFavorite": false,
+      "completedCount": 0,
+      "lastReadAt": "2026-11-16T23:08:25.692Z"
+    },
     {
       "id": "rp-ALMA-001-bk-1",
       "viewerKey": "ALMA-001",
@@ -1033,98 +1135,6 @@
       "bonusPoin": 5,
       "periode": "Bulanan",
       "lencanaHadiah": "Sahabat Bumi"
-    }
-  ],
-  "schedules": [
-    {
-      "id": "sch-1",
-      "hari": "Senin–Kamis",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Main & Baca Sore",
-      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
-      "zona": "Semua Zona",
-      "kuota": 25,
-      "pesertaTerdaftar": 18
-    },
-    {
-      "id": "sch-2",
-      "hari": "Jumat",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Jumat Tukar Sampah",
-      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
-      "zona": "Zona Sahabat Bumi",
-      "kuota": 20,
-      "pesertaTerdaftar": 14
-    },
-    {
-      "id": "sch-3",
-      "hari": "Sabtu",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Sabtu Dongeng",
-      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
-      "zona": "Zona Panggung Cerita",
-      "kuota": 30,
-      "pesertaTerdaftar": 26
-    },
-    {
-      "id": "sch-4",
-      "hari": "Minggu",
-      "waktu": "08.00–10.00 WIB",
-      "program": "Minggu Kreasi",
-      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
-      "zona": "Zona Kreativitas & Eksplorasi",
-      "kuota": 25,
-      "pesertaTerdaftar": 21
-    }
-  ],
-  "missions": [
-    {
-      "id": "mis-1",
-      "judul": "Pemburu Cerita",
-      "zona": "Zona Imajinasi",
-      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
-      "verifikasi": "Tanya jawab pendamping",
-      "poin": 5
-    },
-    {
-      "id": "mis-2",
-      "judul": "Pencerita Cilik",
-      "zona": "Zona Panggung Cerita",
-      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
-      "verifikasi": "Cerita lisan 1–2 menit",
-      "poin": 5
-    },
-    {
-      "id": "mis-3",
-      "judul": "Seniman Buku",
-      "zona": "Zona Kreativitas",
-      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
-      "verifikasi": "Karya ditunjukkan kepada pendamping",
-      "poin": 5
-    },
-    {
-      "id": "mis-4",
-      "judul": "Ilmuwan Cilik",
-      "zona": "Zona Pengetahuan",
-      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
-      "verifikasi": "Menjelaskan hasil pengamatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-5",
-      "judul": "Sahabat Bumi",
-      "zona": "Zona Sahabat Bumi",
-      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
-      "verifikasi": "Demonstrasi kegiatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-6",
-      "judul": "Teman Penolong",
-      "zona": "Semua Zona",
-      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
-      "verifikasi": "Konfirmasi fasilitator",
-      "poin": 3
     }
   ]
 }

@@ -328,25 +328,96 @@ export function computeBookShelves(books: Book[], preferredLevel?: string) {
   };
 }
 
-export function getBookReadablePages(book: Book): BookPage[] {
-  if (book.isiBacaan && book.isiBacaan.length > 0) {
-    return book.isiBacaan;
+function splitTextIntoReadableChunks(text: string, maxChars: number): string[] {
+  const clean = text.trim();
+  if (clean.length <= maxChars) return [clean];
+
+  const sentences = clean
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (sentences.length <= 1) {
+    // Fallback word-boundary split if there is no punctuation
+    const words = clean.split(/\s+/);
+    const chunks: string[] = [];
+    let current = '';
+    for (const word of words) {
+      if (current && current.length + 1 + word.length > maxChars) {
+        chunks.push(current);
+        current = word;
+      } else {
+        current = current ? `${current} ${word}` : word;
+      }
+    }
+    if (current) chunks.push(current);
+    return chunks.length > 0 ? chunks : [clean];
   }
-  return [
-    {
-      judulBab: 'Bagian 1 · Pengantar Petualangan',
-      isi: `${book.deskripsi} Karya ${book.penulis} ini disiapkan untuk menemani petualangan ${book.zona} di Rumah Baca Almahyra.`,
-    },
-    {
-      judulBab: 'Bagian 2 · Inti Bacaan & Pengamatan',
-      isi: `Selama membaca "${book.judul}", pembaca diajak mengamati tokoh, gagasan utama, serta peristiwa penting yang dekat dengan kehidupan sehari-hari anak Indonesia.`,
-    },
-    {
-      judulBab: 'Bagian 3 · Refleksi & Aksi Literasi',
-      isi: `Setelah memahami isi bacaan, ceritakan kembali 2 hal baru yang kamu pelajari kepada orang tua, teman, atau pendamping Teras Almahyra untuk mendapatkan stempel E-Paspor Baca.`,
-      pesanMoral: 'Membaca membuka jendela rasa ingin tahu dan menumbuhkan keberanian berkarya.',
-    },
-  ];
+
+  const chunks: string[] = [];
+  let current = '';
+  for (const sentence of sentences) {
+    if (sentence.length > maxChars && !current) {
+      const subChunks = splitTextIntoReadableChunks(sentence, maxChars);
+      chunks.push(...subChunks.slice(0, -1));
+      current = subChunks[subChunks.length - 1] ?? '';
+      continue;
+    }
+    if (current && current.length + 1 + sentence.length > maxChars) {
+      chunks.push(current);
+      current = sentence;
+    } else {
+      current = current ? `${current} ${sentence}` : sentence;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks.length > 0 ? chunks : [clean];
+}
+
+export function getBookReadablePages(book: Book, maxCharsPerPage = 290): BookPage[] {
+  const rawPages: BookPage[] =
+    book.isiBacaan && book.isiBacaan.length > 0
+      ? book.isiBacaan
+      : [
+          {
+            judulBab: 'Bagian 1 · Pengantar Petualangan',
+            isi: `${book.deskripsi} Karya ${book.penulis} ini disiapkan untuk menemani petualangan ${book.zona} di Rumah Baca Almahyra.`,
+          },
+          {
+            judulBab: 'Bagian 2 · Inti Bacaan & Pengamatan',
+            isi: `Selama membaca "${book.judul}", pembaca diajak mengamati tokoh, gagasan utama, serta peristiwa penting yang dekat dengan kehidupan sehari-hari anak Indonesia.`,
+          },
+          {
+            judulBab: 'Bagian 3 · Refleksi & Aksi Literasi',
+            isi: `Setelah memahami isi bacaan, ceritakan kembali 2 hal baru yang kamu pelajari kepada orang tua, teman, atau pendamping Teras Almahyra untuk mendapatkan stempel E-Paspor Baca.`,
+            pesanMoral:
+              'Membaca membuka jendela rasa ingin tahu dan menumbuhkan keberanian berkarya.',
+          },
+        ];
+
+  const paginated: BookPage[] = [];
+  for (const page of rawPages) {
+    const paragraphs = page.isi
+      .split(/\n{2,}/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+    const chunks =
+      paragraphs.length > 1
+        ? paragraphs.flatMap((p) => splitTextIntoReadableChunks(p, maxCharsPerPage))
+        : splitTextIntoReadableChunks(page.isi, maxCharsPerPage);
+
+    chunks.forEach((chunk, idx) => {
+      const isLastChunk = idx === chunks.length - 1;
+      paginated.push({
+        judulBab:
+          chunks.length > 1 ? `${page.judulBab} (${idx + 1}/${chunks.length})` : page.judulBab,
+        isi: chunk,
+        pesanMoral: isLastChunk ? page.pesanMoral : undefined,
+      });
+    });
+  }
+
+  return paginated;
 }
 
 export function getBookQuizQuestions(book: Book): BookQuizQuestion[] {
