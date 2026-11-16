@@ -1,0 +1,8 @@
+{
+  "name": "ALMAHYRA App — Rumah Baca Almahyra",
+  "description": "Aplikasi web manajemen taman baca dan E-Paspor Baca Rumah Baca Almahyra berbasis Google Spreadsheet dengan desain responsif 3D.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
