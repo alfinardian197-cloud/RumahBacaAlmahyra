@@ -7,8 +7,10 @@ import type {
   MissionItem,
   PassportLog,
 } from '../types/almahyra';
+import { DEFAULT_DB } from '../data/defaultDb';
 import {
   extractSpreadsheetId,
+  hydrateDatabaseWithDefaults,
   recordsToSheetRows,
   sheetRowsToRecords,
 } from '../utils/almahyra';
@@ -91,11 +93,16 @@ export function buildAllSheetRangesPayload(db: AlmahyraDatabase) {
           { key: 'judul', header: 'Judul' },
           { key: 'penulis', header: 'Penulis' },
           { key: 'kategori', header: 'Kategori' },
+          { key: 'jenjangPembaca', header: 'Jenjang' },
+          { key: 'estimasiMenit', header: 'Estimasi Menit' },
           { key: 'zona', header: 'Zona' },
           { key: 'status', header: 'Status' },
           { key: 'stok', header: 'Stok' },
           { key: 'lokasiRak', header: 'Lokasi Rak' },
           { key: 'deskripsi', header: 'Deskripsi' },
+          { key: 'aktif', header: 'Aktif' },
+          { key: 'pilihanAlmahyra', header: 'Pilihan' },
+          { key: 'dibacaCount', header: 'Dibaca' },
         ],
         db.books,
       ),
@@ -125,6 +132,8 @@ export function buildAllSheetRangesPayload(db: AlmahyraDatabase) {
           { key: 'nomorInduk', header: 'Nomor Induk' },
           { key: 'namaAnggota', header: 'Nama Anggota' },
           { key: 'misi', header: 'Misi' },
+          { key: 'judulBuku', header: 'Judul Buku' },
+          { key: 'kategoriBuku', header: 'Kategori Buku' },
           { key: 'zona', header: 'Zona' },
           { key: 'poin', header: 'Poin' },
           { key: 'pendamping', header: 'Pendamping' },
@@ -358,7 +367,7 @@ export async function pullDatabaseFromGoogleSheet(
     if (recs.length > 0) {
       nextDb.members = recs.map((r, idx) => ({
         id: r.ID || `mem-sheet-${idx + 1}`,
-        nomorInduk: r['Nomor Induk'] || `ALM-${String(idx + 1).padStart(3, '0')}`,
+        nomorInduk: r['Nomor Induk'] || `ALMA-${String(idx + 1).padStart(3, '0')}`,
         nama: r.Nama || 'Anggota',
         jenjangUsia: (['PAUD', 'SD', 'SMP', 'Umum'].includes(r.Jenjang)
           ? r.Jenjang
@@ -385,12 +394,17 @@ export async function pullDatabaseFromGoogleSheet(
         kodeBuku: r['Kode Buku'] || `BK-${String(idx + 1).padStart(3, '0')}`,
         judul: r.Judul || 'Judul Buku',
         penulis: r.Penulis || 'Anonim',
-        kategori: r.Kategori || 'Cerita Anak',
+        kategori: r.Kategori || 'Cerita Nusantara',
+        jenjangPembaca: r.Jenjang || 'Semua Usia',
+        estimasiMenit: Number(r['Estimasi Menit']) || 5,
         zona: r.Zona || 'Zona Imajinasi',
         status: r.Status === 'Dipinjam' ? 'Dipinjam' : 'Tersedia',
         stok: Number(r.Stok) || 1,
         lokasiRak: r['Lokasi Rak'] || 'Rak Utama',
         deskripsi: r.Deskripsi || '',
+        aktif: r.Aktif?.toUpperCase() !== 'FALSE',
+        pilihanAlmahyra: r.Pilihan?.toUpperCase() === 'TRUE',
+        dibacaCount: Number(r.Dibaca) || 0,
       }));
     }
   }
@@ -422,6 +436,8 @@ export async function pullDatabaseFromGoogleSheet(
         nomorInduk: r['Nomor Induk'] || '',
         namaAnggota: r['Nama Anggota'] || '',
         misi: r.Misi || '',
+        judulBuku: r['Judul Buku'] || undefined,
+        kategoriBuku: r['Kategori Buku'] || undefined,
         zona: r.Zona || 'Zona Imajinasi',
         poin: Number(r.Poin) || 5,
         pendamping: r.Pendamping || 'Pendamping',
@@ -469,13 +485,15 @@ export async function pullDatabaseFromGoogleSheet(
     );
   }
 
+  const hydrated = hydrateDatabaseWithDefaults(nextDb, DEFAULT_DB);
+
   return {
-    updatedDb: nextDb,
+    updatedDb: hydrated,
     result: {
       spreadsheetId,
       spreadsheetTitle,
-      syncedAt: nextDb.config.lastSyncedAt,
-      summary: `Berhasil menarik data dari ${syncedTabsCount} tab spreadsheet (${nextDb.members.length} anggota, ${nextDb.books.length} buku).`,
+      syncedAt: hydrated.config.lastSyncedAt,
+      summary: `Berhasil menarik data dari ${syncedTabsCount} tab spreadsheet (${hydrated.members.length} anggota, ${hydrated.books.length} buku).`,
     },
   };
 }

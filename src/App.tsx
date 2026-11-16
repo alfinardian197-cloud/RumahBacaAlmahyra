@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPortal } from './components/AdminPortal';
+import { BookReaderModal } from './components/BookReaderModal';
 import { LoginModal } from './components/LoginModal';
 import { MemberPortal } from './components/MemberPortal';
 import { PublicLanding } from './components/PublicLanding';
 import { TopBar, type NavTabItem } from './components/TopBar';
 import { DEFAULT_DB } from './data/defaultDb';
 import { initGoogleAuth } from './services/googleAuth';
-import type { AlmahyraDatabase, AuthSession, ThemeMode } from './types/almahyra';
-import { resolveThemeMode, toggleThemeMode } from './utils/almahyra';
+import type { AlmahyraDatabase, AuthSession, Book, ThemeMode } from './types/almahyra';
+import {
+  getBookReadablePages,
+  hydrateDatabaseWithDefaults,
+  recordBookReadingAction,
+  resolveThemeMode,
+  toggleThemeMode,
+} from './utils/almahyra';
 
 const SESSION_STORAGE_KEY = 'almahyra_user_session_v1';
 const THEME_STORAGE_KEY = 'almahyra_theme_v1';
@@ -31,6 +38,7 @@ export default function App() {
     }
   });
   const [loginOpen, setLoginOpen] = useState(false);
+  const [readingBookId, setReadingBookId] = useState<string | null>(null);
 
   // Page states respecting strict page count limits (2 public, max 3 other portals)
   const [publicPage, setPublicPage] = useState<'page1' | 'page2'>('page1');
@@ -65,9 +73,9 @@ export default function App() {
     let active = true;
     fetch('/api/db')
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Failed to load'))))
-      .then((data: AlmahyraDatabase) => {
+      .then((data: Partial<AlmahyraDatabase>) => {
         if (active && data?.config && Array.isArray(data.members)) {
-          setDb(data);
+          setDb(hydrateDatabaseWithDefaults(data, DEFAULT_DB));
         }
       })
       .catch(() => {
@@ -101,10 +109,74 @@ export default function App() {
   const handleResetDb = useCallback(async () => {
     const res = await fetch('/api/db/reset', { method: 'POST' });
     if (res.ok) {
-      const fresh = (await res.json()) as AlmahyraDatabase;
-      setDb(fresh);
+      const fresh = (await res.json()) as Partial<AlmahyraDatabase>;
+      setDb(hydrateDatabaseWithDefaults(fresh, DEFAULT_DB));
     }
   }, []);
+
+  const viewerKey = session?.nomorInduk || 'guest';
+
+  const handleRecordReading = useCallback(
+    async (params: {
+      bookId: string;
+      lastPage: number;
+      totalPages: number;
+      completed?: boolean;
+      quizScore?: number;
+      journalNote?: string;
+      starRating?: number;
+      toggleFavorite?: boolean;
+      awardPoints?: number;
+    }) => {
+      let updatedSnapshot: AlmahyraDatabase | null = null;
+      setDb((prev) => {
+        updatedSnapshot = recordBookReadingAction(prev, {
+          viewerKey,
+          ...params,
+        });
+        return updatedSnapshot;
+      });
+      if (updatedSnapshot) {
+        await fetch('/api/db', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedSnapshot),
+        });
+      }
+    },
+    [viewerKey],
+  );
+
+  const handleToggleFavorite = useCallback(
+    async (book: Book) => {
+      const existing = db.readingProgress?.find(
+        (p) => p.viewerKey === viewerKey && p.bookId === book.id,
+      );
+      const totalPages = getBookReadablePages(book).length;
+      await handleRecordReading({
+        bookId: book.id,
+        lastPage: existing?.lastPage ?? 0,
+        totalPages,
+        toggleFavorite: true,
+      });
+    },
+    [db.readingProgress, handleRecordReading, viewerKey],
+  );
+
+  const readingBook = useMemo(
+    () => (readingBookId ? db.books.find((b) => b.id === readingBookId) ?? null : null),
+    [db.books, readingBookId],
+  );
+
+  const readingProgress = useMemo(
+    () =>
+      readingBook
+        ? db.readingProgress?.find(
+            (p) => p.viewerKey === viewerKey && p.bookId === readingBook.id,
+          )
+        : undefined,
+    [db.readingProgress, readingBook, viewerKey],
+  );
 
   const handleLoginSuccess = (newSession: AuthSession) => {
     setSession(newSession);
@@ -191,12 +263,21 @@ export default function App() {
       ) : !session ? (
         <PublicLanding
           db={db}
+          viewerKey={viewerKey}
           activePage={publicPage}
           onChangePage={handleSelectTab}
           onOpenLogin={() => setLoginOpen(true)}
+          onReadBook={(book) => setReadingBookId(book.id)}
+          onToggleFavorite={handleToggleFavorite}
         />
       ) : session.role === 'anggota' ? (
-        <MemberPortal db={db} session={session} activePage={memberPage} />
+        <MemberPortal
+          db={db}
+          session={session}
+          activePage={memberPage}
+          onReadBook={(book) => setReadingBookId(book.id)}
+          onToggleFavorite={handleToggleFavorite}
+        />
       ) : (
         <AdminPortal
           db={db}
@@ -206,6 +287,17 @@ export default function App() {
           onResetDb={handleResetDb}
         />
       )}
+
+      <BookReaderModal
+        book={readingBook}
+        db={db}
+        session={session}
+        progress={readingProgress}
+        onClose={() => setReadingBookId(null)}
+        onSwitchBook={(book) => setReadingBookId(book.id)}
+        onOpenLogin={() => setLoginOpen(true)}
+        onRecordReading={handleRecordReading}
+      />
 
       <LoginModal
         open={loginOpen}

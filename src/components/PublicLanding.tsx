@@ -1,35 +1,42 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowRight,
-  BookOpen,
   Calendar,
-  CheckCircle2,
   Clock,
-  Compass,
+  Heart,
   MapPin,
   Search,
   Sparkles,
   Users,
-  X,
 } from 'lucide-react';
 import {
   ILLUSTRATION_READING_ADVENTURE_URL,
   ILLUSTRATION_TELAGA_COMMUNITY_URL,
 } from '../data/defaultDb';
-import type { AlmahyraDatabase, Book } from '../types/almahyra';
-import { computeLibraryStats, filterBooks } from '../utils/almahyra';
+import type { AlmahyraDatabase, Book, ReadingProgress } from '../types/almahyra';
+import {
+  computeLibraryStats,
+  DEFAULT_CATEGORIES,
+  DEFAULT_READER_LEVELS,
+  filterBooksAdvanced,
+} from '../utils/almahyra';
 import {
   CollectionZoneInfographic,
   LevelProgressionInfographic,
   PassportFlowInfographic,
 } from './AlmahyraInfographics';
+import { BerandaShowcase } from './BerandaShowcase';
+import { BookCard } from './BookCard';
 import { Card3DPassport } from './Card3DPassport';
 
 interface PublicLandingProps {
   db: AlmahyraDatabase;
+  viewerKey: string;
   activePage: 'page1' | 'page2';
   onChangePage: (page: 'page1' | 'page2') => void;
   onOpenLogin: () => void;
+  onReadBook: (book: Book) => void;
+  onToggleFavorite: (book: Book) => void;
 }
 
 const TELAGA_PILLARS = [
@@ -134,29 +141,72 @@ const INNOVATIONS = [
 
 export function PublicLanding({
   db,
+  viewerKey,
   activePage,
   onChangePage,
   onOpenLogin,
+  onReadBook,
+  onToggleFavorite,
 }: PublicLandingProps) {
   const { config, books, schedules, members } = db;
   const stats = useMemo(() => computeLibraryStats(db), [db]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState('Semua');
+  const [quick5MinOnly, setQuick5MinOnly] = useState(false);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
 
-  const categories = useMemo(
-    () => ['Semua', ...Array.from(new Set(books.map((b) => b.kategori)))],
-    [books],
-  );
+  const progressMap = useMemo(() => {
+    const map = new Map<string, ReadingProgress>();
+    for (const p of db.readingProgress ?? []) {
+      if (p.viewerKey === viewerKey) {
+        map.set(p.bookId, p);
+      }
+    }
+    return map;
+  }, [db.readingProgress, viewerKey]);
+
+  const favoriteBookIds = useMemo(() => {
+    const ids = new Set<string>();
+    progressMap.forEach((p, bookId) => {
+      if (p.isFavorite) ids.add(bookId);
+    });
+    return ids;
+  }, [progressMap]);
+
+  const categories = useMemo(() => {
+    const base =
+      db.categories && db.categories.length > 0 ? db.categories : [...DEFAULT_CATEGORIES];
+    const fromBooks = books.filter((b) => b.aktif !== false).map((b) => b.kategori);
+    return ['Semua', ...Array.from(new Set([...base, ...fromBooks]))];
+  }, [books, db.categories]);
+
+  const readerLevels = useMemo(() => {
+    const base =
+      db.readerLevels && db.readerLevels.length > 0
+        ? db.readerLevels
+        : [...DEFAULT_READER_LEVELS];
+    return ['Semua', ...base];
+  }, [db.readerLevels]);
 
   const filteredBooks = useMemo(
-    () => filterBooks(books, searchQuery, selectedCategory),
-    [books, searchQuery, selectedCategory],
+    () =>
+      filterBooksAdvanced(books, {
+        query: searchQuery,
+        category: selectedCategory,
+        readerLevel: selectedLevel,
+        maxMinutes: quick5MinOnly ? 5 : undefined,
+        favoriteBookIds,
+        onlyFavorites: favoritesOnly,
+        onlyActive: true,
+      }),
+    [books, searchQuery, selectedCategory, selectedLevel, quick5MinOnly, favoriteBookIds, favoritesOnly],
   );
 
   const featuredMember = members[0] ?? {
     id: 'preview',
-    nomorInduk: 'ALM-001',
+    nomorInduk: 'ALMA-001',
     nama: 'Nadia Putri Azzahra',
     jenjangUsia: 'SD',
     orangTua: 'Ibu Siti Aminah',
@@ -215,8 +265,10 @@ export function PublicLanding({
                   <dd className="mt-0.5 font-semibold text-[#111C17]">E-Paspor 4 Jenjang</dd>
                 </div>
                 <div>
-                  <dt className="text-[#4A5D54]">Sinkronisasi</dt>
-                  <dd className="mt-0.5 font-semibold text-[#111C17]">Google Spreadsheet</dd>
+                  <dt className="text-[#4A5D54]">Koleksi Digital</dt>
+                  <dd className="mt-0.5 font-semibold text-[#111C17]">
+                    {categories.length - 1} Kategori Bacaan
+                  </dd>
                 </div>
               </dl>
 
@@ -283,15 +335,15 @@ export function PublicLanding({
             className="grid grid-cols-2 gap-4 rounded-2xl border border-[#E2E8E5] bg-white p-6 lg:grid-cols-4"
           >
             <div className="space-y-1 border-r border-[#EEF3F0] pr-4 last:border-r-0">
-              <p className="text-xs font-medium text-[#4A5D54]">Total Eksemplar</p>
+              <p className="text-xs font-medium text-[#4A5D54]">Koleksi Digital & Cetak</p>
               <p
                 className="font-display text-3xl font-bold tabular-nums"
                 style={{ color: 'var(--brand-primary-ink)' }}
               >
-                {stats.totalBooks}
+                {stats.totalTitles}
               </p>
               <p className="text-xs text-[#4A5D54]">
-                {stats.availableTitles} judul siap dipinjam
+                {stats.totalBooks} eksemplar di {categories.length - 1} kategori
               </p>
             </div>
             <div className="space-y-1 lg:border-r lg:border-[#EEF3F0] lg:pr-4">
@@ -328,6 +380,15 @@ export function PublicLanding({
               </p>
             </div>
           </section>
+
+          {/* SECTION A: BERANDA RAK BUKU DIGITAL & MISI MINGGUAN (8 BAGIAN) */}
+          <BerandaShowcase
+            db={db}
+            viewerKey={viewerKey}
+            onReadBook={onReadBook}
+            onToggleFavorite={onToggleFavorite}
+            onOpenCatalog={() => onChangePage('page2')}
+          />
 
           {/* SECTION: KERANGKA PENGELOLAAN TELAGA + ILLUSTRATION */}
           {config.showTelagaSection && (
@@ -488,7 +549,7 @@ export function PublicLanding({
           )}
         </div>
       ) : (
-        /* PAGE 2: KATALOG DIGITAL, JADWAL MINGGUAN & INOVASI */
+        /* PAGE 2: KATALOG DIGITAL 10+ KATEGORI, JADWAL MINGGUAN & INOVASI */
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12 space-y-14">
           <div className="flex flex-col gap-4 border-b border-[#E2E8E5] pb-8 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl space-y-2">
@@ -510,7 +571,7 @@ export function PublicLanding({
               onClick={() => onChangePage('page1')}
               className="self-start rounded-xl border border-[#DCE4DF] bg-white px-4 py-2.5 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
             >
-              Kembali ke Halaman 1: Profil
+              Kembali ke Halaman 1: Profil & Rak Pilihan
             </button>
           </div>
 
@@ -521,26 +582,73 @@ export function PublicLanding({
             config={config}
           />
 
-          {/* KATALOG DIGITAL */}
+          {/* KATALOG DIGITAL (10+ KATEGORI, JENJANG PEMBACA, BACA SEKARANG & FAVORIT) */}
           {config.showCatalogSection && (
             <section className="space-y-6">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="relative w-full lg:max-w-sm">
-                  <Search
-                    className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7D74]"
-                    aria-hidden="true"
-                  />
-                  <input
-                    type="search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari judul buku, penulis, atau kode..."
-                    aria-label="Cari buku di katalog"
-                    className="w-full rounded-xl border border-[#DCE4DF] bg-white py-2.5 pl-10 pr-4 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#1B4332] focus:outline-none"
-                  />
+              <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="relative w-full lg:max-w-md">
+                    <Search
+                      className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7D74]"
+                      aria-hidden="true"
+                    />
+                    <input
+                      type="search"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Cari judul buku, penulis, sinopsis, atau kode..."
+                      aria-label="Cari buku di katalog"
+                      className="w-full rounded-xl border border-[#DCE4DF] bg-white py-2.5 pl-10 pr-4 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#136B36] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      aria-label="Filter jenjang pembaca"
+                      value={selectedLevel}
+                      onChange={(e) => setSelectedLevel(e.target.value)}
+                      className="rounded-xl border border-[#DCE4DF] bg-white px-3 py-2 text-xs font-semibold text-[#111C17]"
+                    >
+                      {readerLevels.map((lvl) => (
+                        <option key={lvl} value={lvl}>
+                          Jenjang: {lvl}
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={() => setQuick5MinOnly((v) => !v)}
+                      aria-pressed={quick5MinOnly}
+                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                        quick5MinOnly
+                          ? 'text-white border-transparent'
+                          : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+                      }`}
+                      style={quick5MinOnly ? { backgroundColor: config.primaryColor } : undefined}
+                    >
+                      <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                      Bacaan &lt;= 5 Menit
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFavoritesOnly((v) => !v)}
+                      aria-pressed={favoritesOnly}
+                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                        favoritesOnly
+                          ? 'border-rose-300 bg-rose-50 text-rose-700'
+                          : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+                      }`}
+                    >
+                      <Heart className={`h-3.5 w-3.5 ${favoritesOnly ? 'fill-current' : ''}`} />
+                      Favorit ({favoriteBookIds.size})
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#EEF3F0] p-1">
+                {/* Category Selector Grid */}
+                <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#EEF3F0] p-1.5">
                   {categories.map((cat) => (
                     <button
                       key={cat}
@@ -559,85 +667,25 @@ export function PublicLanding({
               </div>
 
               {filteredBooks.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-[#CBD6D0] bg-white p-10 text-center">
+                <div className="rounded-2xl border border-dashed border-[#CBD6D0] bg-white p-10 text-center space-y-2">
                   <p className="font-display text-base font-semibold text-[#111C17]">
                     Buku tidak ditemukan
                   </p>
-                  <p className="mt-1 text-sm text-[#4A5D54]">
-                    Coba ubah kata kunci pencarian atau pilih kategori Semua.
+                  <p className="text-sm text-[#4A5D54]">
+                    Coba ubah kata kunci pencarian, kategori, atau nonaktifkan filter tambahan.
                   </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                   {filteredBooks.map((book) => (
-                    <button
+                    <BookCard
                       key={book.id}
-                      type="button"
-                      onClick={() => setSelectedBook(book)}
-                      className="book-3d-card group flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-4 text-left transition-colors hover:border-[#BFD0C7]"
-                    >
-                      <div>
-                        <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-[#EEF3F0] bg-[#F2F6F4]">
-                          {book.coverUrl ? (
-                            <img
-                              src={book.coverUrl}
-                              alt={`Sampul ${book.judul}`}
-                              referrerPolicy="no-referrer"
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div
-                              className="flex h-full w-full flex-col justify-between p-4 text-white"
-                              style={{
-                                background: `linear-gradient(145deg, ${config.primaryColor} 0%, ${config.secondaryColor} 100%)`,
-                              }}
-                            >
-                              <span className="font-mono-tabular text-[11px] text-white/80">
-                                {book.kodeBuku}
-                              </span>
-                              <div className="space-y-1">
-                                <BookOpen className="h-5 w-5 text-white/85" aria-hidden="true" />
-                                <p className="font-display text-sm font-bold leading-snug line-clamp-2">
-                                  {book.judul}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="mt-3.5 space-y-1.5">
-                          <div className="flex items-center gap-1.5 text-xs text-[#4A5D54]">
-                            <span className="font-mono-tabular">{book.kodeBuku}</span>
-                            <span aria-hidden="true">·</span>
-                            <span className="truncate">{book.kategori}</span>
-                          </div>
-                          <h3 className="font-display text-base font-bold text-[#111C17] line-clamp-2 group-hover:underline">
-                            {book.judul}
-                          </h3>
-                          <p className="text-xs text-[#4A5D54] truncate">
-                            {book.penulis}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between border-t border-[#EEF3F0] pt-3 text-xs">
-                        <span
-                          className={`inline-flex items-center gap-1.5 font-semibold ${
-                            book.status === 'Tersedia' ? 'text-emerald-700' : 'text-amber-700'
-                          }`}
-                        >
-                          {book.status === 'Tersedia' ? (
-                            <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                          ) : (
-                            <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                          )}
-                          {book.status}
-                        </span>
-                        <span className="font-mono-tabular text-[#4A5D54]">
-                          {book.stok} eks · {book.lokasiRak}
-                        </span>
-                      </div>
-                    </button>
+                      book={book}
+                      config={config}
+                      progress={progressMap.get(book.id)}
+                      onRead={onReadBook}
+                      onToggleFavorite={onToggleFavorite}
+                    />
                   ))}
                 </div>
               )}
@@ -731,81 +779,6 @@ export function PublicLanding({
         </div>
       )}
 
-      {/* Book Detail Modal */}
-      {selectedBook && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="book-detail-title"
-        >
-          <div className="w-full max-w-lg rounded-2xl border border-[#DCE4DF] bg-white p-6 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-mono-tabular text-xs text-[#4A5D54]">
-                  {selectedBook.kodeBuku} · {selectedBook.lokasiRak}
-                </p>
-                <h3
-                  id="book-detail-title"
-                  className="mt-1 font-display text-xl font-bold text-[#111C17]"
-                >
-                  {selectedBook.judul}
-                </h3>
-                <p className="text-sm text-[#4A5D54]">
-                  Penulis: {selectedBook.penulis}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedBook(null)}
-                aria-label="Tutup detail buku"
-                className="rounded-lg p-1.5 text-[#4A5D54] hover:bg-[#F2F6F4]"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-3 text-sm text-[#4A5D54]">
-              <p className="leading-relaxed">{selectedBook.deskripsi}</p>
-              <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#F8FAF9] p-3.5 text-xs">
-                <div>
-                  <span className="block text-[#6B7D74]">Zona Petualangan</span>
-                  <span className="font-semibold text-[#111C17]">{selectedBook.zona}</span>
-                </div>
-                <div>
-                  <span className="block text-[#6B7D74]">Ketersediaan</span>
-                  <span className="font-semibold text-[#111C17]">
-                    {selectedBook.status} ({selectedBook.stok} eksemplar)
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setSelectedBook(null)}
-                className="rounded-lg border border-[#DCE4DF] px-4 py-2 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4]"
-              >
-                Tutup
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedBook(null);
-                  onOpenLogin();
-                }}
-                style={{ backgroundColor: config.primaryColor }}
-                className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white hover:opacity-95"
-              >
-                <Compass className="h-3.5 w-3.5" aria-hidden="true" />
-                Masuk untuk Pinjam / Catat Misi
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Quiet Footer */}
       <footer className="border-t border-[#E2E8E5] bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-xs text-[#4A5D54] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -821,7 +794,7 @@ export function PublicLanding({
               onClick={() => onChangePage('page1')}
               className="hover:text-[#111C17] underline-offset-2 hover:underline"
             >
-              Halaman 1: Profil
+              Halaman 1: Profil & Beranda
             </button>
             <button
               type="button"

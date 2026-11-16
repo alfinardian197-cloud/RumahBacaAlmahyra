@@ -5,7 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { createServer as createViteServer } from 'vite';
 import { DEFAULT_DB } from './src/data/defaultDb';
 import type { AlmahyraDatabase } from './src/types/almahyra';
-import { authenticateUser, extractSpreadsheetId } from './src/utils/almahyra';
+import {
+  authenticateUser,
+  extractSpreadsheetId,
+  hydrateDatabaseWithDefaults,
+} from './src/utils/almahyra';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +20,8 @@ async function ensureDb(): Promise<AlmahyraDatabase> {
   await fs.mkdir(DATA_DIR, { recursive: true });
   try {
     const raw = await fs.readFile(DB_FILE, 'utf-8');
-    return JSON.parse(raw) as AlmahyraDatabase;
+    const parsed = JSON.parse(raw) as Partial<AlmahyraDatabase>;
+    return hydrateDatabaseWithDefaults(parsed, DEFAULT_DB);
   } catch {
     await fs.writeFile(DB_FILE, JSON.stringify(DEFAULT_DB, null, 2), 'utf-8');
     return structuredClone(DEFAULT_DB);
@@ -32,7 +37,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json({ limit: '10mb' }));
+  app.use(express.json({ limit: '25mb' }));
 
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', app: 'ALMAHYRA App' });

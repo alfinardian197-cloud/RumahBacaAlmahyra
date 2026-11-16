@@ -1,7 +1,6 @@
 import { useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 import {
   Award,
-  BookPlus,
   Check,
   CloudDownload,
   CloudUpload,
@@ -9,6 +8,7 @@ import {
   Database,
   Download,
   FileSpreadsheet,
+  NotebookPen,
   Palette,
   Plus,
   RotateCcw,
@@ -37,6 +37,7 @@ import type {
 } from '../types/almahyra';
 import {
   calculateLevelInfo,
+  computeCompanionDashboard,
   computeLibraryStats,
   exportRecordsToCsv,
   extractSpreadsheetId,
@@ -46,6 +47,7 @@ import {
   CollectionZoneInfographic,
   MemberAgeDistributionChart,
 } from './AlmahyraInfographics';
+import { BookCollectionManager } from './BookCollectionManager';
 import { Card3DPassport } from './Card3DPassport';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -72,14 +74,6 @@ export function AdminPortal({
   const [newMemberJenjang, setNewMemberJenjang] = useState<Member['jenjangUsia']>('SD');
   const [newMemberParent, setNewMemberParent] = useState('');
   const [previewMember, setPreviewMember] = useState<Member | null>(null);
-
-  // Book form
-  const [newBookTitle, setNewBookTitle] = useState('');
-  const [newBookAuthor, setNewBookAuthor] = useState('');
-  const [newBookCategory, setNewBookCategory] = useState('Cerita & Fabel');
-  const [newBookZone, setNewBookZone] = useState('Zona Imajinasi');
-  const [newBookStock, setNewBookStock] = useState(2);
-  const [newBookRack, setNewBookRack] = useState('Rak Rendah A1');
 
   // Loan form
   const [loanMemberCode, setLoanMemberCode] = useState(db.members[0]?.nomorInduk ?? '');
@@ -129,6 +123,7 @@ export function AdminPortal({
   });
 
   const stats = useMemo(() => computeLibraryStats(db), [db]);
+  const companionDashboard = useMemo(() => computeCompanionDashboard(db), [db]);
 
   const notify = (type: 'ok' | 'err', text: string) => {
     setFeedback({ type, text });
@@ -142,7 +137,7 @@ export function AdminPortal({
       return;
     }
     const nextNum = db.members.length + 1;
-    const nomorInduk = `ALM-${String(nextNum).padStart(3, '0')}`;
+    const nomorInduk = `ALMA-${String(nextNum).padStart(3, '0')}`;
     const newMember: Member = {
       id: `mem-${Date.now()}`,
       nomorInduk,
@@ -176,31 +171,6 @@ export function AdminPortal({
         notify('ok', `Anggota ${member.nama} telah dihapus.`);
       },
     });
-  };
-
-  const handleAddBook = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!newBookTitle.trim() || !newBookAuthor.trim()) {
-      notify('err', 'Judul buku dan nama penulis wajib diisi.');
-      return;
-    }
-    const kodeBuku = `BK-${String(db.books.length + 1).padStart(3, '0')}`;
-    const newBook: Book = {
-      id: `bk-${Date.now()}`,
-      kodeBuku,
-      judul: newBookTitle.trim(),
-      penulis: newBookAuthor.trim(),
-      kategori: newBookCategory,
-      zona: newBookZone,
-      status: 'Tersedia',
-      stok: Math.max(1, Number(newBookStock) || 1),
-      lokasiRak: newBookRack.trim() || 'Rak Utama',
-      deskripsi: `${newBookTitle.trim()} — koleksi ${newBookZone} Rumah Baca Almahyra.`,
-    };
-    await onUpdateDb({ ...db, books: [...db.books, newBook] });
-    setNewBookTitle('');
-    setNewBookAuthor('');
-    notify('ok', `Buku "${newBook.judul}" (${kodeBuku}) berhasil ditambahkan.`);
   };
 
   const handleDeleteBook = (book: Book) => {
@@ -762,161 +732,12 @@ export function AdminPortal({
           )}
 
           {dataTab === 'books' && (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-              <form
-                onSubmit={handleAddBook}
-                className="lg:col-span-4 rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-3.5 h-fit"
-              >
-                <h2 className="font-display text-base font-bold text-[#111C17] flex items-center gap-2">
-                  <BookPlus className="h-4 w-4" />
-                  Tambah Koleksi Buku
-                </h2>
-                <div>
-                  <label htmlFor="b-judul" className="block text-xs font-semibold text-[#111C17]">
-                    Judul Buku
-                  </label>
-                  <input
-                    id="b-judul"
-                    type="text"
-                    value={newBookTitle}
-                    onChange={(e) => setNewBookTitle(e.target.value)}
-                    placeholder="Contoh: Petualangan Kebun Desa"
-                    className="mt-1 w-full rounded-lg border border-[#DCE4DF] px-3 py-2 text-sm"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="b-penulis" className="block text-xs font-semibold text-[#111C17]">
-                    Penulis
-                  </label>
-                  <input
-                    id="b-penulis"
-                    type="text"
-                    value={newBookAuthor}
-                    onChange={(e) => setNewBookAuthor(e.target.value)}
-                    placeholder="Nama penulis"
-                    className="mt-1 w-full rounded-lg border border-[#DCE4DF] px-3 py-2 text-sm"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="b-kat" className="block text-xs font-semibold text-[#111C17]">
-                      Kategori
-                    </label>
-                    <select
-                      id="b-kat"
-                      value={newBookCategory}
-                      onChange={(e) => setNewBookCategory(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-2 text-xs"
-                    >
-                      <option>Cerita & Fabel</option>
-                      <option>Sains & Alam</option>
-                      <option>Seni & Kreasi</option>
-                      <option>Lingkungan</option>
-                      <option>Komunikasi</option>
-                      <option>Eksplorasi</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="b-zona" className="block text-xs font-semibold text-[#111C17]">
-                      Zona
-                    </label>
-                    <select
-                      id="b-zona"
-                      value={newBookZone}
-                      onChange={(e) => setNewBookZone(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-2 text-xs"
-                    >
-                      <option>Zona Imajinasi</option>
-                      <option>Zona Pengetahuan</option>
-                      <option>Zona Kreativitas</option>
-                      <option>Zona Eksplorasi</option>
-                      <option>Zona Sahabat Bumi</option>
-                      <option>Zona Panggung Cerita</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="b-stok" className="block text-xs font-semibold text-[#111C17]">
-                      Stok
-                    </label>
-                    <input
-                      id="b-stok"
-                      type="number"
-                      min={1}
-                      value={newBookStock}
-                      onChange={(e) => setNewBookStock(Number(e.target.value))}
-                      className="mt-1 w-full rounded-lg border border-[#DCE4DF] px-3 py-2 text-sm font-mono-tabular"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="b-rak" className="block text-xs font-semibold text-[#111C17]">
-                      Lokasi Rak
-                    </label>
-                    <input
-                      id="b-rak"
-                      type="text"
-                      value={newBookRack}
-                      onChange={(e) => setNewBookRack(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-[#DCE4DF] px-3 py-2 text-sm"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  style={{ backgroundColor: db.config.primaryColor }}
-                  className="w-full rounded-lg px-4 py-2.5 text-xs font-semibold text-white hover:opacity-95"
-                >
-                  Simpan ke Katalog
-                </button>
-              </form>
-
-              <div className="lg:col-span-8 rounded-2xl border border-[#E2E8E5] bg-white p-5 overflow-x-auto">
-                <h2 className="font-display text-base font-bold text-[#111C17] mb-4">
-                  Katalog Koleksi Buku ({db.books.length})
-                </h2>
-                <table className="w-full min-w-[600px] border-collapse text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-[#E2E8E5] text-xs font-semibold text-[#4A5D54]">
-                      <th className="py-2.5 pr-3">Kode</th>
-                      <th className="py-2.5 px-3">Judul & Penulis</th>
-                      <th className="py-2.5 px-3">Rak</th>
-                      <th className="py-2.5 px-3">Stok</th>
-                      <th className="py-2.5 px-3">Status</th>
-                      <th className="py-2.5 pl-3 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EEF3F0]">
-                    {db.books.map((b) => (
-                      <tr key={b.id} className="hover:bg-[#F8FAF9]">
-                        <td className="py-3 pr-3 font-mono-tabular font-semibold">{b.kodeBuku}</td>
-                        <td className="py-3 px-3">
-                          <div className="font-semibold text-[#111C17]">{b.judul}</div>
-                          <div className="text-xs text-[#4A5D54]">{b.penulis} · {b.kategori}</div>
-                        </td>
-                        <td className="py-3 px-3 text-xs text-[#4A5D54]">{b.lokasiRak}</td>
-                        <td className="py-3 px-3 font-mono-tabular">{b.stok}</td>
-                        <td className="py-3 px-3 text-xs font-semibold">
-                          <span className={b.status === 'Tersedia' ? 'text-emerald-700' : 'text-amber-700'}>
-                            {b.status}
-                          </span>
-                        </td>
-                        <td className="py-3 pl-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteBook(b)}
-                            aria-label={`Hapus buku ${b.judul}`}
-                            className="rounded-lg p-1.5 text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <BookCollectionManager
+              db={db}
+              onUpdateDb={onUpdateDb}
+              onNotify={notify}
+              onRequestDeleteBook={handleDeleteBook}
+            />
           )}
 
           {dataTab === 'loans' && (
@@ -1121,20 +942,26 @@ export function AdminPortal({
         </div>
       )}
 
-      {/* PAGE 2: KEGIATAN & LAPORAN */}
+      {/* PAGE 2: DASHBOARD PENDAMPING, KEGIATAN & LAPORAN */}
       {activePage === 'reports' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
-              <p className="text-xs text-[#4A5D54]">Total Anggota Aktif</p>
+              <p className="text-xs text-[#4A5D54]">Total Buku Selesai Dibaca</p>
               <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-primary-ink)' }}>
-                {stats.activeMembers}
+                {companionDashboard.totalBooksRead}
+              </p>
+              <p className="text-[11px] text-[#4A5D54] mt-1">
+                {companionDashboard.activeReadersCount} anggota aktif membaca
               </p>
             </div>
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
-              <p className="text-xs text-[#4A5D54]">Judul Koleksi Buku</p>
+              <p className="text-xs text-[#4A5D54]">Total Aktivitas Membaca</p>
               <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-primary-ink)' }}>
-                {stats.totalTitles}
+                {companionDashboard.totalReadingActivities}
+              </p>
+              <p className="text-[11px] text-[#4A5D54] mt-1">
+                {companionDashboard.totalJournals} catatan jurnal pembaca
               </p>
             </div>
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
@@ -1142,14 +969,118 @@ export function AdminPortal({
               <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-accent-ink)' }}>
                 {stats.activeLoans}
               </p>
+              <p className="text-[11px] text-[#4A5D54] mt-1">
+                {stats.totalTitles} judul aktif
+              </p>
             </div>
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
               <p className="text-xs text-[#4A5D54]">Total Poin Literasi</p>
               <p className="mt-1 font-display text-3xl font-bold tabular-nums text-[#111C17]">
                 {stats.totalPointsAwarded}
               </p>
+              <p className="text-[11px] text-[#4A5D54] mt-1">
+                {stats.verifiedMissions} stempel E-Paspor
+              </p>
             </div>
           </div>
+
+          {/* Dashboard Pendamping: Kategori Paling Disukai & Daftar Anggota Aktif Membaca */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <section className="lg:col-span-4 rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4">
+              <h2 className="font-display text-base font-bold text-[#111C17]">
+                Kategori Buku Paling Disukai
+              </h2>
+              <div className="space-y-3">
+                {companionDashboard.favoriteCategories.slice(0, 6).map((cat) => {
+                  const maxScore = companionDashboard.favoriteCategories[0]?.skor || 1;
+                  const widthPct = Math.max(12, Math.round((cat.skor / maxScore) * 100));
+                  return (
+                    <div key={cat.kategori} className="space-y-1 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-[#111C17]">{cat.kategori}</span>
+                        <span className="font-mono-tabular text-[#4A5D54]">Skor {cat.skor}</span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-[#EEF3F0]">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${widthPct}%`, backgroundColor: db.config.primaryColor }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="lg:col-span-8 rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4 overflow-x-auto">
+              <h2 className="font-display text-base font-bold text-[#111C17]">
+                Dashboard Pendamping: Perkembangan Literasi & Anggota Aktif Membaca
+              </h2>
+              <table className="w-full min-w-[600px] border-collapse text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[#E2E8E5] font-semibold text-[#4A5D54]">
+                    <th className="py-2 pr-3">Anggota</th>
+                    <th className="py-2 px-2">Buku Dibaca</th>
+                    <th className="py-2 px-2">Kategori Favorit</th>
+                    <th className="py-2 px-2">Poin & Jenjang</th>
+                    <th className="py-2 pl-2 text-right">Target Mingguan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EEF3F0]">
+                  {companionDashboard.memberReports.map((rep) => (
+                    <tr key={rep.member.id} className="hover:bg-[#F8FAF9]">
+                      <td className="py-3 pr-3">
+                        <div className="font-semibold text-[#111C17]">{rep.member.nama}</div>
+                        <div className="font-mono-tabular text-[11px] text-[#4A5D54]">
+                          {rep.member.nomorInduk} · {rep.member.jenjangUsia}
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 font-mono-tabular">
+                        <span className="font-bold text-[#111C17]">{rep.booksReadCount}</span> buku
+                        <span className="block text-[11px] text-[#4A5D54]">
+                          {rep.journalsCount} jurnal · {rep.favoriteCount} favorit
+                        </span>
+                      </td>
+                      <td className="py-3 px-2 font-medium text-[#111C17]">{rep.topCategory}</td>
+                      <td className="py-3 px-2">
+                        <span className="font-mono-tabular font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
+                          {rep.member.poin} pts
+                        </span>
+                        <span className="block text-[11px] text-[#4A5D54]">
+                          {rep.levelInfo.currentLevel}
+                        </span>
+                      </td>
+                      <td className="py-3 pl-2 text-right font-mono-tabular">
+                        {rep.booksReadCount}/{rep.weeklyTarget} buku
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          </div>
+
+          {/* Jurnal Membaca Terbaru dari Anak */}
+          <section className="rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-3">
+            <h2 className="font-display text-base font-bold text-[#111C17] flex items-center gap-2">
+              <NotebookPen className="h-4 w-4" style={{ color: 'var(--brand-accent-ink)' }} />
+              Catatan Jurnal Membaca Terbaru
+            </h2>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {(db.readingJournals ?? []).slice(0, 6).map((j) => (
+                <div key={j.id} className="rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-3.5 space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-[#4A5D54]">
+                    <span className="font-bold text-[#111C17]">{j.namaAnggota}</span>
+                    <span className="font-mono-tabular">{j.tanggal}</span>
+                  </div>
+                  <p className="text-xs font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
+                    {j.judulBuku}
+                  </p>
+                  <p className="text-xs text-[#4A5D54] line-clamp-2">{j.catatan}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <CollectionZoneInfographic
             books={db.books}

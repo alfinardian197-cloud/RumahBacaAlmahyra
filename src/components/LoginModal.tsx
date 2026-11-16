@@ -141,7 +141,7 @@ export function LoginModal({
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder={mode === 'anggota' ? 'Contoh: ALM-001' : 'admin'}
+              placeholder={mode === 'anggota' ? 'Contoh: ALMA-001' : 'admin'}
               autoComplete="username"
               className="mt-1.5 w-full rounded-lg border border-[#DCE4DF] bg-white px-3.5 py-2.5 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#1B4332] focus:outline-none"
             />
@@ -198,7 +198,7 @@ export function LoginModal({
         <div className="mt-4 rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-3 text-xs text-[#4A5D54] leading-relaxed">
           {mode === 'anggota' ? (
             <p>
-              Anak tidak perlu email atau ponsel pribadi. Gunakan <span className="font-mono-tabular font-semibold text-[#111C17]">Nomor Induk (mis. ALM-001)</span> dan sandi default <span className="font-mono-tabular font-semibold text-[#111C17]">123</span>.
+              Anak tidak perlu email atau ponsel pribadi. Gunakan <span className="font-mono-tabular font-semibold text-[#111C17]">Nomor Induk (mis. ALMA-001)</span> dan sandi default <span className="font-mono-tabular font-semibold text-[#111C17]">123</span>.
             </p>
           ) : (
             <p>

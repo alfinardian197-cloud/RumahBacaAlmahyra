@@ -52,6 +52,20 @@ export interface Member {
   status: 'Aktif' | 'Nonaktif';
   bergabungSejak: string;
   password: string;
+  targetMingguan?: number;
+}
+
+export interface BookPage {
+  judulBab: string;
+  isi: string;
+  pesanMoral?: string;
+}
+
+export interface BookQuizQuestion {
+  pertanyaan: string;
+  pilihan: string[];
+  jawabanBenar: number;
+  penjelasan: string;
 }
 
 export interface Book {
@@ -66,6 +80,17 @@ export interface Book {
   lokasiRak: string;
   deskripsi: string;
   coverUrl?: string;
+  jenjangPembaca?: string;
+  estimasiMenit?: number;
+  aktif?: boolean;
+  pilihanAlmahyra?: boolean;
+  dibacaCount?: number;
+  tanggalTerbit?: string;
+  pdfUrl?: string;
+  pdfNamaFile?: string;
+  lisensi?: string;
+  isiBacaan?: BookPage[];
+  kuis?: BookQuizQuestion[];
 }
 
 export interface Loan {
@@ -91,6 +116,43 @@ export interface PassportLog {
   catatan: string;
   tanggal: string;
   stempel: boolean;
+  judulBuku?: string;
+  kategoriBuku?: string;
+}
+
+export interface ReadingProgress {
+  id: string;
+  viewerKey: string; // nomorInduk anggota atau 'guest'
+  bookId: string;
+  lastPage: number;
+  totalPages: number;
+  isFavorite: boolean;
+  completedCount: number;
+  lastReadAt: string;
+  quizScore?: number;
+}
+
+export interface ReadingJournalEntry {
+  id: string;
+  nomorInduk: string;
+  namaAnggota: string;
+  bookId: string;
+  judulBuku: string;
+  kategoriBuku: string;
+  tanggal: string;
+  catatan: string;
+  peringkatBintang: number;
+  poinDiperoleh: number;
+}
+
+export interface ReadingChallenge {
+  id: string;
+  judul: string;
+  deskripsi: string;
+  targetBuku: number;
+  bonusPoin: number;
+  periode: string;
+  lencanaHadiah: string;
 }
 
 export interface ActivitySchedule {
@@ -131,4 +193,9 @@ export interface AlmahyraDatabase {
   schedules: ActivitySchedule[];
   missions: MissionItem[];
   admins: AdminAccount[];
+  categories?: string[];
+  readerLevels?: string[];
+  readingProgress?: ReadingProgress[];
+  readingJournals?: ReadingJournalEntry[];
+  challenges?: ReadingChallenge[];
 }
