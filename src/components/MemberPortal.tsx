@@ -107,7 +107,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
                 <h2 className="font-display text-lg font-bold text-[#111C17]">
                   Lencana & Apresiasi
                 </h2>
-                <Award className="h-5 w-5" style={{ color: db.config.accentColor }} aria-hidden="true" />
+                <Award className="h-5 w-5" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
               </div>
 
               {member.lencana.length === 0 ? (
@@ -123,7 +123,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
                     >
                       <CheckCircle2
                         className="h-4 w-4 shrink-0"
-                        style={{ color: db.config.primaryColor }}
+                        style={{ color: 'var(--brand-primary-ink)' }}
                         aria-hidden="true"
                       />
                       <span className="text-sm font-semibold text-[#111C17]">
@@ -157,7 +157,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
                         </p>
                         <span
                           className="font-mono-tabular text-xs font-bold"
-                          style={{ color: db.config.primaryColor }}
+                          style={{ color: 'var(--brand-primary-ink)' }}
                         >
                           +{log.poin} pts
                         </span>
@@ -262,7 +262,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
 
           <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
             <div className="flex items-center gap-2">
-              <Compass className="h-5 w-5" style={{ color: db.config.accentColor }} aria-hidden="true" />
+              <Compass className="h-5 w-5" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
               <h2 className="font-display text-xl font-bold text-[#111C17]">
                 Daftar Misi Literasi Almahyra
               </h2>
@@ -274,7 +274,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
                     <h3 className="font-display text-base font-bold text-[#111C17]">
                       {m.judul}
                     </h3>
-                    <span className="font-mono-tabular text-xs font-bold" style={{ color: db.config.primaryColor }}>
+                    <span className="font-mono-tabular text-xs font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
                       +{m.poin} pts
                     </span>
                   </div>
@@ -294,7 +294,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <section className="lg:col-span-6 rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
             <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" style={{ color: db.config.primaryColor }} aria-hidden="true" />
+              <BookOpen className="h-5 w-5" style={{ color: 'var(--brand-primary-ink)' }} aria-hidden="true" />
               <h2 className="font-display text-lg font-bold text-[#111C17]">
                 Riwayat Peminjaman Saya
               </h2>
@@ -334,7 +334,7 @@ export function MemberPortal({ db, session, activePage }: MemberPortalProps) {
 
           <section className="lg:col-span-6 rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
             <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" style={{ color: db.config.accentColor }} aria-hidden="true" />
+              <Calendar className="h-5 w-5" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
               <h2 className="font-display text-lg font-bold text-[#111C17]">
                 Agenda Kegiatan Teras Almahyra
               </h2>

@@ -5,7 +5,16 @@ import type {
   Loan,
   Member,
   PassportLog,
+  ThemeMode,
 } from '../types/almahyra';
+
+export function resolveThemeMode(saved: string | null | undefined): ThemeMode {
+  return saved === 'dark' ? 'dark' : 'light';
+}
+
+export function toggleThemeMode(current: ThemeMode): ThemeMode {
+  return current === 'dark' ? 'light' : 'dark';
+}
 
 export interface LevelInfo {
   currentLevel: string;

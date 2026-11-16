@@ -579,7 +579,7 @@ export function AdminPortal({
       {/* Workspace Header */}
       <div className="flex flex-col gap-3 rounded-2xl border border-[#E2E8E5] bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-semibold" style={{ color: db.config.accentColor }}>
+          <p className="text-xs font-semibold" style={{ color: 'var(--brand-accent-ink)' }}>
             {session.role === 'superadmin' ? 'Konsol Superadmin' : 'Konsol Admin Pengelola'}
           </p>
           <h1 className="font-display text-2xl font-bold text-[#111C17]">
@@ -730,7 +730,7 @@ export function AdminPortal({
                           <div className="text-xs text-[#4A5D54]">Wali: {m.orangTua}</div>
                         </td>
                         <td className="py-3 px-3 text-xs text-[#4A5D54]">{m.jenjangUsia}</td>
-                        <td className="py-3 px-3 font-mono-tabular font-bold" style={{ color: db.config.primaryColor }}>
+                        <td className="py-3 px-3 font-mono-tabular font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
                           {m.poin}
                         </td>
                         <td className="py-3 px-3 text-xs text-[#4A5D54]">
@@ -1109,7 +1109,7 @@ export function AdminPortal({
                           {log.tanggal} · {log.zona} · Pendamping: {log.pendamping}
                         </p>
                       </div>
-                      <span className="font-mono-tabular text-xs font-bold shrink-0" style={{ color: db.config.primaryColor }}>
+                      <span className="font-mono-tabular text-xs font-bold shrink-0" style={{ color: 'var(--brand-primary-ink)' }}>
                         +{log.poin} pts
                       </span>
                     </div>
@@ -1127,19 +1127,19 @@ export function AdminPortal({
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
               <p className="text-xs text-[#4A5D54]">Total Anggota Aktif</p>
-              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: db.config.primaryColor }}>
+              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-primary-ink)' }}>
                 {stats.activeMembers}
               </p>
             </div>
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
               <p className="text-xs text-[#4A5D54]">Judul Koleksi Buku</p>
-              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: db.config.primaryColor }}>
+              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-primary-ink)' }}>
                 {stats.totalTitles}
               </p>
             </div>
             <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5">
               <p className="text-xs text-[#4A5D54]">Peminjaman Berjalan</p>
-              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: db.config.accentColor }}>
+              <p className="mt-1 font-display text-3xl font-bold tabular-nums" style={{ color: 'var(--brand-accent-ink)' }}>
                 {stats.activeLoans}
               </p>
             </div>
@@ -1311,7 +1311,7 @@ export function AdminPortal({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h2 className="font-display text-lg font-bold text-[#111C17] flex items-center gap-2">
-                    <FileSpreadsheet className="h-5 w-5" style={{ color: db.config.primaryColor }} />
+                    <FileSpreadsheet className="h-5 w-5" style={{ color: 'var(--brand-primary-ink)' }} />
                     Database Google Spreadsheet
                   </h2>
                   <p className="mt-1 text-xs text-[#4A5D54]">
@@ -1533,7 +1533,7 @@ export function AdminPortal({
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="font-display text-lg font-bold text-[#111C17] flex items-center gap-2">
-                  <Palette className="h-5 w-5" style={{ color: db.config.accentColor }} />
+                  <Palette className="h-5 w-5" style={{ color: 'var(--brand-accent-ink)' }} />
                   Pengelola Icon Logo, Warna & Tampilan Landing Page
                 </h2>
                 <p className="mt-1 text-xs text-[#4A5D54]">

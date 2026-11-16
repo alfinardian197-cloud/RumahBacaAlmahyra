@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { LogIn, LogOut, Menu, X } from 'lucide-react';
-import type { AuthSession, LandingConfig } from '../types/almahyra';
+import { LogIn, LogOut, Menu, Moon, Sun, X } from 'lucide-react';
+import type { AuthSession, LandingConfig, ThemeMode } from '../types/almahyra';
 
 export interface NavTabItem {
   id: string;
@@ -12,6 +12,9 @@ interface TopBarProps {
   session: AuthSession | null;
   tabs: NavTabItem[];
   activeTab: string;
+  theme: ThemeMode;
+  onSelectTheme: (theme: ThemeMode) => void;
+  onToggleTheme: () => void;
   onSelectTab: (id: string) => void;
   onOpenLogin: () => void;
   onLogout: () => void;
@@ -22,6 +25,9 @@ export function TopBar({
   session,
   tabs,
   activeTab,
+  theme,
+  onSelectTheme,
+  onToggleTheme,
   onSelectTab,
   onOpenLogin,
   onLogout,
@@ -30,7 +36,7 @@ export function TopBar({
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#E2E8E5] bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8">
         {/* Zone 1: Brand Wordmark + Logo Icon (Single-line, clean) */}
         <button
           type="button"
@@ -41,7 +47,7 @@ export function TopBar({
             src={config.logoUrl}
             alt=""
             referrerPolicy="no-referrer"
-            className="h-9 w-9 rounded-xl border border-[#DCE4DF] object-cover bg-white shrink-0"
+            className="h-9 w-9 rounded-xl border border-[#DCE4DF] object-cover bg-white preserve-light shrink-0"
           />
           <span className="font-display text-lg font-bold tracking-tight text-[#111C17] whitespace-nowrap shrink-0">
             {config.appName}
@@ -67,7 +73,7 @@ export function TopBar({
                 {isActive && (
                   <span
                     className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"
-                    style={{ backgroundColor: 'var(--brand-primary)' }}
+                    style={{ backgroundColor: 'var(--brand-primary-ink)' }}
                   />
                 )}
               </button>
@@ -75,8 +81,44 @@ export function TopBar({
           })}
         </nav>
 
-        {/* Zone 3: Single Primary Action + Mobile Menu Trigger */}
-        <div className="flex items-center gap-3 shrink-0">
+        {/* Zone 3: Day/Night Switch + Primary Action + Mobile Menu Trigger */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          {/* Desktop Segmented Day/Night Switch */}
+          <div
+            role="group"
+            aria-label="Pilih tampilan siang atau malam"
+            className="hidden md:inline-flex items-center rounded-lg border border-[#DCE4DF] bg-[#F2F6F4] p-0.5 shrink-0"
+          >
+            <button
+              type="button"
+              onClick={() => onSelectTheme('light')}
+              aria-pressed={theme === 'light'}
+              aria-label="Aktifkan tampilan siang"
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                theme === 'light'
+                  ? 'bg-white text-[#111C17] shadow-xs'
+                  : 'text-[#4A5D54] hover:text-[#111C17]'
+              }`}
+            >
+              <Sun className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+              Siang
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectTheme('dark')}
+              aria-pressed={theme === 'dark'}
+              aria-label="Aktifkan tampilan malam"
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                theme === 'dark'
+                  ? 'bg-white dark:bg-[#1E352B] text-[#111C17] shadow-xs'
+                  : 'text-[#4A5D54] hover:text-[#111C17]'
+              }`}
+            >
+              <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+              Malam
+            </button>
+          </div>
+
           {session ? (
             <button
               type="button"
@@ -97,6 +139,21 @@ export function TopBar({
               Masuk Portal
             </button>
           )}
+
+          {/* Mobile Quick Day/Night Toggle */}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={theme === 'dark' ? 'Beralih ke tampilan siang' : 'Beralih ke tampilan malam'}
+            aria-pressed={theme === 'dark'}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#DCE4DF] bg-white text-[#111C17] md:hidden"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4 text-amber-400" aria-hidden="true" />
+            ) : (
+              <Moon className="h-4 w-4" aria-hidden="true" />
+            )}
+          </button>
 
           <button
             type="button"
@@ -135,6 +192,35 @@ export function TopBar({
                 </button>
               );
             })}
+
+            <div className="flex items-center justify-between rounded-lg border border-[#E7EEEA] bg-[#F8FAF9] px-3 py-2">
+              <span className="text-xs font-semibold text-[#4A5D54]">Mode Tampilan</span>
+              <div className="inline-flex items-center rounded-md border border-[#DCE4DF] bg-[#F2F6F4] p-0.5">
+                <button
+                  type="button"
+                  onClick={() => onSelectTheme('light')}
+                  aria-pressed={theme === 'light'}
+                  className={`inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold ${
+                    theme === 'light' ? 'bg-white text-[#111C17]' : 'text-[#4A5D54]'
+                  }`}
+                >
+                  <Sun className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+                  Siang
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectTheme('dark')}
+                  aria-pressed={theme === 'dark'}
+                  className={`inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold ${
+                    theme === 'dark' ? 'bg-white dark:bg-[#1E352B] text-[#111C17]' : 'text-[#4A5D54]'
+                  }`}
+                >
+                  <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+                  Malam
+                </button>
+              </div>
+            </div>
+
             <div className="pt-2 border-t border-[#E2E8E5]">
               {session ? (
                 <button

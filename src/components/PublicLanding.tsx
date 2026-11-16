@@ -187,7 +187,7 @@ export function PublicLanding({
               <div className="space-y-3.5">
                 <p
                   className="text-xs font-semibold tracking-wide"
-                  style={{ color: config.accentColor }}
+                  style={{ color: 'var(--brand-accent-ink)' }}
                 >
                   {config.tagline} · {config.slogan}
                 </p>
@@ -286,7 +286,7 @@ export function PublicLanding({
               <p className="text-xs font-medium text-[#4A5D54]">Total Eksemplar</p>
               <p
                 className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: config.primaryColor }}
+                style={{ color: 'var(--brand-primary-ink)' }}
               >
                 {stats.totalBooks}
               </p>
@@ -298,7 +298,7 @@ export function PublicLanding({
               <p className="text-xs font-medium text-[#4A5D54]">Anggota Aktif</p>
               <p
                 className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: config.primaryColor }}
+                style={{ color: 'var(--brand-primary-ink)' }}
               >
                 {stats.activeMembers}
               </p>
@@ -308,7 +308,7 @@ export function PublicLanding({
               <p className="text-xs font-medium text-[#4A5D54]">Misi Tervalidasi</p>
               <p
                 className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: config.accentColor }}
+                style={{ color: 'var(--brand-accent-ink)' }}
               >
                 {stats.verifiedMissions}
               </p>
@@ -336,7 +336,7 @@ export function PublicLanding({
                 <div className="lg:col-span-7 space-y-2">
                   <p
                     className="text-xs font-semibold tracking-wide"
-                    style={{ color: config.accentColor }}
+                    style={{ color: 'var(--brand-accent-ink)' }}
                   >
                     Fondasi Operasional
                   </p>
@@ -399,7 +399,7 @@ export function PublicLanding({
                 <div>
                   <p
                     className="text-xs font-semibold"
-                    style={{ color: config.accentColor }}
+                    style={{ color: 'var(--brand-accent-ink)' }}
                   >
                     Almahyra Reading Adventure
                   </p>
@@ -494,7 +494,7 @@ export function PublicLanding({
             <div className="max-w-2xl space-y-2">
               <p
                 className="text-xs font-semibold"
-                style={{ color: config.accentColor }}
+                style={{ color: 'var(--brand-accent-ink)' }}
               >
                 Halaman 2 dari 2 · Layanan Publik {config.appName}
               </p>
@@ -679,7 +679,7 @@ export function PublicLanding({
                     <p className="mt-1 text-sm text-[#4A5D54] leading-relaxed">
                       {sch.aktivitas}
                     </p>
-                    <p className="mt-3 text-xs font-medium" style={{ color: config.primaryColor }}>
+                    <p className="mt-3 text-xs font-medium" style={{ color: 'var(--brand-primary-ink)' }}>
                       {sch.zona}
                     </p>
                   </div>
@@ -810,7 +810,7 @@ export function PublicLanding({
       <footer className="border-t border-[#E2E8E5] bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-xs text-[#4A5D54] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5" style={{ color: config.accentColor }} aria-hidden="true" />
+            <Sparkles className="h-3.5 w-3.5" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
             <span>
               {config.appName} — {config.slogan}
             </span>

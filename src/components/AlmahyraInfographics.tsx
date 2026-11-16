@@ -62,7 +62,7 @@ export function PassportFlowInfographic({ config }: { config: LandingConfig }) {
     <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 sm:p-8 space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold" style={{ color: config.accentColor }}>
+          <p className="text-xs font-semibold" style={{ color: 'var(--brand-accent-ink)' }}>
             Infografis Alur E-Paspor Baca
           </p>
           <h2 className="font-display text-2xl font-bold tracking-tight text-[#111C17]">
@@ -106,16 +106,16 @@ export function PassportFlowInfographic({ config }: { config: LandingConfig }) {
                 }`}
                 style={
                   isSelected
-                    ? ({ '--tw-ring-color': config.primaryColor } as React.CSSProperties)
+                    ? ({ '--tw-ring-color': 'var(--brand-primary-ink)' } as React.CSSProperties)
                     : undefined
                 }
               >
                 <div className="flex w-full items-center justify-between">
                   <span
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-colors"
-                    style={{
-                      backgroundColor: isPassed ? config.primaryColor : '#CBD6D0',
-                    }}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                      isPassed ? 'text-white' : 'bg-[#E7EEEA] text-[#4A5D54]'
+                    }`}
+                    style={isPassed ? { backgroundColor: config.primaryColor } : undefined}
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
@@ -136,7 +136,7 @@ export function PassportFlowInfographic({ config }: { config: LandingConfig }) {
       {/* Active Step Detail Strip */}
       <div className="flex flex-col gap-3 rounded-xl bg-[#F8FAF9] p-4 sm:flex-row sm:items-center sm:justify-between border border-[#E7EEEA]">
         <div className="space-y-1">
-          <p className="font-mono-tabular text-xs font-semibold" style={{ color: config.primaryColor }}>
+          <p className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
             Langkah {current.step} · {current.title}
           </p>
           <p className="text-sm text-[#111C17] leading-relaxed">{current.desc}</p>
@@ -173,14 +173,14 @@ export function LevelProgressionInfographic({
           <path
             d="M 60 112 C 180 112, 210 86, 310 86 C 410 86, 440 60, 560 60 C 670 60, 710 34, 820 34"
             fill="none"
-            stroke="#DCE4DF"
+            stroke="var(--border-strong)"
             strokeWidth="8"
             strokeLinecap="round"
           />
           <path
             d="M 60 112 C 180 112, 210 86, 310 86 C 410 86, 440 60, 560 60 C 670 60, 710 34, 820 34"
             fill="none"
-            stroke={config.primaryColor}
+            stroke="var(--brand-primary-ink)"
             strokeWidth="4"
             strokeDasharray="8 6"
             strokeLinecap="round"
@@ -199,7 +199,7 @@ export function LevelProgressionInfographic({
                   cx={node.x}
                   cy={node.y}
                   r="19"
-                  fill={reached ? node.color : '#FFFFFF'}
+                  fill={reached ? node.color : 'var(--surface-card)'}
                   stroke={node.color}
                   strokeWidth="3"
                 />
@@ -210,7 +210,7 @@ export function LevelProgressionInfographic({
                   fontSize="11.5"
                   fontWeight="700"
                   fontFamily="JetBrains Mono, monospace"
-                  fill={reached ? '#FFFFFF' : '#111C17'}
+                  fill={reached ? '#FFFFFF' : 'var(--ink-primary)'}
                 >
                   {node.pts}p
                 </text>
@@ -221,7 +221,7 @@ export function LevelProgressionInfographic({
                   fontSize="12.5"
                   fontWeight="700"
                   fontFamily="Plus Jakarta Sans, sans-serif"
-                  fill="#111C17"
+                  fill="var(--ink-primary)"
                 >
                   {node.label}
                 </text>
@@ -241,33 +241,33 @@ export function LevelProgressionInfographic({
             const reached = currentPoints !== undefined ? currentPoints >= node.pts : true;
             return (
               <li key={node.pts} className="flex items-center gap-3">
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 font-mono-tabular text-xs font-bold"
-                  style={{
-                    backgroundColor: reached ? node.color : '#FFFFFF',
-                    borderColor: node.color,
-                    color: reached ? '#FFFFFF' : '#111C17',
-                  }}
-                >
-                  {node.pts}p
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-display text-sm font-bold text-[#111C17]">
-                    {node.label}
-                  </p>
-                  <p className="text-xs text-[#4A5D54]">
-                    Tahap 0{idx + 1} · Target {node.pts} poin
-                  </p>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 font-mono-tabular text-xs font-bold"
+                style={{
+                  backgroundColor: reached ? node.color : 'var(--surface-card)',
+                  borderColor: node.color,
+                  color: reached ? '#FFFFFF' : 'var(--ink-primary)',
+                }}
+              >
+                {node.pts}p
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-sm font-bold text-[#111C17]">
+                  {node.label}
+                </p>
+                <p className="text-xs text-[#4A5D54]">
+                  Tahap 0{idx + 1} · Target {node.pts} poin
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
 
         {activeLevel && currentPoints !== undefined && (
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#DCE4DF] pt-3 text-xs">
             <span className="font-semibold text-[#111C17] inline-flex items-center gap-1.5">
-              <Award className="h-4 w-4" style={{ color: config.accentColor }} aria-hidden="true" />
+              <Award className="h-4 w-4" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
               Posisi Anda: {currentPoints} poin ({activeLevel.currentLevel})
             </span>
             <span className="text-[#4A5D54]">
@@ -292,7 +292,7 @@ export function LevelProgressionInfographic({
               </span>
               <span
                 className="font-mono-tabular text-sm font-bold"
-                style={{ color: idx === 3 ? config.accentColor : config.primaryColor }}
+                style={{ color: idx === 3 ? 'var(--brand-accent-ink)' : 'var(--brand-primary-ink)' }}
               >
                 {tier.target} pts
               </span>
@@ -365,20 +365,20 @@ export function CollectionZoneInfographic({
       <div className="lg:col-span-6 rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold" style={{ color: config.accentColor }}>
+            <p className="text-xs font-semibold" style={{ color: 'var(--brand-accent-ink)' }}>
               Infografis Koleksi
             </p>
             <h2 className="font-display text-lg font-bold text-[#111C17]">
               Sebaran Buku per Zona Petualangan
             </h2>
           </div>
-          <Sparkles className="h-5 w-5" style={{ color: config.accentColor }} aria-hidden="true" />
+          <Sparkles className="h-5 w-5" style={{ color: 'var(--brand-accent-ink)' }} aria-hidden="true" />
         </div>
 
         <div className="flex flex-col items-center gap-6 sm:flex-row">
           <div className="relative h-36 w-36 shrink-0">
             <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90" role="img" aria-label="Grafik donat sebaran buku per zona">
-              <circle cx="70" cy="70" r="52" fill="none" stroke="#EEF3F0" strokeWidth="18" />
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--surface-muted)" strokeWidth="18" />
               {donutSegments.map((seg) => (
                 <circle
                   key={seg.zona}
@@ -432,7 +432,7 @@ export function CollectionZoneInfographic({
       {/* Right: Weekly Program Participation Bar Infographic */}
       <div className="lg:col-span-6 rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
         <div>
-          <p className="text-xs font-semibold" style={{ color: config.primaryColor }}>
+          <p className="text-xs font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
             Infografis Partisipasi Mingguan
           </p>
           <h2 className="font-display text-lg font-bold text-[#111C17]">
@@ -506,7 +506,7 @@ export function MemberAgeDistributionChart({
   return (
     <div className="rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-4">
       <div>
-        <p className="text-xs font-semibold" style={{ color: config.accentColor }}>
+        <p className="text-xs font-semibold" style={{ color: 'var(--brand-accent-ink)' }}>
           Infografis Demografi Anggota
         </p>
         <h2 className="font-display text-lg font-bold text-[#111C17]">
@@ -520,10 +520,10 @@ export function MemberAgeDistributionChart({
               <span className="font-semibold text-[#111C17]">{g.jenjang}</span>
               <span className="font-mono-tabular">{g.pct}%</span>
             </div>
-            <p className="font-display text-2xl font-bold tabular-nums" style={{ color: config.primaryColor }}>
+            <p className="font-display text-2xl font-bold tabular-nums" style={{ color: 'var(--brand-primary-ink)' }}>
               {g.count}
             </p>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E2E8E5]">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#EEF3F0]">
               <div
                 className="h-full rounded-full"
                 style={{ width: `${g.pct}%`, backgroundColor: config.primaryColor }}

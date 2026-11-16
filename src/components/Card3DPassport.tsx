@@ -57,7 +57,7 @@ export function Card3DPassport({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white shadow-xs">
+                <div className="preserve-light h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white shadow-xs">
                   <img
                     src={config.logoUrl}
                     alt={config.appName}
@@ -127,7 +127,7 @@ export function Card3DPassport({
                   {member.nomorInduk} · {levelInfo.currentLevel}
                 </p>
               </div>
-              <span className="font-mono-tabular text-sm font-bold" style={{ color: config.primaryColor }}>
+              <span className="font-mono-tabular text-sm font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
                 {member.poin}/{levelInfo.nextTarget} pts
               </span>
             </div>

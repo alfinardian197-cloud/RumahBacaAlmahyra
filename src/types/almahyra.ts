@@ -1,4 +1,5 @@
 export type UserRole = 'superadmin' | 'admin' | 'anggota';
+export type ThemeMode = 'light' | 'dark';
 
 export interface AuthSession {
   role: UserRole;

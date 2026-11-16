@@ -17,7 +17,7 @@ export function QrCodeMatrix({
 
   return (
     <div
-      className="inline-flex flex-col items-center rounded-xl border border-[#DCE4DF] bg-white p-2"
+      className="preserve-light inline-flex flex-col items-center rounded-xl border border-[#DCE4DF] bg-white p-2"
       aria-label={label}
     >
       <svg

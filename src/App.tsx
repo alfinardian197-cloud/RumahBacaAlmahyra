@@ -6,13 +6,22 @@ import { PublicLanding } from './components/PublicLanding';
 import { TopBar, type NavTabItem } from './components/TopBar';
 import { DEFAULT_DB } from './data/defaultDb';
 import { initGoogleAuth } from './services/googleAuth';
-import type { AlmahyraDatabase, AuthSession } from './types/almahyra';
+import type { AlmahyraDatabase, AuthSession, ThemeMode } from './types/almahyra';
+import { resolveThemeMode, toggleThemeMode } from './utils/almahyra';
 
 const SESSION_STORAGE_KEY = 'almahyra_user_session_v1';
+const THEME_STORAGE_KEY = 'almahyra_theme_v1';
 
 export default function App() {
   const [db, setDb] = useState<AlmahyraDatabase>(DEFAULT_DB);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    try {
+      return resolveThemeMode(localStorage.getItem(THEME_STORAGE_KEY));
+    } catch {
+      return 'light';
+    }
+  });
   const [session, setSession] = useState<AuthSession | null>(() => {
     try {
       const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -31,6 +40,25 @@ export default function App() {
   useEffect(() => {
     const unsub = initGoogleAuth();
     return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    root.style.colorScheme = theme;
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Ignore storage errors
+    }
+  }, [theme]);
+
+  const handleSetTheme = useCallback((nextTheme: ThemeMode) => {
+    setTheme(nextTheme);
+  }, []);
+
+  const handleToggleTheme = useCallback(() => {
+    setTheme((prev) => toggleThemeMode(prev));
   }, []);
 
   useEffect(() => {
@@ -147,6 +175,9 @@ export default function App() {
         session={session}
         tabs={navTabs}
         activeTab={activeTab}
+        theme={theme}
+        onSelectTheme={handleSetTheme}
+        onToggleTheme={handleToggleTheme}
         onSelectTab={handleSelectTab}
         onOpenLogin={() => setLoginOpen(true)}
         onLogout={handleLogout}

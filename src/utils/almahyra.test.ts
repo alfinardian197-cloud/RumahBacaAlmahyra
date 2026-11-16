@@ -8,7 +8,9 @@ import {
   filterBooks,
   generateDeterministicQrMatrix,
   recordsToSheetRows,
+  resolveThemeMode,
   sheetRowsToRecords,
+  toggleThemeMode,
 } from './almahyra';
 import type { AdminAccount, Book, Member } from '../types/almahyra';
 
@@ -209,4 +211,12 @@ test('generateDeterministicQrMatrix builds a reproducible 19x19 finder matrix', 
   assert.deepEqual(m1, m2);
   assert.equal(m1[0][0], true);
   assert.equal(m1[3][3], true);
+});
+
+test('resolveThemeMode and toggleThemeMode switch cleanly between light and dark', () => {
+  assert.equal(resolveThemeMode(undefined), 'light');
+  assert.equal(resolveThemeMode('light'), 'light');
+  assert.equal(resolveThemeMode('dark'), 'dark');
+  assert.equal(toggleThemeMode('light'), 'dark');
+  assert.equal(toggleThemeMode('dark'), 'light');
 });
