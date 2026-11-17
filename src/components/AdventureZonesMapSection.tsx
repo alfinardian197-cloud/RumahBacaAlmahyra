@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { BookOpen, CheckCircle2, Compass, Sparkles, Star } from 'lucide-react';
 import type { AlmahyraDatabase, Book } from '../types/almahyra';
 import { computeZoneAdventureStats } from '../utils/almahyra';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { ResilientImage } from './ResilientImage';
-import { DEFAULT_HERO_IMAGE_URL } from '../data/defaultDb';
 
 interface AdventureZonesMapSectionProps {
   db: AlmahyraDatabase;
@@ -183,12 +183,22 @@ export function AdventureZonesMapSection({
                   key={book.id}
                   className="flex gap-3 rounded-xl border border-[#DCE4DF] bg-white p-3"
                 >
-                  <ResilientImage
-                    src={book.coverUrl}
-                    fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                    alt={book.judul}
-                    className="h-24 w-20 rounded-lg object-cover shrink-0 bg-[#EEF3F0]"
-                  />
+                  <div
+                    className={`h-24 w-20 overflow-hidden rounded-lg shrink-0 ${
+                      book.coverUrl ? 'bg-[#EDF3EF] p-0.5' : 'bg-[#EEF3F0]'
+                    }`}
+                  >
+                    {book.coverUrl ? (
+                      <ResilientImage
+                        src={book.coverUrl}
+                        alt={`Sampul ${book.judul}`}
+                        className="h-full w-full object-contain"
+                        renderFallback={() => <CustomBookCoverSvg book={book} />}
+                      />
+                    ) : (
+                      <CustomBookCoverSvg book={book} />
+                    )}
+                  </div>
                   <div className="flex flex-col justify-between min-w-0">
                     <div>
                       <p className="text-[11px] font-semibold text-[#087C3B] dark:text-[#6EE7B7] truncate">

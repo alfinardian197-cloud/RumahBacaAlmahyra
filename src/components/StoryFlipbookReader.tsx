@@ -371,13 +371,17 @@ export const StoryFlipbookReader = forwardRef<
 
           {/* Center Book Artwork Frame */}
           <div className="relative z-10 mx-auto my-2 flex w-full max-w-[230px] sm:max-w-[260px] flex-1 min-h-0 flex-col items-center justify-center">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-2xl border-2 border-amber-300/70 bg-white/10 shadow-lg">
+            <div
+              className={`aspect-[4/3] w-full overflow-hidden rounded-2xl border-2 border-amber-300/70 shadow-lg ${
+                book.coverUrl ? 'bg-[#05351D]/65 p-1.5' : 'bg-white/10'
+              }`}
+            >
               {book.coverUrl ? (
                 <ResilientImage
                   src={book.coverUrl}
                   alt={`Sampul ${book.judul}`}
                   loading="eager"
-                  className="h-full w-full object-cover object-[50%_28%]"
+                  className="h-full w-full object-contain drop-shadow-md"
                   renderFallback={() => <CustomBookCoverSvg book={book} />}
                 />
               ) : (
@@ -463,13 +467,13 @@ export const StoryFlipbookReader = forwardRef<
                     onClick={() => onSwitchBook?.(rec)}
                     className="flex w-full items-center gap-2.5 rounded-xl border border-white/25 bg-white/10 p-2 text-left transition-colors hover:bg-white/20"
                   >
-                    <div className="h-10 w-12 overflow-hidden rounded-lg shrink-0 bg-white/10">
+                    <div className="h-12 w-12 overflow-hidden rounded-lg shrink-0 bg-white/15 p-0.5">
                       {rec.coverUrl ? (
                         <ResilientImage
                           src={rec.coverUrl}
                           alt={`Sampul ${rec.judul}`}
                           loading="eager"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                           renderFallback={() => <CustomBookCoverSvg book={rec} />}
                         />
                       ) : (
@@ -537,13 +541,19 @@ export const StoryFlipbookReader = forwardRef<
           {/* OPENER */}
           {page.kind === 'opener' && (
             <div className="space-y-3">
-              <div className="mx-auto aspect-[16/10] w-full max-w-[290px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+              <div
+                className={`mx-auto aspect-[16/10] w-full max-w-[290px] overflow-hidden rounded-xl border border-[#DFD4BC] shadow-xs dark:border-[#274436] ${
+                  book.coverUrl
+                    ? 'bg-[#EFE8D5] p-1.5 dark:bg-[#0D1A14]'
+                    : 'bg-[#F3ECD9] dark:bg-[#0D1A14]'
+                }`}
+              >
                 {book.coverUrl ? (
                   <ResilientImage
                     src={book.coverUrl}
                     alt={`Ilustrasi pembuka ${book.judul}`}
                     loading="eager"
-                    className="h-full w-full object-cover object-[50%_26%]"
+                    className="h-full w-full object-contain"
                     renderFallback={() => <CustomBookCoverSvg book={book} />}
                   />
                 ) : (
@@ -590,13 +600,19 @@ export const StoryFlipbookReader = forwardRef<
               )}
 
               {page.hasIllustrationFrame && (
-                <div className="aspect-[16/9] max-h-[160px] w-full overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                <div
+                  className={`aspect-[16/9] max-h-[160px] w-full overflow-hidden rounded-xl border border-[#DFD4BC] shadow-xs dark:border-[#274436] ${
+                    book.coverUrl
+                      ? 'bg-[#EFE8D5] p-1.5 dark:bg-[#0D1A14]'
+                      : 'bg-[#F3ECD9] dark:bg-[#0D1A14]'
+                  }`}
+                >
                   {book.coverUrl ? (
                     <ResilientImage
                       src={book.coverUrl}
                       alt={`Ilustrasi adegan ${book.judul}`}
                       loading="eager"
-                      className="h-full w-full object-cover object-[50%_28%]"
+                      className="h-full w-full object-contain"
                       renderFallback={() => <CustomBookCoverSvg book={book} />}
                     />
                   ) : (

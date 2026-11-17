@@ -65,7 +65,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Menghormati habitat satwa dan menanam pohon membantu menjaga keanekaragaman hayati Indonesia."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/0h281DsR5B9TwIfQyl3vahi28WTnohvMQ_HfFbRNpgFOpMIM-34dgt3hOidPaGP--f90m73SxfX7KW1kEauTWP8yKjIwJZKRd8tD=s600"
   },
   {
     "id": "alm-002",
@@ -130,7 +131,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Menghargai makanan berarti menghormati kerja keras nelayan, petani, dan keluarga."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/vyLRu2ACkWUQ63rhKhBbkrDn05R7aL_NFr-A4pc8T2Z3IbH-8QDZwatST-cGVqHwsbGKy3KKbzg0kEryKHOfwWBUB7b_ah3L4JRF_g=s600"
   },
   {
     "id": "alm-003",
@@ -158,7 +160,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita edukasi kehidupan laut.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/aDR-9oBYlO53NbgZ79LP7zXfIeuFwHq_5FNYlTPDRgOvN43yihm-5pZppHkjRIP4eR8T5cNLzLinPsBhl6Go3D8OwMEwCCpwsvyyyrs=s600"
   },
   {
     "id": "alm-004",
@@ -186,7 +189,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku terjemahan Bahasa Indonesia.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/MfnyWryGIi-Xl4WFCt_tSC2L_IzlIp0c4PhF4wVQiqZYHaL51lNg8MZvlL1-JndoXtgwkjNiKNb9lr8otGpoJfc=s600"
   },
   {
     "id": "alm-005",
@@ -214,7 +218,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; jangan ubah/adaptasi; cek izin salin lokal",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Lisensi ND melarang distribusi adaptasi.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/WUkDQgnWi-QNZBmOGJkldtdYRCc5qNmZrt-4uWQmLqkWbTpWGWmYAbnLHrOmO7eRvDg4PXi_xN15uv1fqSLXYVAu6kURaQ6Ase6gcw=s600"
   },
   {
     "id": "alm-006",
@@ -242,7 +247,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; adaptasi wajib berbagi dengan lisensi serupa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku terjemahan Bahasa Indonesia.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/fa0VljfFNsCtaBXm0lPj6KV7--yaZi2osqH1UzUSOuAAPU6Yruc38PTA2YZ-ojWgsYu5xr1xWIyMKSu43kDEG18e=s600"
   },
   {
     "id": "alm-007",
@@ -307,7 +313,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Perbedaan panjang dan ruang udara pada bambu menghasilkan tinggi-rendah nada yang berbeda."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/-e8YpC8snELOrExAHdSLvhZOgU4jxGGvQ4Uc4j5_bbxfPccPhLxWOb5hEk3Y09GeZjWyaSaRdsRZVoT1ZYSm7DoStVgzvYHSARi_=s600"
   },
   {
     "id": "alm-008",
@@ -372,7 +379,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Masker melindungi pernapasan dari abu vulkanik dan air minum menjaga kondisi tubuh."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/1z_T3qmu5m9w8f2e8QsC5pmpbsAO8EdViiah_cf8gPLczdRIEJdnBEL30BM8pExTtM_7ssdXisvu7MJ9AUgVTtVaoF9YQbJx99yaJg=s600"
   },
   {
     "id": "alm-009",
@@ -400,7 +408,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang menunggu rendang matang.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/7Uxx05YiMbgNilzugaMLSssjly6F_l53--k_PX2gD-87Ici6zv_mabnwx0cn2Urs3LQynGs_NXsYbicU4mfEj9UwUBdTv7kuMDcuaw=s600"
   },
   {
     "id": "alm-010",
@@ -428,7 +437,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita anak perempuan belajar daring.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/5jhDMrAXEbV-fXqd8VuqtxItDDdWmsZtd4gfzrxjI8o7oYPMrTWRt-MG0lJ8FjSkPDEuWbufj58E4nKJwohH3pVqJu5C6NoKZFsr_g=s600"
   },
   {
     "id": "alm-011",
@@ -456,7 +466,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Tentang tukik/dugong dan kemandirian.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/Z7tAeH4Fow9eoUqjFYwY0EGVwHVOV1xbCx0ww0Nk57J7spyngNsoiJ6Z9imVUcYzMpuciG6q1u9PHW3lJnkK0Yt_3lP9EwN_SgPtQSU=s600"
   },
   {
     "id": "alm-012",
@@ -484,7 +495,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku terjemahan Bahasa Indonesia.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/oz2kmbd-TX8NjjoH-lJ5TTnKYc_INwYdGoHpZ0VfzrwIngStXRa6R2aNbyNQOdUOz99pdeb7uHbsK0Fr0jUxw_5VY7OA5syUFwGLvZQ=s600"
   },
   {
     "id": "alm-013",
@@ -512,7 +524,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan sesuai CC BY dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku level emergent.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/HfJZJjuwGoNFaBFOmEPrss1EM2T0JU4auF6vDFt-2GR6Mk4SpGae_Sv5n0gmtT0wZ8dkAY8YoXpFeRTBBcy_KIGsbZBbB1xO-D_Y=s600"
   },
   {
     "id": "alm-014",
@@ -540,7 +553,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku biografi bergambar.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/0nma6KAssoxS5QNBRcV4CZMHjHfIatUoRhuVZJxpL--VulqunZ8serxoMOmAmVBIBp5lMOdgr9YmA12jLuYsyqh1a1-TyWQi_CLBxg=s600"
   },
   {
     "id": "alm-015",
@@ -568,7 +582,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang rumah pohon.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/8cA-fPLv7A2qOs4-KiVvD-aTtOXJIqfDnEiJnAgNdc2Rs-vi7EgsQmaRTVR1jZ1V23NR7Ghlf39-b7cJJxkq5EeucdCBG6KQkMROyw=s600"
   },
   {
     "id": "alm-016",
@@ -633,7 +648,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Ketersediaan air, udara bersih, dan suhu bersahabat membuat Bumi menjadi tempat tinggal makhluk hidup."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/T4Brano5R6mLgzQMtRzMo4GahoZEjkB4fZjtg_pMGQc2iLI8SoTV0oqH3wSoPIvY3ZH-k00v_geTj0OwqoVCA-MM2w=s600"
   },
   {
     "id": "alm-017",
@@ -661,7 +677,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita naga dan landak.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/EFQ4MWmQDpHu0mI888COF0JIvvQlxEgAnagKnlMHDuefy45ONSiGvCFqdXfpPbJdiMvwYfeeiIICRrLVsHUUJrXcGW7nwpZrVtK3=s600"
   },
   {
     "id": "alm-018",
@@ -726,7 +743,8 @@ export const BATCH_1_BOOKS: Book[] = [
         "jawabanBenar": 0,
         "penjelasan": "Kebersihan bahan daur ulang membuatnya aman dan rapi digunakan anak-anak untuk berkarya."
       }
-    ]
+    ],
+    "coverUrl": "https://lh3.googleusercontent.com/G_QYlqr3CMx25nYlBU1trLswxI6BIPCIIg4FrM066ErZv9Ta-JWqJwDXF3lGhoWzwKl7tq8ehZILGE9tTmNQi2slBhhaG7MEcQbq=s600"
   },
   {
     "id": "alm-019",
@@ -754,7 +772,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Kisah laron menjalankan misi.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/UxA07su3w9c9Dwvmu4AGD2CERfkOMCJ3MpnTG2cpxkpw8u0HbuaJOH0Sx0xmzy2Hc5gUCVEgzWsnGShtY0AR6IMOj138mvodOHJfVA=s600"
   },
   {
     "id": "alm-020",
@@ -782,7 +801,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; jangan ubah/adaptasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang gedung saat gempa.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/Do3HbtpCoTxQcKrDd1ePsBVIeeUyNXw-N-BmhvkeRhsLJMIcugCX2DIC6FR14qY1TWKm5yp51JGW2-BehoumE-XnLUIa_OIpM612pQ=s600"
   },
   {
     "id": "alm-021",
@@ -810,7 +830,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang keluarga burung.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/Fg0x5jIAMGV_t-kr7rUbibiz2mwswNCfTdch9UzDmyVXncvNeFNut47S7Z2BfwID3gsRoFV_293wqs82rNnnLiMFJg=s600"
   },
   {
     "id": "alm-022",
@@ -838,7 +859,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan sesuai CC BY dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku nonfiksi awal.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/3RokhQGpnq7sujh8Xgk3XjVzTu9cl3AX5UOR_maQ5qSPTStD3XNFLvW8qr52Z53oK1x-2_6oHiU9zRKhDhceFM0gHop0wJXIHonJMTk=s600"
   },
   {
     "id": "alm-023",
@@ -866,7 +888,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan sesuai CC BY dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku level emergent.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/GFbdN5MOmXedszPEWHEkQ6EuJDCglzDZnlnAxyImznUvO6U5LGPRcdNLZNsN_btOn3CiA5H9RH06QevxVO1s0-4WbN1rv-fu_Sin3xs=s600"
   },
   {
     "id": "alm-024",
@@ -894,7 +917,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang tukik menuju laut.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/hx2OpL2tZoj5c6PiTumJLo_9Q1GcFfL84aH4TKwWvSAlb2dL3m9MizRUuGOeYm_bxCYQegil0G-vRsOUhxvNIRo=s600"
   },
   {
     "id": "alm-025",
@@ -922,7 +946,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita membuat apam.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/acPpzIQXZrwIE6bzOz7Vd342DsRKi1CtH6lmSZ_556HwOpJARGbWbjqOuemE9Q9Yo8hCqo9AyRmGTA5tsEUCg1Ms=s600"
   },
   {
     "id": "alm-026",
@@ -950,7 +975,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang burung kenari.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/QaRoxBLmIYUbWH0Z5hzL83F5tNb0fpWuuA3-ZPq47LkQ0SDx-Ksugn6Suf2eOJFztsmAOl57Gnhj4Gjm549nsytX=s600"
   },
   {
     "id": "alm-027",
@@ -978,7 +1004,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Bahan diskusi tentang cita-cita.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/uOMjhfCYcxsSHnskWzHTV7n2J2SAhEId5SHFFLLNGINHE9RmAcnNazq3fhOVp5ubnAOk4No-cB4h-TO-PK3Yee4-aw=s600"
   },
   {
     "id": "alm-028",
@@ -1006,7 +1033,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin/unggah sesuai lisensi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Cerita tentang membuat buku sendiri.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/aQcNl_TvtvxPHfCh46rbBikU9yM9soiPorg3xeUAA5wwvBZAjBolMmUdBit_8H7w8j6080tLQrTed7tkq_Jbu4Ns5cLoTjyVz5dsqZg=s600"
   },
   {
     "id": "alm-029",
@@ -1034,7 +1062,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/yfa2A-wR2TZyIEdlh6EtPSuNfzlLMbnI-LXpOfM8OQ9mSUTD2oh2rwXjrTCE5lpmwtsve1CzpQFoanRUnPPM_EnzUpN68GtLYYoEw-0=s600"
   },
   {
     "id": "alm-030",
@@ -1062,7 +1091,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/QJj2PpU9BW53h62ZoZ8_M_w1AxxkKjcvYj8l2UwbiQ3ywCEfkb2_hfWJrpJ-ATu-hV0wnnBClqCJFKIgQhG8lkhwpiAe7U1t-KQL=s600"
   },
   {
     "id": "alm-031",
@@ -1090,7 +1120,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/k20sR0dLDGmXEukXboSOL3U98Rt4VhPyrli5rNA4M-qs6sg0abtKT9_X4tqZhwCurhM6Ak1sIugWcbkQ3tYWDfx7pIDxNwCFMXA4Y8M=s600"
   },
   {
     "id": "alm-032",
@@ -1118,7 +1149,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/kzO0FCQ1QrBW1KACcaY13B1NY6CkaNAx6CPTx1xfMmwc3aAQ-8thcvQZ8xqWYoxhFkPanjXJoRcNgDYsTJ16sQcBY7LLpmXFd8m6KOc=s600"
   },
   {
     "id": "alm-033",
@@ -1146,7 +1178,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/Q6dR3cbAqeHeQC0PfobKmzCy6mVqQcElE9I9e244ApRjaG6PoLMhDe5hcPEesz6L-dK9NJQoD9QR96isBgi1TQE2MljBs_Hmnpaz7g=s600"
   },
   {
     "id": "alm-034",
@@ -1174,7 +1207,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/4KDaRKCn_mcu5tYhgVEJjn1nD6l4BJ7kA6oSgCky1RtgCM_YInxCrrhvHF970q_aNT2InU0A9lHMsipfjV7C-x8QBuEH0utK-f_eiOk=s600"
   },
   {
     "id": "alm-035",
@@ -1202,7 +1236,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/KrbKkAQ-MjES7tmwEcDn7sYyKbBDcTdPJmxyOkd3MsTYxeThLJQP3T2LpXeO1YNh27NedEVONJpFODMVFVQjeyPqJgbrSO43D5L9=s600"
   },
   {
     "id": "alm-036",
@@ -1230,7 +1265,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/M5AA7WHu5WHVlzitKbV0qoRqNnkAKARYblF_GgmK3tStaQxNa8qRHfUpJrbrnio127lkoJHhP0sHRPX4-ZBTq1KwHJJ4GewWS6Sg=s600"
   },
   {
     "id": "alm-037",
@@ -1258,7 +1294,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/sNda210eDwdCrp4hiBn4xh5v5fOeMp2ypaPmE6K-B9nyIgqMW4m_bXtV0UBr8_Jrmk9CGDVcohhOwczeH5H-UWtMMXK3DWIl2DEj=s600"
   },
   {
     "id": "alm-038",
@@ -1286,7 +1323,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/XfLnKD3OijpF5arcsDeV2tRw2HnTXdL_HeN_LrE4FcCOZQxee08MU8x7eFr417vd5TYrr9qOygH3pd9UnpnzlRi6MltOaSJ5LN4J=s600"
   },
   {
     "id": "alm-039",
@@ -1314,7 +1352,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan sementara; cek lisensi per judul",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tertera pada katalog Bahasa Indonesia; tautan saat ini ke daftar katalog.",
-    "sumberKatalog": "Let's Read Asia"
+    "sumberKatalog": "Let's Read Asia",
+    "coverUrl": "https://lh3.googleusercontent.com/3d2AJYig38kQZDvHKgQk60nFoAEPYAnUCUFTTzyl360WKuGIkk2jCYGuM3qI-fi_IP2RHDc_ulrOcpSXdmYqCaNgrJ2aT3jrYvGXbw=s600"
   },
   {
     "id": "alm-040",
@@ -1622,7 +1661,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi; cek ukuran dan file",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/mQKNASCZKJPVJcqz5M0ZEe3N8B869gEuvWZQR3dD.jpg"
   },
   {
     "id": "alm-051",
@@ -1650,7 +1690,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/0vkdAkRDMrJLjtsSdp3zdGr45poEDQrlvDxKb1hN.jpg"
   },
   {
     "id": "alm-052",
@@ -1678,7 +1719,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/UB7tbP0uUA2mGM9QiSpfg79dew4vrJ39uZt2g5gN.png"
   },
   {
     "id": "alm-053",
@@ -1734,7 +1776,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/AUhEiKCEc48yaNTKEfcJ1np8K0KUk7m5Te2NtH8a.jpg"
   },
   {
     "id": "alm-055",
@@ -1762,7 +1805,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/fRq2oNVR3LmZCA5jvaBZwMpVkoIQysMe1HYNRVU5.png"
   },
   {
     "id": "alm-056",
@@ -1939,7 +1983,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/LZZZElHLdH0Sf6qC3bLdfY7xyF3rmPqezpCalUrq.jpg"
   },
   {
     "id": "alm-061",
@@ -1967,7 +2012,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/sRb7opyA3CHEEtxYqjPbScjiGlwbHYpgAWfSDG5L.jpg"
   },
   {
     "id": "alm-062",
@@ -1995,7 +2041,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/69VO61upzXSQXMILNZdQB9r4hvII5HXe4BHuk6cn.jpg"
   },
   {
     "id": "alm-063",
@@ -2023,7 +2070,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/q6Pb7mScU9j2wKab4c3wcDMORD8eU3lqjSLBSWyr.png"
   },
   {
     "id": "alm-064",
@@ -2051,7 +2099,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ZbUXfswKTNnJflvnqsUVflYdd7DBlBhdZhWK5FL8.png"
   },
   {
     "id": "alm-065",
@@ -2079,7 +2128,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/O4JnleOFdWJV7jm5yn1kWZ9Kb9yMh46RZ5waOXRJ.jpg"
   },
   {
     "id": "alm-066",
@@ -2107,7 +2157,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Pc0u1xpgcSQct8H0wAkZbkdqM1f5J0ha1I6srgLV.png"
   },
   {
     "id": "alm-067",
@@ -2135,7 +2186,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Boleh digunakan nonkomersial dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/oUdhHbrmFKW7yVuM8izVWAJ0g1gFpRPSk4zOVadj.jpg"
   },
   {
     "id": "alm-068",
@@ -2191,7 +2243,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke katalog resmi; jangan unggah ulang tanpa izin",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Buku teks resmi.",
-    "sumberKatalog": "Repositori Institusi Kemendikdasmen"
+    "sumberKatalog": "Repositori Institusi Kemendikdasmen",
+    "coverUrl": "https://static-sc.cloudapp.web.id/content/image/coverteks/coverkurikulum21/IPA_BS_KLS_VII_Rev_Cover.png"
   },
   {
     "id": "alm-070",
@@ -2275,7 +2328,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/L5T3ympzz3j9885s1fLUzvG89MsOAFzBFbpFhkrk.jpg"
   },
   {
     "id": "alm-073",
@@ -2303,7 +2357,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/eBAQI4RO1iHOSCJIfN6NQYeDzYlnMlUV1jgaQz6D.jpg"
   },
   {
     "id": "alm-074",
@@ -2331,7 +2386,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/5ASHKTF4x22wGbNOsHHSyaB1Fw65Wz0YJUkovj16.jpg"
   },
   {
     "id": "alm-075",
@@ -2359,7 +2415,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/iK36WvACPn2KsWs5klkC8dBxkgpJRQEGVyd37oEU.jpg"
   },
   {
     "id": "alm-076",
@@ -2387,7 +2444,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/iK36WvACPn2KsWs5klkC8dBxkgpJRQEGVyd37oEU.jpg"
   },
   {
     "id": "alm-077",
@@ -2415,7 +2473,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/OIOsvvlwDUrdF5BeRAwXEyEZYj7e0pVlODdR6oXt.png"
   },
   {
     "id": "alm-078",
@@ -2443,7 +2502,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/OIOsvvlwDUrdF5BeRAwXEyEZYj7e0pVlODdR6oXt.png"
   },
   {
     "id": "alm-079",
@@ -2499,7 +2559,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/5uCqNZb2yKC8SpycxFtBeTKy787JHTFmxGvhQnRN.jpg"
   },
   {
     "id": "alm-081",
@@ -2527,7 +2588,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/1EoLOMgjolqFf4gR6AAXN7t2ER0vlBChHQQU4NCi.jpg"
   },
   {
     "id": "alm-082",
@@ -2555,7 +2617,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/xImnowZa2HZgrKuQtDrABADA8wFwlA1ypTJpCrsU.png"
   },
   {
     "id": "alm-083",
@@ -2583,7 +2646,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/xImnowZa2HZgrKuQtDrABADA8wFwlA1ypTJpCrsU.png"
   },
   {
     "id": "alm-084",
@@ -2639,7 +2703,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ZuIWsodiKcWOktHGjBn9JD95gm7ADjYzITGfnwrG.png"
   },
   {
     "id": "alm-086",
@@ -2667,7 +2732,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/PbH3ZfFsG4I4ONpAGWkC5pFOt9RpNub7PqGxwm54.png"
   },
   {
     "id": "alm-087",
@@ -2723,7 +2789,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://static-sc.cloudapp.web.id/content/image/covernonteks/coverbudi/Cover%20Toloong%2C%20Aku%20Terjebak%20di%20Dunia%20Monster%21%20%28Tria%20Ayu%20K.%29.png"
   },
   {
     "id": "alm-089",
@@ -2751,7 +2818,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/HJLxtmfZ5p9mjgwqgDzeCkBdGq6AcjK2uhhNGrXy.jpg"
   },
   {
     "id": "alm-090",
@@ -2779,7 +2847,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ZbV4iH1dsRNtpSx7I687ts8mGJtv60nrpe1x0WuB.jpg"
   },
   {
     "id": "alm-091",
@@ -2807,7 +2876,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/wvv3fYdjJ768rIqvAOyYMjUHIouADjfuYcyGCPiX.jpg"
   },
   {
     "id": "alm-092",
@@ -2835,7 +2905,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/wvv3fYdjJ768rIqvAOyYMjUHIouADjfuYcyGCPiX.jpg"
   },
   {
     "id": "alm-093",
@@ -2863,7 +2934,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ZT50qYlMqoplIaKcI7cECeCqPtlFFxBC28KoDQEk.png"
   },
   {
     "id": "alm-094",
@@ -2891,7 +2963,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/KASPsStFGvLmqDcGdSb8JfYsA0rdIjqrDz7i1s2g.png"
   },
   {
     "id": "alm-095",
@@ -2919,7 +2992,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ngv1Wz1rmxGmxeXH9cjUqneNaFAYrvNCeXykJvPC.png"
   },
   {
     "id": "alm-096",
@@ -2947,7 +3021,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Bgsy22GRpeEZoz9MOcjodX9XcZq17GeBnyEpagBy.png"
   },
   {
     "id": "alm-097",
@@ -2975,7 +3050,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/uvFl5ll0vq5bhICComjwiWwAXOpSZntdUqyrVr7Z.jpg"
   },
   {
     "id": "alm-098",
@@ -3003,7 +3079,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/DDWKvdK1HWZBrK3E4Bo2qiA48HbU90NPZ9EDFZse.jpg"
   },
   {
     "id": "alm-099",
@@ -3031,7 +3108,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/qnymFHjSDhGZFq8MuZrbh0mT4nDrmSWTDQgGfYSY.png"
   },
   {
     "id": "alm-100",
@@ -3087,7 +3165,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/8KSWIquVGHge5bSUQumtKvt1mZyXKshhboMv1MmD.jpg"
   },
   {
     "id": "alm-102",
@@ -3143,7 +3222,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Bw5VGnGkDuEY6PhPPs5USSn1HUuadQ85iaHaKTYe.jpg"
   },
   {
     "id": "alm-104",
@@ -3199,7 +3279,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/gyzLwSkKjNS5YaNM2QoZMtMJYnNP7YhDEAcG3KOK.png"
   },
   {
     "id": "alm-106",
@@ -3227,7 +3308,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/N4QmVNvSr1qmDVor6Jf4dMmhinlJmwYzskk84BIo.jpg"
   },
   {
     "id": "alm-107",
@@ -3255,7 +3337,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/12QjwclQGBTjvncG6qchXL9N3xDf3VxjKsWy1XPs.jpg"
   },
   {
     "id": "alm-108",
@@ -3283,7 +3366,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/9naFFKWJ0CJWoHFRKYBckWLcEZKZRmT6EGYVQo2g.jpg"
   },
   {
     "id": "alm-109",
@@ -3311,7 +3395,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/uiyDSvTfJBmJelSzGx9XCW8vlzxsU5Qwy4qe3W8s.jpg"
   },
   {
     "id": "alm-110",
@@ -3339,7 +3424,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/oyVb9bHP6yX7oIArFmuOwo9JxOYfLKWcO3lUArqW.jpg"
   },
   {
     "id": "alm-111",
@@ -3367,7 +3453,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/UYF2WDdgoxdrUkom6DBplB7SuwdVLiPS464weJu1.png"
   },
   {
     "id": "alm-112",
@@ -3395,7 +3482,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/PfQPrD6cpXmwywQwe1v55YHWGUSdYX9SR2WFAxX8.jpg"
   },
   {
     "id": "alm-113",
@@ -3423,7 +3511,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/3YyKDf5didIqPjcK60PRC0hBKRrvLJK3i7yNuxDd.jpg"
   },
   {
     "id": "alm-114",
@@ -3479,7 +3568,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/wkndlFpGHjssxEI8atvz7McvdnIjlKarcHoTp7BN.png"
   },
   {
     "id": "alm-116",
@@ -3563,7 +3653,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/3I1uZ3QLq4bzxTfXbHbEP0H8ABqsABcNyVVdh0x0.png"
   },
   {
     "id": "alm-119",
@@ -3591,7 +3682,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ZbUXfswKTNnJflvnqsUVflYdd7DBlBhdZhWK5FL8.png"
   },
   {
     "id": "alm-120",
@@ -3619,7 +3711,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/nA82ayOoIe87D4rBHpvAYH7W36UTyLByDA3XOO3c.jpg"
   },
   {
     "id": "alm-121",
@@ -3647,7 +3740,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/eD78iTAAmKpPHHleARwfv3U2IkUWdPzMixVd3V5W.jpg"
   },
   {
     "id": "alm-122",
@@ -3675,7 +3769,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ufoqO3YrMqt0hYlCUaAXNf5zrsW5FR4SuFwWwWPJ.jpg"
   },
   {
     "id": "alm-123",
@@ -3703,7 +3798,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/JFLitrS51xoVz11LWDruEZLaMNJx04gB5MSt70CA.jpg"
   },
   {
     "id": "alm-124",
@@ -3731,7 +3827,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/PPQ4nl7rxwUhIynDQiZvg1MWjzLnQyQ1P3vKw7zu.jpg"
   },
   {
     "id": "alm-125",
@@ -3759,7 +3856,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/aaDGVaLeDdFhjcZTwtlRZH7P5sS8wkyoyu8R5GIO.png"
   },
   {
     "id": "alm-126",
@@ -3787,7 +3885,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ADpeEWGy617F5xKZCiPaPaoJMq72ZupJsKIkySYF.png"
   },
   {
     "id": "alm-127",
@@ -3843,7 +3942,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/yTQFe0F7zxi3fwWD02qgFIPl8c9NBYoSD3YwNvUL.jpg"
   },
   {
     "id": "alm-129",
@@ -3871,7 +3971,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Gtl28gWrOfa0P4MJz8FHv2HwahzfOJ4j9QEsPg3B.jpg"
   },
   {
     "id": "alm-130",
@@ -3899,7 +4000,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/FP8qz6KwBQImqsAvINwQLC6ehTFuEaN00YoZsnLE.png"
   },
   {
     "id": "alm-131",
@@ -3927,7 +4029,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/oDRFuR34LZe4unh0gBnyeh8nuMA426p7qAUR4luP.jpg"
   },
   {
     "id": "alm-132",
@@ -3955,7 +4058,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/b5kOALhbjrliuU1YuI6nDSjJYoJX6tESPDpUxnnE.jpg"
   },
   {
     "id": "alm-133",
@@ -3983,7 +4087,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/XKMsP7ZusOltMSmJzDtGxmw4S3xeEPC7s7876IPb.png"
   },
   {
     "id": "alm-134",
@@ -4039,7 +4144,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/wkndlFpGHjssxEI8atvz7McvdnIjlKarcHoTp7BN.png"
   },
   {
     "id": "alm-136",
@@ -4067,7 +4173,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/l8ZXZ0M0cK8Racntv7usZIIQZ6bqKezosorJMF40.jpg"
   },
   {
     "id": "alm-137",
@@ -4095,7 +4202,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/lNRiBigJ0ZOmKxCVOEeY6IDL0NiVAIUu3moswowr.png"
   },
   {
     "id": "alm-138",
@@ -4151,7 +4259,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/fGSdBXROQZT8Jt4tI34wkdkOM6xihB8yoe3gZi3t.jpg"
   },
   {
     "id": "alm-140",
@@ -4179,7 +4288,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://static-sc.cloudapp.web.id/content/image/covernonteks/coverbudi/Lala-dan-lulu-Cover.png"
   },
   {
     "id": "alm-141",
@@ -4207,7 +4317,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/8p2BangomwpoIRAO8hrCsIjLsK7tdiFwivyPmIpT.jpg"
   },
   {
     "id": "alm-142",
@@ -4235,7 +4346,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/8p2BangomwpoIRAO8hrCsIjLsK7tdiFwivyPmIpT.jpg"
   },
   {
     "id": "alm-143",
@@ -4263,7 +4375,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/XuBupYs3fY39gUcQn80rdF49TV7WghczF2TdGPgC.jpg"
   },
   {
     "id": "alm-144",
@@ -4319,7 +4432,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/EBwfx8tgcDBK4oUrDUZuthX1hjLkbhcO5EQ0ZCWO.jpg"
   },
   {
     "id": "alm-146",
@@ -4347,7 +4461,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/lOCKmBXx27pUP3Q0iGMlt8tQkZtImoPy6MdaAgvw.jpg"
   },
   {
     "id": "alm-147",
@@ -4375,7 +4490,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/APECzAgYp2kui2WTNRC6OehttcryKmeQRWNazeti.png"
   },
   {
     "id": "alm-148",
@@ -4403,7 +4519,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/8pP5NACGx0fmy4MbzcjknOzaxR0DjUWlFIUZ5YGV.jpg"
   },
   {
     "id": "alm-149",
@@ -4431,7 +4548,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/JTMQPmJ2hJBbZKSjFDvXqJgoSU6spQfaob0sxP0Y.jpg"
   },
   {
     "id": "alm-150",
@@ -4459,7 +4577,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/cWPYTmCvGXgTN7tngw5NWLtWSIeKp0YWpj9EX4dz.jpg"
   },
   {
     "id": "alm-151",
@@ -4487,7 +4606,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/0bMubPztYQDbbo7D21Ol1UslcCrAqgjOXohrAmxP.jpg"
   },
   {
     "id": "alm-152",
@@ -4543,7 +4663,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/PdXClxChWxQR1hGvCW0jdGi8Ijk6yPCmUo80k55d.png"
   },
   {
     "id": "alm-154",
@@ -4571,7 +4692,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/PdXClxChWxQR1hGvCW0jdGi8Ijk6yPCmUo80k55d.png"
   },
   {
     "id": "alm-155",
@@ -4599,7 +4721,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/QDramfgTG2vUzE6k2YuF9WnIQ6AqUYN1jm0VdUkm.jpg"
   },
   {
     "id": "alm-156",
@@ -4627,7 +4750,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/s1TYrlGDRoB4ZVhL9T6axw8VvEczztw9kmaDPSZL.jpg"
   },
   {
     "id": "alm-157",
@@ -4655,7 +4779,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/hbkJTGg7ysHcwzZWKUNDwbwsl66IywNqSRmcbJ5u.png"
   },
   {
     "id": "alm-158",
@@ -4683,7 +4808,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/NMaAnap2VaBBw1Y9JuYt7bI1hex9Vrr3hhkzBHV9.jpg"
   },
   {
     "id": "alm-159",
@@ -4711,7 +4837,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/AsTeSKotYoqH1CqfOOjICqf9KI8WkF7dO3iw690R.jpg"
   },
   {
     "id": "alm-160",
@@ -4739,7 +4866,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/89ulHUD2QASPy5huSFnahICehRZjnoBiKkoGoRY6.png"
   },
   {
     "id": "alm-161",
@@ -4767,7 +4895,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/lRhKVXFYjyfXUqG5qtgoutzvmvHfb8TPHEFl3iGV.jpg"
   },
   {
     "id": "alm-162",
@@ -4795,7 +4924,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/lRhKVXFYjyfXUqG5qtgoutzvmvHfb8TPHEFl3iGV.jpg"
   },
   {
     "id": "alm-163",
@@ -4823,7 +4953,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/bg7X79wAPVeRZabpzRihQjF95CMKcCEX770fxg6b.jpg"
   },
   {
     "id": "alm-164",
@@ -4851,7 +4982,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/sJ5U7VQPndMVBadgFtyBjfzLq9YiqWj9MIFfNWS1.jpg"
   },
   {
     "id": "alm-165",
@@ -4879,7 +5011,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ggQ2X9NqTRcNmsrR2TGNkBpzJGUFznJFosq0ttuC.jpg"
   },
   {
     "id": "alm-166",
@@ -4907,7 +5040,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/dgDdz85kREurMlPb507svGl5e1VA2uT5pMt2zkzM.png"
   },
   {
     "id": "alm-167",
@@ -4935,7 +5069,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/jxP6rKr8ODmTgX82xgrYNiuAuYaFDFZZjy9PaFta.png"
   },
   {
     "id": "alm-168",
@@ -4963,7 +5098,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Jp4pYQ8ZCXRDoUut9mQOQ9xzg2Zqp77BmNOBtWw8.jpg"
   },
   {
     "id": "alm-169",
@@ -4991,7 +5127,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/Jp4pYQ8ZCXRDoUut9mQOQ9xzg2Zqp77BmNOBtWw8.jpg"
   },
   {
     "id": "alm-170",
@@ -5019,7 +5156,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/fFYv79cejnsTqcg9xQtlWLoKCeONYF0zW4oO3ASE.png"
   },
   {
     "id": "alm-171",
@@ -5047,7 +5185,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/t90AKjFhrx44UaLusDVWF0rBipvunvLpyLMUBTYu.jpg"
   },
   {
     "id": "alm-172",
@@ -5075,7 +5214,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/O0henK9r3whhGTODuO75OQahz6HGy08wHeaLuDIC.jpg"
   },
   {
     "id": "alm-173",
@@ -5103,7 +5243,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/O0henK9r3whhGTODuO75OQahz6HGy08wHeaLuDIC.jpg"
   },
   {
     "id": "alm-174",
@@ -5131,7 +5272,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/3REGwpilHvR1V8q6FyL24Rp8CTSRlwaMFdYMhlQ3.png"
   },
   {
     "id": "alm-175",
@@ -5159,7 +5301,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/YGxDTbNRx26mpTM8CyVeFsAc8CY0diWBdlgvTJEJ.jpg"
   },
   {
     "id": "alm-176",
@@ -5187,7 +5330,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/LZZZElHLdH0Sf6qC3bLdfY7xyF3rmPqezpCalUrq.jpg"
   },
   {
     "id": "alm-177",
@@ -5215,7 +5359,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/eBAQI4RO1iHOSCJIfN6NQYeDzYlnMlUV1jgaQz6D.jpg"
   },
   {
     "id": "alm-178",
@@ -5271,7 +5416,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/O4JnleOFdWJV7jm5yn1kWZ9Kb9yMh46RZ5waOXRJ.jpg"
   },
   {
     "id": "alm-180",
@@ -5299,7 +5445,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/6NaUHgknmDE4Cum3uSBqHRgYOLFZQvWD3rLrnAR2.jpg"
   },
   {
     "id": "alm-181",
@@ -5383,7 +5530,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ibWnqYXDfZTGmuM9UwrsIqbTF2XtAi7hV1hw3Klf.jpg"
   },
   {
     "id": "alm-184",
@@ -5411,7 +5559,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/hm4DEDCjkkDaCFZG2qqLehP6mIZBz93XMEdLClp8.jpg"
   },
   {
     "id": "alm-185",
@@ -5439,7 +5588,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ISI8pSAdVbPJaHPfp1ccmLJt7uFiZDIeATT7LziN.jpg"
   },
   {
     "id": "alm-186",
@@ -5467,7 +5617,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/ISI8pSAdVbPJaHPfp1ccmLJt7uFiZDIeATT7LziN.jpg"
   },
   {
     "id": "alm-187",
@@ -5495,7 +5646,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/NMNgkDJEf6eAqWNxUTprETKHFUbYSMd25SpL9DOA.jpg"
   },
   {
     "id": "alm-188",
@@ -5523,7 +5675,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/hO0MhfDZC3UepJ9686cV5HViwJbBQdRbz543n97h.jpg"
   },
   {
     "id": "alm-189",
@@ -5551,7 +5704,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/fTq5BIcFYK6VYOCHiVl6PEqD09vj86pE9I4ocjio.jpg"
   },
   {
     "id": "alm-190",
@@ -5579,7 +5733,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/rsaaho9wR7ETjQL1OaDbdgvPdfo5QOj0VPulz3CE.png"
   },
   {
     "id": "alm-191",
@@ -5635,7 +5790,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke halaman item; simpan file hanya setelah lisensi item diverifikasi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul tercantum pada katalog resmi 2019. Tautan menuju daftar katalog; cari judul persis pada halaman tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2019",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/1pA38Fmr5yjtnAxE8aWHQ9BTUop237PoQX9VJPUo.jpg"
   },
   {
     "id": "alm-193",
@@ -5663,7 +5819,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/141845/size4/a7164ef13c889209527c4355f11e01ef.jpg"
   },
   {
     "id": "alm-194",
@@ -5691,7 +5848,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/724151/size4/d0c6a34c2ae1e41832c171b1ca3e427f.jpg"
   },
   {
     "id": "alm-195",
@@ -5719,7 +5877,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/99516/size4/5717eeb81f7e16ed04c71d00881764bb.jpg"
   },
   {
     "id": "alm-196",
@@ -5747,7 +5906,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/6GocQWmYcxW5Y4dXjRGvbJ0QRt9s2qx1EhNV3aex.png"
   },
   {
     "id": "alm-197",
@@ -5775,7 +5935,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/153804/size4/7aaf4581283dbf3e99fb6d7cda8bfe4f.jpg"
   },
   {
     "id": "alm-198",
@@ -5803,7 +5964,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/118239/size4/24acd1b6280faa5efff9d119b107c8d2.jpg"
   },
   {
     "id": "alm-199",
@@ -5831,7 +5993,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/727061/size4/136f05ee6d48dd5d7c58d50da93c79cd.jpg"
   },
   {
     "id": "alm-200",
@@ -5859,7 +6022,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/139313/size4/1cba0e9e0e4a8a62dbb67f61df601710.jpg"
   },
   {
     "id": "alm-201",
@@ -5887,7 +6051,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/71449/size4/66a5ea88a9b2cbdb581bab0efab79cc8.jpg"
   },
   {
     "id": "alm-202",
@@ -5915,7 +6080,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/283163/size4/37a6f82e0194f64250d9d781c5ca07eb.jpg"
   },
   {
     "id": "alm-203",
@@ -5943,7 +6109,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/204971/size4/1e40ea50442e91dfaf6897702ab19754.jpg"
   },
   {
     "id": "alm-204",
@@ -5999,7 +6166,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/67806/size4/dbd8c77de5d43fbf2e7568ee21cee8fa.jpg"
   },
   {
     "id": "alm-206",
@@ -6027,7 +6195,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/126966/size4/00f41c902b3ca2a809716cc279a695ab.jpg"
   },
   {
     "id": "alm-207",
@@ -6055,7 +6224,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/99488/size4/879048deb2e1068ba1db73dc74ef22c6.jpg"
   },
   {
     "id": "alm-208",
@@ -6083,7 +6253,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/699247/size4/3fc37d2f562718ad41ae2200b5a20908.jpg"
   },
   {
     "id": "alm-209",
@@ -6111,7 +6282,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/22848/size4/28beb82a7019e771b8e69eb1564246e9.jpg"
   },
   {
     "id": "alm-210",
@@ -6139,7 +6311,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/337779/size4/8174bb7568d773ed8ab6a7c54e9adab8.jpg"
   },
   {
     "id": "alm-211",
@@ -6167,7 +6340,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/130505/size4/a742332e84b93fa37142e968f541e73d.jpg"
   },
   {
     "id": "alm-212",
@@ -6195,7 +6369,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/130943/size4/4301ba557d8658d098e9b0c3cde586a2.jpg"
   },
   {
     "id": "alm-213",
@@ -6251,7 +6426,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/191966/size4/9242ec477b75ce8d6c53ec9ca7103f99.jpg"
   },
   {
     "id": "alm-215",
@@ -6279,7 +6455,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/117617/size4/835e1d375a9f1cb096053b2a8491e360.jpg"
   },
   {
     "id": "alm-216",
@@ -6307,7 +6484,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/722033/size4/6f953dea1448b109b24b70edf7350a65.jpg"
   },
   {
     "id": "alm-217",
@@ -6335,7 +6513,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/646248/size4/785eeebf26aca45dc9fc4f56cedba1a6.jpg"
   },
   {
     "id": "alm-218",
@@ -6363,7 +6542,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/36718/size4/f692403e407062c9d73484fed615ea04.jpg"
   },
   {
     "id": "alm-219",
@@ -6391,7 +6571,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/165236/size4/92bdc2d38c209b87253b2ebd4e358026.jpg"
   },
   {
     "id": "alm-220",
@@ -6419,7 +6600,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/78001/size4/d2f8378a6b000c468063055d56aa4515.jpg"
   },
   {
     "id": "alm-221",
@@ -6447,7 +6629,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/718098/size4/7ce9adf05af275eab0dd97cacb072a00.jpg"
   },
   {
     "id": "alm-222",
@@ -6475,7 +6658,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/699943/size4/0e15576e8c73b38bf8275d54a2d1bf1d.jpg"
   },
   {
     "id": "alm-223",
@@ -6503,7 +6687,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/317844/size4/6e858f60143db0b2cf15a9974db9a960.jpg"
   },
   {
     "id": "alm-224",
@@ -6531,7 +6716,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/85544/size4/1bec959a236b14835f6f2e18865eb1e8.jpg"
   },
   {
     "id": "alm-225",
@@ -6559,7 +6745,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/166888/size4/060bebdc6d4a18e302683c688086acc2.jpg"
   },
   {
     "id": "alm-226",
@@ -6587,7 +6774,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/713565/size4/3722fa6d4b3c0bb3ae91f53e0a1f31e6.jpg"
   },
   {
     "id": "alm-227",
@@ -6615,7 +6803,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/722857/size4/6fb60231ce2aa30ab7722953f3d0c925.jpg"
   },
   {
     "id": "alm-228",
@@ -6643,7 +6832,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/716368/size4/ee43a59b4f099703679c055db6a7e43e.jpg"
   },
   {
     "id": "alm-229",
@@ -6699,7 +6889,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/646387/size4/ff1df4b48c7dcd320e96152a03c86f3e.jpg"
   },
   {
     "id": "alm-231",
@@ -6727,7 +6918,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/527548/size4/0bacccee2370b502d39470570de6f7ef.jpg"
   },
   {
     "id": "alm-232",
@@ -6755,7 +6947,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/85553/size4/8bc5506a0bf82b256a769430c410b2b0.jpg"
   },
   {
     "id": "alm-233",
@@ -6783,7 +6976,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/527532/size4/d554b58ed4a31df51c45cca2a90e4aa0.jpg"
   },
   {
     "id": "alm-234",
@@ -6811,7 +7005,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/352165/size4/2426a700524e1043bd3be342f25a7283.jpg"
   },
   {
     "id": "alm-235",
@@ -6839,7 +7034,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/130949/size4/77c40e84e52d5e0e58f8ed820bf5b5a5.jpg"
   },
   {
     "id": "alm-236",
@@ -6867,7 +7063,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/101403/size4/3b32b1a5599bdea05a05cffdf393c2aa.jpg"
   },
   {
     "id": "alm-237",
@@ -6895,7 +7092,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/723773/size4/59eacf74760a6366ea11b0ecbb11fde2.jpg"
   },
   {
     "id": "alm-238",
@@ -6923,7 +7121,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/183417/size4/243bc92631b2da5cd962099435acd65d.jpg"
   },
   {
     "id": "alm-239",
@@ -6951,7 +7150,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/717460/size4/371430b9f5e5718d4be9c13d0336e745.jpg"
   },
   {
     "id": "alm-240",
@@ -6979,7 +7179,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/329657/size4/e7b79cb9ca651a12689b993d2df91702.jpg"
   },
   {
     "id": "alm-241",
@@ -7007,7 +7208,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/183410/size4/b42217090b2df104a47c9d395e8bd87d.jpg"
   },
   {
     "id": "alm-242",
@@ -7035,7 +7237,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/183410/size4/b42217090b2df104a47c9d395e8bd87d.jpg"
   },
   {
     "id": "alm-243",
@@ -7063,7 +7266,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/337778/size4/b75d341e32e61211f2257441fcb6d587.jpg"
   },
   {
     "id": "alm-244",
@@ -7091,7 +7295,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan ke item resmi; jangan salin file sebelum lisensi item diperiksa",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Judul terdaftar pada katalog resmi tahun 2021; tautan menuju daftar koleksi tahun tersebut.",
-    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021"
+    "sumberKatalog": "Katalog Repositori Kemendikdasmen 2021",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/illustration_crops/716431/size4/6bc9c1887a5230a7f0d6708d14a9982d.jpg"
   },
   {
     "id": "alm-245",
@@ -7119,7 +7324,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan resmi; minta izin sebelum unggah ulang",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Materi edukasi astronomi.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://bosscha.itb.ac.id/download/materi-edukasi/Buku%20Pandunan%20Gerhana.webp"
   },
   {
     "id": "alm-246",
@@ -7147,7 +7353,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan resmi; minta izin sebelum unggah ulang",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Aktivitas pendamping.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://bosscha.itb.ac.id/download/materi-edukasi/Model%20Kertas%20Bumi-Bulan-Matahari.webp"
   },
   {
     "id": "alm-247",
@@ -7175,7 +7382,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Embed/tampilkan tautan resmi YouTube",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Video edukasi origami.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://i.ytimg.com/vi/oI_CVyC11zw/hqdefault.jpg"
   },
   {
     "id": "alm-248",
@@ -7203,7 +7411,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan/sematkan video resmi; jangan unduh ulang",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Kanal berisi dongeng, fabel, legenda, dan cerita rakyat.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://yt3.googleusercontent.com/4udYyk-KJ13Bsz2uJ2PlO6pUdpRg0RnTZZNbAbngOzVH-hDS3DXYrQvzWj1z9NzKvIAJGtOF=s900-c-k-c0x00ffffff-no-rj"
   },
   {
     "id": "alm-249",
@@ -7231,7 +7440,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Tautkan; salin hanya jika izin judul mengizinkan",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Katalog sumber; judul perlu dipilih satu per satu.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://d1n8mrduh1yfxn.cloudfront.net/meta-images/homepage.jpg"
   },
   {
     "id": "alm-250",
@@ -7259,7 +7469,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Unduh dan gunakan sesuai lisensi per judul dengan atribusi",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Platform menyatakan koleksi open-licensed; cek tiap item.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://storage.googleapis.com/static.storyweaver.org.in/seo_metadata/images/338/thumbnail/pb-storyweaver-logo-01-4acd9848be4ca29481825c4b23848b97.svg"
   },
   {
     "id": "alm-251",
@@ -7287,7 +7498,8 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Gunakan hanya karya yang status haknya jelas",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Katalog sumber, bukan satu judul.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://id.wikisource.org/static/images/icons/wikisource.svg"
   },
   {
     "id": "alm-252",
@@ -7315,6 +7527,7 @@ export const BATCH_1_BOOKS: Book[] = [
     "caraIntegrasi": "Gunakan hanya setelah verifikasi status hak di Indonesia",
     "statusKurasi": "Kandidat terkurasi awal – cek halaman item sebelum publikasi",
     "catatanKurasi": "Katalog sumber.",
-    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi"
+    "sumberKatalog": "Sumber pendidikan terbuka / kanal resmi",
+    "coverUrl": "https://upload.wikimedia.org/wikipedia/commons/5/59/Project_Gutenberg_logo.svg"
   }
 ];

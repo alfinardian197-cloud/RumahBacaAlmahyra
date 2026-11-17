@@ -16,7 +16,7 @@ import {
   UserCheck,
   Users,
 } from 'lucide-react';
-import { DEFAULT_HERO_IMAGE_URL, DEFAULT_LOGO_URL } from '../data/defaultDb';
+import { DEFAULT_LOGO_URL } from '../data/defaultDb';
 import type {
   AlmahyraDatabase,
   AuthSession,
@@ -39,6 +39,7 @@ import { LevelProgressionInfographic } from './AlmahyraInfographics';
 import { BookCard } from './BookCard';
 import { Card3DPassport } from './Card3DPassport';
 import { CreationGallerySection } from './CreationGallerySection';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { DigitalCertificateModal } from './DigitalCertificateModal';
 import { ResilientImage } from './ResilientImage';
 
@@ -350,12 +351,18 @@ export function MemberPortal({
                     Lanjutkan Bacaan Terakhir
                   </p>
                   <div className="flex items-center gap-3">
-                    <ResilientImage
-                      src={latestRead.book.coverUrl}
-                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                      alt={latestRead.book.judul}
-                      className="h-16 w-14 rounded-lg object-cover bg-[#EEF3F0] shrink-0"
-                    />
+                    <div className="h-16 w-14 overflow-hidden rounded-lg bg-[#EDF3EF] p-0.5 shrink-0">
+                      {latestRead.book.coverUrl ? (
+                        <ResilientImage
+                          src={latestRead.book.coverUrl}
+                          alt={latestRead.book.judul}
+                          className="h-full w-full object-contain"
+                          renderFallback={() => <CustomBookCoverSvg book={latestRead.book} />}
+                        />
+                      ) : (
+                        <CustomBookCoverSvg book={latestRead.book} />
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <h2 className="font-display text-sm font-bold text-[#111C17] truncate">
                         {latestRead.book.judul}

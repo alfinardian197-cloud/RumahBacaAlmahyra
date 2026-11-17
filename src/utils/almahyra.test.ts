@@ -743,5 +743,37 @@ test('Digital Flipbook builder guarantees even balanced spreads, hard covers, an
   }
 });
 
+test('Batch 1 books expose authentic source covers and preserve live BUDI image URLs', () => {
+  assert.equal(DEFAULT_DB.books.length, 252);
+
+  const budiSampleUrl =
+    'https://budi.kemendikdasmen.go.id/storage/image/CBT0TDuXY9ogbjg89kDhAb7grSNX7LB8F2ZQ0PhU.png';
+  assert.equal(normalizeAssetUrl(budiSampleUrl), budiSampleUrl);
+
+  const lraBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-001');
+  assert.ok(lraBook?.coverUrl?.startsWith('https://lh3.googleusercontent.com/'));
+
+  const budiBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-050');
+  assert.ok(budiBook?.coverUrl?.startsWith('https://budi.kemendikdasmen.go.id/storage/image/'));
+
+  const storyWeaverBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-238');
+  assert.ok(storyWeaverBook?.coverUrl?.includes('storyweaver.org.in'));
+
+  const booksWithCovers = DEFAULT_DB.books.filter((b) => Boolean(b.coverUrl?.trim()));
+  assert.ok(
+    booksWithCovers.length >= 210,
+    `Expected >= 210 books with authentic source covers, got ${booksWithCovers.length}`,
+  );
+
+  // Existing persisted Batch 1 records without coverUrl hydrate with the new authentic coverUrl
+  const staleSaved = {
+    books: [{ ...lraBook!, coverUrl: undefined }],
+  };
+  const hydrated = hydrateDatabaseWithDefaults(staleSaved, DEFAULT_DB);
+  const upgraded = hydrated.books.find((b) => b.kodeBuku === 'ALM-001');
+  assert.equal(upgraded?.coverUrl, lraBook?.coverUrl);
+});
+
+
 
 

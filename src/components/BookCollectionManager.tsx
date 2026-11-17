@@ -985,13 +985,13 @@ export function BookCollectionManager({
                     <tr key={b.id} className="hover:bg-[#F8FAF9]">
                       <td className="py-3 pr-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="h-10 w-10 overflow-hidden rounded-lg border border-[#E2E8E5] shrink-0 bg-[#F2F6F4]">
+                          <div className="h-10 w-10 overflow-hidden rounded-lg border border-[#E2E8E5] shrink-0 bg-[#EDF3EF] p-0.5">
                             {b.coverUrl ? (
                               <ResilientImage
                                 src={b.coverUrl}
-                                fallbackSrc={DEFAULT_BOOK_COVER_URL}
                                 alt={b.judul}
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-contain"
+                                renderFallback={() => <CustomBookCoverSvg book={b} />}
                               />
                             ) : (
                               <CustomBookCoverSvg book={b} />

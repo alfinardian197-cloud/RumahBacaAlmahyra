@@ -96,13 +96,17 @@ export function HomepageShowcaseStage({
               className="group flex flex-col justify-between rounded-xl border border-[#E7DEC6] bg-[#FFFDF6] p-2 text-left transition-all hover:-translate-y-0.5 hover:border-[#087C3B]/45 hover:shadow-xs"
             >
               <div>
-                <div className="aspect-4/3 w-full overflow-hidden rounded-lg bg-[#E7EEEA]">
+                <div
+                  className={`aspect-4/3 w-full overflow-hidden rounded-lg ${
+                    book.coverUrl ? 'bg-[#EDF3EF] p-1' : 'bg-[#E7EEEA]'
+                  }`}
+                >
                   {book.coverUrl ? (
                     <ResilientImage
                       src={book.coverUrl}
-                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                       alt={`Sampul ${book.judul}`}
-                      className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                      className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
+                      renderFallback={() => <CustomBookCoverSvg book={book} />}
                     />
                   ) : (
                     <CustomBookCoverSvg

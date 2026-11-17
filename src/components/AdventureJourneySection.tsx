@@ -379,13 +379,13 @@ export function AdventureJourneySection({
                     }}
                     className="flex items-center gap-3 rounded-xl border border-[#DCE4DF] bg-white p-2.5 text-left transition-colors hover:border-[#BFD0C7]"
                   >
-                    <div className="h-12 w-12 overflow-hidden rounded-lg bg-[#EEF3F0] shrink-0">
+                    <div className="h-12 w-12 overflow-hidden rounded-lg bg-[#EDF3EF] p-0.5 shrink-0">
                       {book.coverUrl ? (
                         <ResilientImage
                           src={book.coverUrl}
-                          fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                           alt={book.judul}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
+                          renderFallback={() => <CustomBookCoverSvg book={book} />}
                         />
                       ) : (
                         <CustomBookCoverSvg book={book} />
@@ -420,13 +420,13 @@ export function AdventureJourneySection({
           {activeStepDef.stepNumber === 4 && spotlightBook && (
             <div className="space-y-4">
               <div className="flex flex-col gap-3 rounded-xl border border-[#DCE4DF] bg-white p-4 sm:flex-row sm:items-center">
-                <div className="h-24 w-24 overflow-hidden rounded-xl bg-[#EEF3F0] shrink-0">
+                <div className="h-24 w-24 overflow-hidden rounded-xl bg-[#EDF3EF] p-1 shrink-0">
                   {spotlightBook.coverUrl ? (
                     <ResilientImage
                       src={spotlightBook.coverUrl}
-                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                       alt={spotlightBook.judul}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
+                      renderFallback={() => <CustomBookCoverSvg book={spotlightBook} />}
                     />
                   ) : (
                     <CustomBookCoverSvg book={spotlightBook} />

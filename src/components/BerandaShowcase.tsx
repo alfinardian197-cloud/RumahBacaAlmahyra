@@ -194,13 +194,13 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#EDF3EF] p-0.5">
                   {b.coverUrl ? (
                     <ResilientImage
                       src={b.coverUrl}
                       alt={`Sampul ${b.judul}`}
                       loading="eager"
-                      className="h-full w-full object-cover object-[50%_28%]"
+                      className="h-full w-full object-contain"
                       renderFallback={() => <CustomBookCoverSvg book={b} />}
                     />
                   ) : (
@@ -251,13 +251,13 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#EDF3EF] p-0.5">
                   {b.coverUrl ? (
                     <ResilientImage
                       src={b.coverUrl}
                       alt={`Sampul ${b.judul}`}
                       loading="eager"
-                      className="h-full w-full object-cover object-[50%_28%]"
+                      className="h-full w-full object-contain"
                       renderFallback={() => <CustomBookCoverSvg book={b} />}
                     />
                   ) : (
@@ -308,13 +308,13 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#EDF3EF] p-0.5">
                   {b.coverUrl ? (
                     <ResilientImage
                       src={b.coverUrl}
                       alt={`Sampul ${b.judul}`}
                       loading="eager"
-                      className="h-full w-full object-cover object-[50%_28%]"
+                      className="h-full w-full object-contain"
                       renderFallback={() => <CustomBookCoverSvg book={b} />}
                     />
                   ) : (

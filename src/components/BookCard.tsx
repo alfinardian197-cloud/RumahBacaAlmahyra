@@ -59,13 +59,19 @@ export function BookCard({
   return (
     <article className="book-3d-card flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-4 transition-colors hover:border-[#BFD0C7]">
       <div>
-        <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-[#EEF3F0] bg-[#F2F6F4]">
+        <div
+          className={`relative aspect-4/3 w-full overflow-hidden rounded-xl border border-[#EEF3F0] ${
+            hasCoverImage && book.coverUrl
+              ? 'bg-gradient-to-br from-[#EAF2ED] via-[#F7F9F7] to-[#FDF9EE] p-1.5'
+              : 'bg-[#F2F6F4]'
+          }`}
+        >
           {hasCoverImage && book.coverUrl ? (
             <ResilientImage
               src={book.coverUrl}
               alt={`Sampul ${book.judul}`}
               loading="eager"
-              className="h-full w-full object-cover object-[50%_28%]"
+              className="h-full w-full object-contain drop-shadow-xs"
               renderFallback={() => <CustomBookCoverSvg book={book} />}
             />
           ) : (

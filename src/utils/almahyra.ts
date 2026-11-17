@@ -947,10 +947,6 @@ export function normalizeAssetUrl(url: string | undefined): string | undefined {
   if (trimmed.startsWith('/public/assets/')) {
     return `/assets/${trimmed.slice('/public/assets/'.length)}`;
   }
-  const budiPrefix = 'https://budi.kemendikdasmen.go.id/storage/image/';
-  if (trimmed.startsWith(budiPrefix)) {
-    return `/images/budi/${trimmed.slice(budiPrefix.length)}`;
-  }
   return trimmed;
 }
 

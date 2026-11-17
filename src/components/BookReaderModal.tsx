@@ -974,13 +974,13 @@ export function BookReaderModal({
                       onClick={() => onSwitchBook(rec)}
                       className="flex items-center gap-3 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-3 text-left transition-colors hover:border-[#BFD0C7] dark:border-[#243B30] dark:bg-[#122019]"
                     >
-                      <div className="h-14 w-16 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                      <div className="h-14 w-16 overflow-hidden rounded-lg shrink-0 bg-[#EDF3EF] p-0.5">
                         {rec.coverUrl ? (
                           <ResilientImage
                             src={rec.coverUrl}
                             alt={`Sampul ${rec.judul}`}
                             loading="eager"
-                            className="h-full w-full object-cover object-[50%_28%]"
+                            className="h-full w-full object-contain"
                             renderFallback={() => <CustomBookCoverSvg book={rec} />}
                           />
                         ) : (
