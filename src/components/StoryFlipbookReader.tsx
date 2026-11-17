@@ -10,17 +10,13 @@ import {
 import { createPortal } from 'react-dom';
 import { PageFlip } from 'page-flip';
 import {
-  Award,
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
-  HelpCircle,
   List,
   Maximize2,
   Minimize2,
   RotateCcw,
-  Sparkles,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
@@ -28,10 +24,8 @@ import type { Book } from '../types/almahyra';
 import {
   getFlipbookVisibleIndices,
   type FlipbookPageEntry,
-  type LocalRealActionRecord,
 } from '../utils/almahyra';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
-import { RealActionMissionCard } from './RealActionMissionCard';
 import { ResilientImage } from './ResilientImage';
 
 export interface StoryFlipbookHandle {
@@ -48,16 +42,9 @@ interface StoryFlipbookReaderProps {
   fontScale: 'normal' | 'large' | 'xlarge';
   primaryColor: string;
   accentColor: string;
-  existingRealActionRecord?: LocalRealActionRecord;
-  savingStamp?: boolean;
   isFullscreen: boolean;
-  recommendedBooks?: Book[];
   onPageChange: (nextIdx: number, isPortrait: boolean) => void;
   onOrientationChange?: (isPortrait: boolean) => void;
-  onQuickClaimStamp: () => void;
-  onClaimRealAction: (book: Book, note?: string) => { alreadyClaimed: boolean };
-  onOpenQuiz: () => void;
-  onSwitchBook?: (book: Book) => void;
   onToggleFullscreen: () => void;
 }
 
@@ -88,16 +75,9 @@ export const StoryFlipbookReader = forwardRef<
     fontScale,
     primaryColor,
     accentColor,
-    existingRealActionRecord,
-    savingStamp = false,
     isFullscreen,
-    recommendedBooks = [],
     onPageChange,
     onOrientationChange,
-    onQuickClaimStamp,
-    onClaimRealAction,
-    onOpenQuiz,
-    onSwitchBook,
     onToggleFullscreen,
   },
   ref,
@@ -113,7 +93,7 @@ export const StoryFlipbookReader = forwardRef<
   const [showToc, setShowToc] = useState<boolean>(false);
   const [stageDims, setStageDims] = useState<{ w: number; h: number }>({
     w: 960,
-    h: 620,
+    h: 580,
   });
   const [portalMount, setPortalMount] = useState<PortalMountState | null>(null);
 
@@ -142,7 +122,7 @@ export const StoryFlipbookReader = forwardRef<
       if (!rect) return;
       setStageDims({
         w: Math.max(280, Math.floor(rect.width)),
-        h: Math.max(340, Math.floor(rect.height)),
+        h: Math.max(320, Math.floor(rect.height)),
       });
     });
     ro.observe(el);
@@ -171,15 +151,11 @@ export const StoryFlipbookReader = forwardRef<
       return pageEl;
     });
 
-    // Prevent StPageFlip drag/flip handlers from swallowing clicks inside interactive buttons, checkboxes, inputs, or links
+    // Prevent StPageFlip drag/flip handlers from swallowing clicks inside interactive buttons or links
     const stopInteractiveEvent = (evt: Event) => {
       const target = evt.target as HTMLElement | null;
       if (!target) return;
-      if (
-        target.closest(
-          'button, a, input, textarea, select, label, [data-no-flip="true"]',
-        )
-      ) {
+      if (target.closest('button, a, [data-no-flip="true"]')) {
         evt.stopPropagation();
       }
     };
@@ -192,14 +168,15 @@ export const StoryFlipbookReader = forwardRef<
         ? currentPageIndex
         : 0;
 
+    // Rasio 500:520 lebih proporsional & lega agar teks cerita mengisi halaman secara penuh tanpa ruang kosong di bawah
     const pf = new PageFlip(bookBlock, {
-      width: 470,
-      height: 600,
+      width: 500,
+      height: 520,
       size: 'stretch',
       minWidth: 260,
       maxWidth: 560,
-      minHeight: 360,
-      maxHeight: 740,
+      minHeight: 320,
+      maxHeight: 540,
       startPage: startAt,
       drawShadow: true,
       maxShadowOpacity: 0.32,
@@ -302,10 +279,10 @@ export const StoryFlipbookReader = forwardRef<
     const verticalPadding = 20;
     const availW = Math.max(260, stageDims.w - horizontalPadding);
     const availH = Math.max(320, stageDims.h - verticalPadding);
-    const singleRatio = 470 / 600;
+    const singleRatio = 500 / 520;
     const targetAspect = isPortrait ? singleRatio : singleRatio * 2;
     const maxByHeight = Math.floor(availH * targetAspect);
-    const baseFit = Math.min(availW, maxByHeight, isPortrait ? 440 : 1020);
+    const baseFit = Math.min(availW, maxByHeight, isPortrait ? 480 : 1040);
     return Math.max(260, Math.min(availW, Math.round(baseFit * zoomScale)));
   }, [isPortrait, stageDims.h, stageDims.w, zoomScale]);
 
@@ -326,19 +303,27 @@ export const StoryFlipbookReader = forwardRef<
     return `Halaman ${currentPageIndex + 1} dari ${flipPages.length}`;
   }, [currentPageIndex, flipPages.length, visibleIndices]);
 
-  // Body typography scale inside flipbook pages
-  const storyTextClass =
-    fontScale === 'xlarge'
-      ? 'text-[16px] sm:text-[18px] lg:text-[20px] leading-[1.72]'
-      : fontScale === 'large'
-        ? 'text-[14px] sm:text-[16px] lg:text-[17.5px] leading-[1.68]'
-        : 'text-[13px] sm:text-[14.5px] lg:text-[15.5px] leading-[1.65]';
+  // Story typography helpers — scale text slightly fuller on prose-only pages so sheets feel richly filled
+  const getStoryTextClass = (hasMediaOrMoral: boolean) => {
+    if (fontScale === 'xlarge') {
+      return hasMediaOrMoral
+        ? 'text-[16px] sm:text-[18px] lg:text-[19px] leading-[1.7]'
+        : 'text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.78]';
+    }
+    if (fontScale === 'large') {
+      return hasMediaOrMoral
+        ? 'text-[14.5px] sm:text-[16px] lg:text-[17px] leading-[1.68]'
+        : 'text-[16.5px] sm:text-[18px] lg:text-[19.5px] leading-[1.76]';
+    }
+    return hasMediaOrMoral
+      ? 'text-[13.5px] sm:text-[14.5px] lg:text-[15.5px] leading-[1.65]'
+      : 'text-[15px] sm:text-[16px] lg:text-[17px] leading-[1.74]';
+  };
 
   const isComic = book.kategori === 'Komik Edukasi';
   const atCover = currentPageIndex === 0;
   const atEnd = currentPageIndex >= flipPages.length - 1;
 
-  // Compute clean TOC spread items
   const tocItems = useMemo(() => {
     return flipPages.map((p) => ({
       index: p.index,
@@ -349,7 +334,7 @@ export const StoryFlipbookReader = forwardRef<
   }, [flipPages, visibleIndices]);
 
   const renderPageContent = (page: FlipbookPageEntry) => {
-    // 1. FRONT COVER
+    // 1. FRONT COVER (Sampul Depan Murni)
     if (page.kind === 'cover') {
       return (
         <div
@@ -369,29 +354,31 @@ export const StoryFlipbookReader = forwardRef<
             <span>Rumah Baca Almahyra</span>
           </div>
 
-          {/* Center Book Artwork Frame */}
-          <div className="relative z-10 mx-auto my-2 flex w-full max-w-[230px] sm:max-w-[260px] flex-1 min-h-0 flex-col items-center justify-center">
-            <div
-              className={`aspect-[4/3] w-full overflow-hidden rounded-2xl border-2 border-amber-300/70 shadow-lg ${
-                book.coverUrl ? 'bg-[#05351D]/65 p-1.5' : 'bg-white/10'
-              }`}
-            >
-              {book.coverUrl ? (
+          {/* Center Book Artwork Frame — fits natural cover ratio without empty sidebars */}
+          <div className="relative z-10 my-2 flex flex-1 min-h-0 flex-col items-center justify-center pl-2">
+            {book.coverUrl ? (
+              <div className="w-fit max-w-full overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-[#05351D]/70 p-1.5 shadow-xl">
                 <ResilientImage
                   src={book.coverUrl}
                   alt={`Sampul ${book.judul}`}
                   loading="eager"
-                  className="h-full w-full object-contain drop-shadow-md"
-                  renderFallback={() => <CustomBookCoverSvg book={book} />}
+                  className="block max-h-[215px] sm:max-h-[245px] w-auto max-w-full rounded-xl object-contain"
+                  renderFallback={() => (
+                    <div className="aspect-[3/4] w-[155px] sm:w-[175px]">
+                      <CustomBookCoverSvg book={book} />
+                    </div>
+                  )}
                 />
-              ) : (
+              </div>
+            ) : (
+              <div className="aspect-[3/4] w-[155px] sm:w-[175px] overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-white/10 shadow-xl">
                 <CustomBookCoverSvg book={book} />
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
-          {/* Title, Clean Metadata Line & Buka Buku CTA */}
-          <div className="relative z-10 space-y-2.5 pl-2">
+          {/* Title, Author & Buka Buku CTA */}
+          <div className="relative z-10 space-y-2 pl-2">
             <p className="text-[11px] sm:text-xs font-semibold text-amber-200 truncate">
               {book.kategori} · {book.jenjangPembaca ?? 'Semua Usia'} ·{' '}
               {book.estimasiMenit ?? 5} mnt
@@ -432,92 +419,63 @@ export const StoryFlipbookReader = forwardRef<
       );
     }
 
-    // 2. BACK COVER
+    // 2. BACK COVER (Penutup Buku Murni — Tanpa Kuis / Rekomendasi / Klaim Poin)
     if (page.kind === 'back-cover') {
       return (
         <div
-          className="flipbook-hard-cover relative flex h-full w-full flex-col justify-between overflow-hidden rounded-l-2xl rounded-r-md p-5 sm:p-6 text-white"
+          className="flipbook-hard-cover relative flex h-full w-full flex-col justify-between overflow-hidden rounded-l-2xl rounded-r-md p-5 sm:p-7 text-white"
           style={{
             background: `linear-gradient(155deg, #075A32 0%, ${primaryColor} 100%)`,
           }}
         >
-          <div className="space-y-3">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-amber-200">
-              {page.chapterLabel} · Dusun Grontol, Desa Tlogosari
-            </p>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-black/25 via-white/10 to-transparent"
+          />
+
+          <div className="relative z-10 flex items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-amber-200 pr-2">
+            <span>{page.chapterLabel}</span>
+            <span>Rumah Baca Almahyra</span>
+          </div>
+
+          <div className="relative z-10 my-auto space-y-4 py-2 pr-2">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-300/60 bg-white/15 text-amber-200 shadow-md">
+              <BookOpen className="h-6 w-6" aria-hidden="true" />
+            </div>
             <h3 className="font-display text-xl sm:text-2xl font-extrabold leading-snug text-white">
               {page.heading}
             </h3>
-            <p className="text-xs sm:text-sm leading-relaxed text-emerald-50">
+            <p className="text-sm sm:text-base leading-relaxed text-emerald-50">
               {page.body}
             </p>
+            <div className="rounded-xl border border-white/25 bg-white/10 px-4 py-3 text-xs leading-relaxed text-emerald-100">
+              Kisah "{book.judul}" telah selesai dibaca. Kamu dapat membalik kembali halaman untuk mengulang cerita atau memilih tab Aktivitas &amp; Info di bilah atas.
+            </div>
           </div>
 
-          {recommendedBooks.length > 0 && (
-            <div className="space-y-2 my-2" data-no-flip="true">
-              <p className="flex items-center gap-1.5 text-xs font-bold text-amber-200">
-                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                Rekomendasi Cerita Berikutnya
-              </p>
-              <div className="space-y-2">
-                {recommendedBooks.slice(0, 2).map((rec) => (
-                  <button
-                    key={rec.id}
-                    type="button"
-                    onClick={() => onSwitchBook?.(rec)}
-                    className="flex w-full items-center gap-2.5 rounded-xl border border-white/25 bg-white/10 p-2 text-left transition-colors hover:bg-white/20"
-                  >
-                    <div className="h-12 w-12 overflow-hidden rounded-lg shrink-0 bg-white/15 p-0.5">
-                      {rec.coverUrl ? (
-                        <ResilientImage
-                          src={rec.coverUrl}
-                          alt={`Sampul ${rec.judul}`}
-                          loading="eager"
-                          className="h-full w-full object-contain"
-                          renderFallback={() => <CustomBookCoverSvg book={rec} />}
-                        />
-                      ) : (
-                        <CustomBookCoverSvg book={rec} />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] text-amber-200 truncate">
-                        {rec.kategori} · {rec.estimasiMenit ?? 5} mnt
-                      </p>
-                      <p className="font-display text-xs sm:text-sm font-bold text-white truncate">
-                        {rec.judul}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-wrap items-center gap-2 pt-2">
+          <div className="relative z-10 flex items-center justify-between gap-2 pt-2 pr-2">
+            <span className="text-[11px] text-emerald-100 truncate">
+              {book.kodeBuku} · {book.penulis}
+            </span>
             <button
               type="button"
               onClick={() => flipToPage(0)}
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-white/35 bg-white/15 px-3.5 py-2 text-xs font-bold text-white hover:bg-white/25 whitespace-nowrap shrink-0"
-            >
-              <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Baca Dari Awal</span>
-            </button>
-            <button
-              type="button"
-              onClick={onOpenQuiz}
               style={{ backgroundColor: accentColor }}
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap shrink-0"
+              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-extrabold text-[#10281B] shadow-md hover:opacity-95 whitespace-nowrap shrink-0"
             >
-              <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Buka Kuis Cerita</span>
+              <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>Baca Dari Awal</span>
             </button>
           </div>
         </div>
       );
     }
 
-    // 3. INNER SOFT PAPER PAGES (opener, story, info, discussion, closing)
+    // 3. INNER SOFT PAPER PAGES (Hanya Opener Pembuka Cerita & Halaman Cerita Murni)
+    const hasIllustration =
+      page.kind === 'opener' || Boolean(page.hasIllustrationFrame);
+    const hasMediaOrMoral = hasIllustration || Boolean(page.moralMessage);
+
     return (
       <article className="flipbook-paper-sheet relative flex h-full w-full flex-col justify-between p-4 sm:p-6">
         {/* Top Page Running Header */}
@@ -533,245 +491,140 @@ export const StoryFlipbookReader = forwardRef<
           </span>
         </header>
 
-        {/* Scrollable Middle Safe Body */}
-        <div
-          data-no-flip={page.kind === 'closing' ? 'true' : undefined}
-          className="my-2 flex-1 min-h-0 overflow-y-auto pr-1 space-y-3"
-        >
-          {/* OPENER */}
-          {page.kind === 'opener' && (
-            <div className="space-y-3">
-              <div
-                className={`mx-auto aspect-[16/10] w-full max-w-[290px] overflow-hidden rounded-xl border border-[#DFD4BC] shadow-xs dark:border-[#274436] ${
-                  book.coverUrl
-                    ? 'bg-[#EFE8D5] p-1.5 dark:bg-[#0D1A14]'
-                    : 'bg-[#F3ECD9] dark:bg-[#0D1A14]'
-                }`}
-              >
-                {book.coverUrl ? (
-                  <ResilientImage
-                    src={book.coverUrl}
-                    alt={`Ilustrasi pembuka ${book.judul}`}
-                    loading="eager"
-                    className="h-full w-full object-contain"
-                    renderFallback={() => <CustomBookCoverSvg book={book} />}
-                  />
-                ) : (
-                  <CustomBookCoverSvg book={book} />
-                )}
-              </div>
+        {/* Vertically Balanced Middle Reading Body — centers compact passages naturally to eliminate empty bottom voids */}
+        <div className="my-2 flex-1 min-h-0 overflow-y-auto pr-1 flex flex-col">
+          <div className="my-auto space-y-4 py-1">
+            {/* OPENER */}
+            {page.kind === 'opener' && (
+              <>
+                <div className="flex justify-center">
+                  {book.coverUrl ? (
+                    <div className="w-fit max-w-full overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#EFE8D5] p-1.5 shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                      <ResilientImage
+                        src={book.coverUrl}
+                        alt={`Ilustrasi pembuka ${book.judul}`}
+                        loading="eager"
+                        className="block max-h-[165px] sm:max-h-[185px] w-auto max-w-full rounded-lg object-contain"
+                        renderFallback={() => (
+                          <div className="aspect-[3/4] w-[130px] sm:w-[145px]">
+                            <CustomBookCoverSvg book={book} />
+                          </div>
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[3/4] w-[130px] sm:w-[145px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                      <CustomBookCoverSvg book={book} />
+                    </div>
+                  )}
+                </div>
 
-              <div className="space-y-1.5">
-                <h2 className="font-display text-lg sm:text-xl font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]">
-                  {book.judul}
-                </h2>
-                <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
-                  Penulis: {book.penulis} · {book.zona}
-                </p>
-              </div>
-
-              <p className={`text-[#212E26] dark:text-[#E2ECE5] ${storyTextClass}`}>
-                {page.body}
-              </p>
-
-              <p className="rounded-xl border border-[#DFD4BC] bg-[#F5EFE0] px-3 py-2 text-xs text-[#435348] dark:border-[#274436] dark:bg-[#172B22] dark:text-[#B9CFC3]">
-                Balik sudut halaman ke kanan atau tekan panah kanan untuk mulai membaca isi cerita!
-              </p>
-            </div>
-          )}
-
-          {/* STORY PAGE */}
-          {page.kind === 'story' && (
-            <div className="space-y-3">
-              {page.storyPageNumber === 1 && (
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-display text-base sm:text-lg font-extrabold text-[#16221A] dark:text-[#F1F7F3]">
+                <div className="space-y-1 text-center">
+                  <h2 className="font-display text-lg sm:text-xl font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]">
                     {book.judul}
+                  </h2>
+                  <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                    Penulis: {book.penulis}
+                  </p>
+                </div>
+
+                <p
+                  className={`text-[#212E26] dark:text-[#E2ECE5] first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:font-display first-letter:text-4xl first-letter:font-extrabold first-letter:leading-[0.86] first-letter:text-[#087C3B] dark:first-letter:text-[#6EE7B7] ${getStoryTextClass(
+                    true,
+                  )}`}
+                >
+                  {page.body}
+                </p>
+              </>
+            )}
+
+            {/* PURE STORY PAGE */}
+            {page.kind === 'story' && (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-display text-base sm:text-lg font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]">
+                    {page.storyPageNumber === 1 ? book.judul : page.chapterLabel}
                   </h3>
-                  {isComic && (
+                  {page.storyPageNumber === 1 && isComic && (
                     <span
-                      className="rounded-md px-2 py-0.5 text-[10px] font-bold text-white"
+                      className="rounded-md px-2 py-0.5 text-[10px] font-bold text-[#10281B]"
                       style={{ backgroundColor: accentColor }}
                     >
                       Adegan Komik
                     </span>
                   )}
                 </div>
-              )}
 
-              {page.hasIllustrationFrame && (
-                <div
-                  className={`aspect-[16/9] max-h-[160px] w-full overflow-hidden rounded-xl border border-[#DFD4BC] shadow-xs dark:border-[#274436] ${
-                    book.coverUrl
-                      ? 'bg-[#EFE8D5] p-1.5 dark:bg-[#0D1A14]'
-                      : 'bg-[#F3ECD9] dark:bg-[#0D1A14]'
-                  }`}
+                {page.hasIllustrationFrame && (
+                  <div className="flex justify-center">
+                    {book.coverUrl ? (
+                      <div className="w-fit max-w-full overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#EFE8D5] p-1.5 shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                        <ResilientImage
+                          src={book.coverUrl}
+                          alt={`Ilustrasi cerita ${book.judul}`}
+                          loading="eager"
+                          className="block max-h-[160px] sm:max-h-[180px] w-auto max-w-full rounded-lg object-contain"
+                          renderFallback={() => (
+                            <div className="aspect-[3/4] w-[125px] sm:w-[140px]">
+                              <CustomBookCoverSvg book={book} />
+                            </div>
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-[3/4] w-[125px] sm:w-[140px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                        <CustomBookCoverSvg book={book} />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <p
+                  className={`whitespace-pre-line font-normal text-[#1E2B22] dark:text-[#E5EFE9] first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:font-display first-letter:text-4xl sm:first-letter:text-[44px] first-letter:font-extrabold first-letter:leading-[0.86] first-letter:text-[#087C3B] dark:first-letter:text-[#6EE7B7] ${getStoryTextClass(
+                    hasMediaOrMoral,
+                  )}`}
                 >
-                  {book.coverUrl ? (
-                    <ResilientImage
-                      src={book.coverUrl}
-                      alt={`Ilustrasi adegan ${book.judul}`}
-                      loading="eager"
-                      className="h-full w-full object-contain"
-                      renderFallback={() => <CustomBookCoverSvg book={book} />}
-                    />
-                  ) : (
-                    <CustomBookCoverSvg book={book} />
-                  )}
-                </div>
-              )}
-
-              <p
-                className={`whitespace-pre-line font-normal text-[#1E2B22] dark:text-[#E5EFE9] ${storyTextClass}`}
-              >
-                {page.body}
-              </p>
-
-              {page.moralMessage && (
-                <div className="rounded-xl border border-[#CEDDC3] bg-[#EFF6E9] p-3 dark:border-[#2A4939] dark:bg-[#162B20]">
-                  <p
-                    className="text-[11px] font-extrabold uppercase tracking-wider"
-                    style={{ color: 'var(--brand-primary-ink)' }}
-                  >
-                    Pesan Petualangan Literasi
-                  </p>
-                  <p className="mt-1 text-xs sm:text-sm leading-relaxed text-[#1C2820] dark:text-[#ECF3EE]">
-                    {page.moralMessage}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* INFORMATION & OFFICIAL SOURCE PAGE */}
-          {page.kind === 'info' && (
-            <div className="space-y-3">
-              <h3 className="font-display text-lg sm:text-xl font-extrabold text-[#16221A] dark:text-[#F1F7F3]">
-                {page.heading}
-              </h3>
-
-              <div className="rounded-xl border border-[#DFD4BC] bg-[#F7F1E2] p-3.5 text-xs space-y-2 dark:border-[#274436] dark:bg-[#172B22]">
-                <p className="font-bold text-[#16221A] dark:text-white">
-                  {book.kodeBuku} · {book.sumberKatalog ?? 'Master Katalog Batch 1'}
-                </p>
-                <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-[#45564B] dark:text-[#B4C9BE]">
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-wider opacity-75">Subtema</dt>
-                    <dd className="font-semibold text-[#16221A] dark:text-[#ECF3EE]">
-                      {book.subtema || book.kategori}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-wider opacity-75">Format</dt>
-                    <dd className="font-semibold text-[#16221A] dark:text-[#ECF3EE]">
-                      {book.format || 'Buku Digital'}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-wider opacity-75">Usia / Jenjang</dt>
-                    <dd className="font-semibold text-[#16221A] dark:text-[#ECF3EE]">
-                      {book.sasaranUsia || book.jenjangPembaca || 'Semua Usia'}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-wider opacity-75">Lisensi</dt>
-                    <dd className="font-semibold text-[#16221A] dark:text-[#ECF3EE]">
-                      {book.lisensi || 'Lisensi Terbuka'}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-
-              <p className="text-xs sm:text-sm leading-relaxed text-[#2D3E33] dark:text-[#D1E2D8]">
-                {page.body}
-              </p>
-
-              {book.sumberResmiUrl && (
-                <a
-                  href={book.sumberResmiUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ backgroundColor: primaryColor }}
-                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap"
-                >
-                  <span>Buka Sumber Resmi</span>
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                </a>
-              )}
-            </div>
-          )}
-
-          {/* FAMILY DISCUSSION PAGE (balances double-page spreads cleanly) */}
-          {page.kind === 'discussion' && (
-            <div className="space-y-3">
-              <h3 className="font-display text-lg sm:text-xl font-extrabold text-[#16221A] dark:text-[#F1F7F3]">
-                {page.heading}
-              </h3>
-              <p className="text-xs sm:text-sm leading-relaxed text-[#2D3E33] dark:text-[#D1E2D8]">
-                {page.body}
-              </p>
-              <ol className="space-y-2">
-                {(page.discussionPrompts ?? []).map((prompt, pIdx) => (
-                  <li
-                    key={prompt}
-                    className="flex items-start gap-2.5 rounded-xl border border-[#DFD4BC] bg-[#F7F1E2] p-3 text-xs sm:text-sm text-[#1C2820] dark:border-[#274436] dark:bg-[#172B22] dark:text-[#ECF3EE]"
-                  >
-                    <span
-                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[11px] font-bold text-white"
-                      style={{ backgroundColor: primaryColor }}
-                    >
-                      {pIdx + 1}
-                    </span>
-                    <span>{prompt}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {/* CLOSING PAGE + REAL ACTION MISSION + STAMP CLAIM */}
-          {page.kind === 'closing' && (
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <h3 className="font-display text-lg font-extrabold text-[#16221A] dark:text-[#F1F7F3]">
-                  {page.heading}
-                </h3>
-                <p className="text-xs leading-relaxed text-[#384A3E] dark:text-[#B9CFC3]">
                   {page.body}
                 </p>
-              </div>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  disabled={savingStamp}
-                  onClick={onQuickClaimStamp}
-                  style={{ backgroundColor: accentColor }}
-                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold text-[#10281B] shadow-xs hover:opacity-95 disabled:opacity-60 whitespace-nowrap"
-                >
-                  <Award className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>Selesai Baca &amp; Klaim Stempel</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onOpenQuiz}
-                  style={{ backgroundColor: primaryColor }}
-                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap"
-                >
-                  <HelpCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>Kerjakan Kuis</span>
-                </button>
-              </div>
+                {page.moralMessage && (
+                  <div className="rounded-xl border border-[#CEDDC3] bg-[#EFF6E9] p-3.5 dark:border-[#2A4939] dark:bg-[#162B20]">
+                    <p
+                      className="text-[11px] font-extrabold uppercase tracking-wider"
+                      style={{ color: 'var(--brand-primary-ink)' }}
+                    >
+                      Pesan Cerita
+                    </p>
+                    <p className="mt-1 text-xs sm:text-sm leading-relaxed text-[#1C2820] dark:text-[#ECF3EE]">
+                      {page.moralMessage}
+                    </p>
+                  </div>
+                )}
 
-              <div className="origin-top">
-                <RealActionMissionCard
-                  book={book}
-                  existingRecord={existingRealActionRecord}
-                  onClaimRealAction={onClaimRealAction}
-                />
-              </div>
-            </div>
-          )}
+                {/* Subtle botanical storybook flourish when page is pure prose so it reads cleanly with zero clutter */}
+                {!hasMediaOrMoral && (
+                  <div
+                    aria-hidden="true"
+                    className="flex items-center justify-center gap-3 pt-2 text-[#B8A98A] dark:text-[#355947]"
+                  >
+                    <span className="h-px w-12 bg-current opacity-60" />
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-4 w-4 fill-none stroke-current"
+                      strokeWidth="1.8"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6.5C9.5 4.8 6.2 4.8 3.5 6v12c2.7-1.2 6-1.2 8.5.5m0-12c2.5-1.7 5.8-1.7 8.5-.5v12c-2.7-1.2-6-1.2-8.5.5m0-12v12"
+                      />
+                    </svg>
+                    <span className="h-px w-12 bg-current opacity-60" />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Bottom Paper Page Corner Indicator */}
@@ -813,7 +666,7 @@ export const StoryFlipbookReader = forwardRef<
                 className="absolute left-0 top-11 z-40 w-72 max-h-72 overflow-y-auto rounded-2xl border border-[#D4CCB8] bg-[#FFFDF7] p-2 shadow-xl dark:border-[#2D473B] dark:bg-[#14251D]"
               >
                 <p className="px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
-                  Pilih Halaman Buku
+                  Pilih Halaman Cerita
                 </p>
                 <div className="space-y-1">
                   {tocItems.map((item) => (

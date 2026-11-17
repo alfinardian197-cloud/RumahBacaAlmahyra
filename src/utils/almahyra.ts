@@ -441,9 +441,6 @@ export type FlipbookPageKind =
   | 'cover'
   | 'opener'
   | 'story'
-  | 'info'
-  | 'discussion'
-  | 'closing'
   | 'back-cover';
 
 export interface FlipbookPageEntry {
@@ -458,7 +455,6 @@ export interface FlipbookPageEntry {
   moralMessage?: string;
   storyPageNumber?: number;
   totalStoryPages?: number;
-  discussionPrompts?: string[];
   hasIllustrationFrame?: boolean;
 }
 
@@ -469,19 +465,22 @@ export function buildFlipbookPages(
   const storyChunks = getBookReadablePages(book, maxCharsPerPage);
   const insideDraft: Omit<FlipbookPageEntry, 'index'>[] = [];
 
-  // 1. Pembuka cerita (halaman kiri saat buku pertama kali dibuka)
-  insideDraft.push({
-    id: `${book.id}-opener`,
-    kind: 'opener',
-    density: 'soft',
-    tocTitle: 'Pembuka & Pengantar Cerita',
-    chapterLabel: 'Pembuka Cerita',
-    heading: book.judul,
-    body: book.deskripsi,
-    hasIllustrationFrame: true,
-  });
+  // Sertakan Pembuka Cerita bila jumlah bab ganjil agar seluruh spread dalam buku genap & penuh
+  const needsOpenerForEvenSpread = storyChunks.length % 2 === 1;
+  if (needsOpenerForEvenSpread) {
+    insideDraft.push({
+      id: `${book.id}-opener`,
+      kind: 'opener',
+      density: 'soft',
+      tocTitle: 'Pembuka Cerita',
+      chapterLabel: 'Pembuka Cerita',
+      heading: book.judul,
+      body: book.deskripsi,
+      hasIllustrationFrame: true,
+    });
+  }
 
-  // 2. Halaman isi cerita (berpasangan dengan selingan ilustrasi visual)
+  // Halaman isi cerita murni tanpa sisipan fitur lain (kuis, misi, atau tabel info berada di luar flipbook)
   storyChunks.forEach((chunk, idx) => {
     insideDraft.push({
       id: `${book.id}-story-${idx + 1}`,
@@ -494,52 +493,8 @@ export function buildFlipbookPages(
       moralMessage: chunk.pesanMoral,
       storyPageNumber: idx + 1,
       totalStoryPages: storyChunks.length,
-      hasIllustrationFrame: idx % 2 === 0,
+      hasIllustrationFrame: !needsOpenerForEvenSpread && idx === 0,
     });
-  });
-
-  // 3. Halaman Informasi Buku, Kurasi & Sumber Resmi
-  insideDraft.push({
-    id: `${book.id}-info`,
-    kind: 'info',
-    density: 'soft',
-    tocTitle: 'Informasi & Sumber Resmi',
-    chapterLabel: 'Informasi Bacaan',
-    heading: 'Fakta Buku & Sumber Resmi',
-    body:
-      book.catatanKurasi?.trim() ||
-      `Bacaan ${book.kategori} untuk ${book.sasaranUsia ?? book.jenjangPembaca ?? 'semua usia'} di ${book.zona}, Rumah Baca Almahyra.`,
-  });
-
-  // 4. Penyeimbang spread genap: tambahkan Obrolan Keluarga jika jumlah halaman dalam ganjil
-  // Supaya total halaman dalam (tanpa sampul depan & belakang) SELALU genap & setiap spread 2 halaman penuh
-  if ((insideDraft.length + 1) % 2 !== 0) {
-    insideDraft.push({
-      id: `${book.id}-discussion`,
-      kind: 'discussion',
-      density: 'soft',
-      tocTitle: 'Obrolan Keluarga & Refleksi',
-      chapterLabel: 'Obrolan Keluarga',
-      heading: 'Ayo Ceritakan Kembali!',
-      body: `Ajak ayah, ibu, atau sahabat di Rumah Baca Almahyra mendiskusikan kisah "${book.judul}".`,
-      discussionPrompts: [
-        `Siapa tokoh atau peristiwa paling berkesan di "${book.judul}"?`,
-        `Hal baru apa tentang ${book.kategori.toLowerCase()} yang kamu temukan hari ini?`,
-        'Bagaimana cara kita mempraktikkan pesan baik cerita ini di rumah atau Dusun Grontol?',
-      ],
-    });
-  }
-
-  // 5. Penutup cerita + Misi Petualang Nyata + Klaim Stempel
-  insideDraft.push({
-    id: `${book.id}-closing`,
-    kind: 'closing',
-    density: 'soft',
-    tocTitle: 'Penutup & Misi Aksi Nyata',
-    chapterLabel: 'Penutup & Aksi Nyata',
-    heading: 'Tamat & Tantangan Aksi Nyata!',
-    body:
-      'Hore! Kamu telah membaca kisah ini sampai selesai. Klaim stempel E-Paspor Baca dan selesaikan Misi Petualang Nyata di bawah ini!',
   });
 
   const allDraft: Omit<FlipbookPageEntry, 'index'>[] = [
@@ -559,9 +514,12 @@ export function buildFlipbookPages(
       kind: 'back-cover',
       density: 'hard',
       tocTitle: 'Sampul Belakang',
-      chapterLabel: 'Rumah Baca Almahyra',
-      heading: 'Terima Kasih Sudah Membaca!',
-      body: `Terus bertualang bersama koleksi ${book.kategori} dan kumpulkan stempel E-Paspor Baca di Rumah Baca Almahyra, Dusun Grontol, Desa Tlogosari.`,
+      chapterLabel: 'Tamat',
+      heading: 'Tamat · Terima Kasih Sudah Membaca!',
+      body:
+        storyChunks[storyChunks.length - 1]?.pesanMoral ||
+        book.catatanKurasi?.trim() ||
+        `Kisah "${book.judul}" telah selesai dibaca. Kamu dapat membalik kembali ke awal cerita kapan saja.`,
     },
   ];
 
@@ -609,9 +567,6 @@ export function getFlipbookSpreadNarrationText(
       if (!p) return '';
       if (p.kind === 'cover') {
         return `${book.judul}. Ditulis oleh ${book.penulis}. ${book.deskripsi}`;
-      }
-      if (p.kind === 'discussion' && p.discussionPrompts?.length) {
-        return `${p.chapterLabel}. ${p.body ?? ''} ${p.discussionPrompts.join(' ')}`;
       }
       return `${p.chapterLabel}. ${p.body ?? ''} ${
         p.moralMessage ? `Pesan cerita: ${p.moralMessage}` : ''

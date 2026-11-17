@@ -6,9 +6,12 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
   FileText,
   Heart,
   HelpCircle,
+  Info,
+  MessageCircle,
   Music,
   NotebookPen,
   Pause,
@@ -67,7 +70,7 @@ interface BookReaderModalProps {
   }) => Promise<void>;
 }
 
-type ReaderTab = 'read' | 'pdf' | 'quiz' | 'journal';
+type ReaderTab = 'read' | 'pdf' | 'quiz' | 'journal' | 'info';
 
 export function BookReaderModal({
   book,
@@ -124,6 +127,16 @@ export function BookReaderModal({
     setIsSpeaking(false);
   }, []);
 
+  const handleSelectTab = useCallback(
+    (nextTab: ReaderTab) => {
+      if (nextTab !== 'read') {
+        stopSpeech();
+      }
+      setActiveTab(nextTab);
+    },
+    [stopSpeech],
+  );
+
   const handleExitReader = useCallback(() => {
     stopSpeech();
     storyAudioEngine.stop();
@@ -140,7 +153,6 @@ export function BookReaderModal({
       setIsMusicPlaying(false);
       return;
     }
-    // Selalu buka dari Sampul Depan tertutup sesuai konsep Flipbook Interaktif
     setPageIdx(0);
     setActiveTab('read');
     setAnswers({});
@@ -274,6 +286,16 @@ export function BookReaderModal({
     )
     .slice(0, 2);
 
+  const lastMoral =
+    book.isiBacaan?.[book.isiBacaan.length - 1]?.pesanMoral ||
+    `Pesan utama dari kategori ${book.kategori} dalam kehidupan sehari-hari.`;
+
+  const familyDiscussionPrompts = [
+    `Bagian mana dari cerita "${book.judul}" yang paling membuatmu tersenyum atau penasaran?`,
+    `Mengapa sikap tokoh dalam cerita ini patut ditiru saat belajar bersama keluarga?`,
+    `Hal baik apa yang ingin kamu praktikkan di rumah setelah memahami pesan: "${lastMoral}"`,
+  ];
+
   const quizCorrectCount = quizQuestions.reduce(
     (sum, q, idx) => sum + (answers[idx] === q.jawabanBenar ? 1 : 0),
     0,
@@ -378,7 +400,7 @@ export function BookReaderModal({
       aria-modal="true"
       aria-labelledby="reader-modal-title"
     >
-      {/* Top Distraction-Free Reader Header */}
+      {/* Top Reader Header: Separates Mode Baca (Flipbook/PDF) cleanly from Aktivitas & Info (Kuis/Misi/Info) */}
       <header className="shrink-0 border-b border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-6 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2.5">
           {/* Left: Back Button & Compact Meta */}
@@ -387,13 +409,13 @@ export function BookReaderModal({
               type="button"
               onClick={handleExitReader}
               aria-label="Kembali keluar dari mode membaca"
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1C2820] shadow-xs transition-colors hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] dark:hover:bg-[#21382D]"
+              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1C2820] shadow-xs transition-colors hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] dark:hover:bg-[#21382D] whitespace-nowrap shrink-0"
             >
               <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span>Kembali</span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs text-[#546358] dark:text-[#A4B9AE] min-w-0">
+            <div className="hidden lg:flex items-center gap-2 text-xs text-[#546358] dark:text-[#A4B9AE] min-w-0">
               <span className="font-mono-tabular font-semibold">{book.kodeBuku}</span>
               <span aria-hidden="true">·</span>
               <span className="font-semibold truncate" style={{ color: 'var(--brand-primary-ink)' }}>
@@ -404,67 +426,96 @@ export function BookReaderModal({
             </div>
           </div>
 
-          {/* Center/Right: Mode Tabs & Quick Actions */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-1 rounded-xl border border-[#DFD7C4] bg-[#ECE6D8] p-0.5 dark:border-[#243B30] dark:bg-[#0F1C16]">
-              <button
-                type="button"
-                onClick={() => setActiveTab('read')}
-                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-                  activeTab === 'read'
-                    ? 'text-white shadow-xs'
-                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
-                }`}
-                style={activeTab === 'read' ? { backgroundColor: db.config.primaryColor } : undefined}
-              >
-                <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Cerita</span>
-              </button>
-
-              {book.pdfUrl && (
+          {/* Center/Right: Strictly Separated Mode Baca vs Fitur Lain Tabs + Actions */}
+          <div className="flex flex-wrap items-center gap-2">
+            <nav
+              aria-label="Navigasi Bacaan dan Fitur Pendamping"
+              className="flex flex-wrap items-center gap-2"
+            >
+              {/* Group 1: Mode Baca (Flipbook & PDF Murni) */}
+              <div className="inline-flex items-center gap-1 rounded-xl border border-[#CED8CF] bg-[#E8EFE9] p-0.5 dark:border-[#274636] dark:bg-[#11241B]">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('pdf')}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-                    activeTab === 'pdf'
+                  onClick={() => handleSelectTab('read')}
+                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors whitespace-nowrap ${
+                    activeTab === 'read'
+                      ? 'text-white shadow-xs'
+                      : 'text-[#314A3B] hover:text-[#111E16] dark:text-[#B5CDC0] dark:hover:text-white'
+                  }`}
+                  style={activeTab === 'read' ? { backgroundColor: db.config.primaryColor } : undefined}
+                >
+                  <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>Baca Flipbook</span>
+                </button>
+
+                {book.pdfUrl && (
+                  <button
+                    type="button"
+                    onClick={() => handleSelectTab('pdf')}
+                    className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                      activeTab === 'pdf'
+                        ? 'text-white shadow-xs'
+                        : 'text-[#314A3B] hover:text-[#111E16] dark:text-[#B5CDC0] dark:hover:text-white'
+                    }`}
+                    style={activeTab === 'pdf' ? { backgroundColor: db.config.primaryColor } : undefined}
+                  >
+                    <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    <span>PDF</span>
+                  </button>
+                )}
+              </div>
+
+              <span
+                aria-hidden="true"
+                className="hidden sm:inline-block h-5 w-px bg-[#D4CCB8] dark:bg-[#2A4638]"
+              />
+
+              {/* Group 2: Fitur Lain di Luar Flipbook (Kuis, Misi & Paspor, Info & Sumber) */}
+              <div className="inline-flex items-center gap-1 rounded-xl border border-[#DFD7C4] bg-[#ECE6D8] p-0.5 dark:border-[#243B30] dark:bg-[#0F1C16]">
+                <button
+                  type="button"
+                  onClick={() => handleSelectTab('quiz')}
+                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    activeTab === 'quiz'
                       ? 'text-white shadow-xs'
                       : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
                   }`}
-                  style={activeTab === 'pdf' ? { backgroundColor: db.config.primaryColor } : undefined}
+                  style={activeTab === 'quiz' ? { backgroundColor: db.config.primaryColor } : undefined}
                 >
-                  <FileText className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>PDF</span>
+                  <HelpCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>Kuis</span>
                 </button>
-              )}
 
-              <button
-                type="button"
-                onClick={() => setActiveTab('quiz')}
-                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-                  activeTab === 'quiz'
-                    ? 'text-white shadow-xs'
-                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
-                }`}
-                style={activeTab === 'quiz' ? { backgroundColor: db.config.primaryColor } : undefined}
-              >
-                <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Kuis</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTab('journal')}
+                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    activeTab === 'journal'
+                      ? 'text-[#10281B] shadow-xs font-bold'
+                      : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                  }`}
+                  style={activeTab === 'journal' ? { backgroundColor: db.config.accentColor } : undefined}
+                >
+                  <NotebookPen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>Misi &amp; Paspor</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveTab('journal')}
-                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
-                  activeTab === 'journal'
-                    ? 'text-white shadow-xs'
-                    : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
-                }`}
-                style={activeTab === 'journal' ? { backgroundColor: db.config.accentColor } : undefined}
-              >
-                <NotebookPen className="h-3.5 w-3.5" aria-hidden="true" />
-                <span className="hidden xs:inline sm:inline">E-Paspor</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTab('info')}
+                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    activeTab === 'info'
+                      ? 'text-white shadow-xs'
+                      : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
+                  }`}
+                  style={activeTab === 'info' ? { backgroundColor: db.config.primaryColor } : undefined}
+                >
+                  <Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="hidden xs:inline">Info &amp; Sumber</span>
+                  <span className="xs:hidden">Info</span>
+                </button>
+              </div>
+            </nav>
 
             {activeTab === 'read' && (
               <div className="hidden md:inline-flex items-center rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
@@ -504,7 +555,7 @@ export function BookReaderModal({
               }
               aria-pressed={isFavorite}
               aria-label={isFavorite ? 'Hapus dari favorit' : 'Simpan ke favorit'}
-              className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+              className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                 isFavorite
                   ? 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-950/40 dark:text-rose-200'
                   : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]'
@@ -516,8 +567,8 @@ export function BookReaderModal({
           </div>
         </div>
 
-        {/* Story-Matched Background Music & Narration Sub-Strip */}
-        {soundtrack && (
+        {/* Reading-Only Background Music & Voice Narration Sub-Strip */}
+        {activeTab === 'read' && soundtrack && (
           <div className="mx-auto mt-2 flex max-w-6xl flex-wrap items-center justify-between gap-2 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7]/90 px-3 py-1.5 text-xs dark:border-[#243B30] dark:bg-[#162720]/90">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <span
@@ -561,10 +612,10 @@ export function BookReaderModal({
                 aria-pressed={isMusicPlaying}
                 style={
                   isMusicPlaying
-                    ? { backgroundColor: db.config.accentColor }
-                    : { backgroundColor: db.config.primaryColor }
+                    ? { backgroundColor: db.config.accentColor, color: '#10281B' }
+                    : { backgroundColor: db.config.primaryColor, color: '#FFFFFF' }
                 }
-                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition-opacity hover:opacity-95 whitespace-nowrap"
               >
                 {isMusicPlaying ? (
                   <>
@@ -579,43 +630,39 @@ export function BookReaderModal({
                 )}
               </button>
 
-              {activeTab === 'read' && (
-                <button
-                  type="button"
-                  onClick={handleToggleSpeech}
-                  aria-pressed={isSpeaking}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-3 py-1 text-[11px] font-bold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
-                >
-                  {isSpeaking ? (
-                    <>
-                      <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
-                      Hentikan Suara
-                    </>
-                  ) : (
-                    <>
-                      <Volume2
-                        className="h-3.5 w-3.5"
-                        style={{ color: 'var(--brand-primary-ink)' }}
-                        aria-hidden="true"
-                      />
-                      Bacakan Cerita
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleToggleSpeech}
+                aria-pressed={isSpeaking}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-3 py-1 text-[11px] font-bold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE] whitespace-nowrap"
+              >
+                {isSpeaking ? (
+                  <>
+                    <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
+                    Hentikan Suara
+                  </>
+                ) : (
+                  <>
+                    <Volume2
+                      className="h-3.5 w-3.5"
+                      style={{ color: 'var(--brand-primary-ink)' }}
+                      aria-hidden="true"
+                    />
+                    Bacakan Cerita
+                  </>
+                )}
+              </button>
 
-              {activeTab === 'read' && (
-                <select
-                  aria-label="Kecepatan suara narasi"
-                  value={speechRate}
-                  onChange={(e) => setSpeechRate(Number(e.target.value))}
-                  className="hidden sm:block rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-1.5 py-1 text-[11px] font-semibold text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
-                >
-                  <option value={0.9}>0.9x Santai</option>
-                  <option value={1}>1.0x Normal</option>
-                  <option value={1.15}>1.15x Cepat</option>
-                </select>
-              )}
+              <select
+                aria-label="Kecepatan suara narasi"
+                value={speechRate}
+                onChange={(e) => setSpeechRate(Number(e.target.value))}
+                className="hidden sm:block rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-1.5 py-1 text-[11px] font-semibold text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
+              >
+                <option value={0.9}>0.9x Santai</option>
+                <option value={1}>1.0x Normal</option>
+                <option value={1.15}>1.15x Cepat</option>
+              </select>
             </div>
           </div>
         )}
@@ -624,22 +671,11 @@ export function BookReaderModal({
       {/* Main Content Stage */}
       {activeTab === 'read' && flipPages.length > 0 ? (
         <main className="flex-1 min-h-0 flex flex-col overflow-hidden">
-          {(speechMessage || quickClaimNotice) && (
-            <div className="shrink-0 bg-[#F3EFE4] px-3 py-2 sm:px-6 space-y-1.5 border-b border-[#E3DCCB] dark:bg-[#13221B] dark:border-[#243B30]">
-              {speechMessage && (
-                <p className="mx-auto max-w-6xl rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] px-3.5 py-1.5 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#162720] dark:text-[#A4B9AE]">
-                  {speechMessage}
-                </p>
-              )}
-              {quickClaimNotice && (
-                <div
-                  role="status"
-                  className="animate-celebrate-pop mx-auto max-w-6xl flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-3.5 py-2 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-950/50 dark:text-emerald-200"
-                >
-                  <Award className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
-                  <span>{quickClaimNotice}</span>
-                </div>
-              )}
+          {speechMessage && (
+            <div className="shrink-0 bg-[#F3EFE4] px-3 py-2 sm:px-6 border-b border-[#E3DCCB] dark:bg-[#13221B] dark:border-[#243B30]">
+              <p className="mx-auto max-w-6xl rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] px-3.5 py-1.5 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#162720] dark:text-[#A4B9AE]">
+                {speechMessage}
+              </p>
             </div>
           )}
 
@@ -681,21 +717,14 @@ export function BookReaderModal({
             fontScale={fontScale}
             primaryColor={db.config.primaryColor}
             accentColor={db.config.accentColor}
-            existingRealActionRecord={existingRealActionRecord}
-            savingStamp={saving}
             isFullscreen={isFullscreen}
-            recommendedBooks={recommendedBooks}
             onPageChange={handleFlipPageChange}
             onOrientationChange={setIsFlipbookPortrait}
-            onQuickClaimStamp={handleQuickClaimButton}
-            onClaimRealAction={handleRealActionClaim}
-            onOpenQuiz={() => setActiveTab('quiz')}
-            onSwitchBook={onSwitchBook}
             onToggleFullscreen={handleToggleFullscreen}
           />
         </main>
       ) : (
-        /* Non-Reading Tabs (PDF, Quiz, Journal & E-Paspor) */
+        /* Fitur di Luar Flipbook: PDF, Kuis, Misi & Paspor, Info & Sumber */
         <main className="flex-1 min-h-0 overflow-y-auto px-4 py-5 sm:px-8 sm:py-7">
           <div className="mx-auto max-w-4xl space-y-6">
             <div className="rounded-2xl border border-[#E2DAC8] bg-[#FFFDF7] px-5 py-3.5 dark:border-[#243B30] dark:bg-[#122019]">
@@ -738,7 +767,7 @@ export function BookReaderModal({
                       Sumber Resmi Dokumen PDF Tersedia
                     </p>
                     <p className="mx-auto max-w-xl text-sm text-[#4B5A50] dark:text-[#A4B9AE]">
-                      Dokumen PDF lengkap dari {book.lisensi || 'penerbit resmi'} dapat dibuka langsung di tab baru atau dibaca halaman demi halaman melalui tab Cerita di atas.
+                      Dokumen PDF lengkap dari {book.lisensi || 'penerbit resmi'} dapat dibuka langsung di tab baru atau dibaca halaman demi halaman melalui tab Baca Flipbook di atas.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
                       <a
@@ -753,11 +782,11 @@ export function BookReaderModal({
                       </a>
                       <button
                         type="button"
-                        onClick={() => setActiveTab('read')}
+                        onClick={() => handleSelectTab('read')}
                         className="inline-flex items-center gap-2 rounded-xl border border-[#D4CCB8] bg-[#F3EFE4] px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
                       >
                         <BookOpen className="h-4 w-4" aria-hidden="true" />
-                        Kembali ke Bacaan Interaktif
+                        Kembali ke Baca Flipbook
                       </button>
                     </div>
                   </div>
@@ -843,11 +872,11 @@ export function BookReaderModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('journal')}
+                    onClick={() => handleSelectTab('journal')}
                     style={{ backgroundColor: db.config.accentColor }}
-                    className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95"
+                    className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-bold text-[#10281B] hover:opacity-95"
                   >
-                    Isi Jurnal & Klaim Stempel E-Paspor
+                    Buka Misi &amp; Klaim Stempel E-Paspor
                     <ChevronRight className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
@@ -856,6 +885,38 @@ export function BookReaderModal({
 
             {activeTab === 'journal' && (
               <div className="space-y-6">
+                {/* Quick Stamp Claim Card (kept cleanly outside Flipbook) */}
+                <div className="rounded-2xl border border-[#CFE0D5] bg-[#EFF7F1] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 dark:border-[#244434] dark:bg-[#11241B]">
+                  <div className="space-y-0.5 min-w-0">
+                    <p className="font-display text-sm sm:text-base font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                      Sudah Selesai Membaca Ceritanya?
+                    </p>
+                    <p className="text-xs text-[#4B5A50] dark:text-[#A4B9AE]">
+                      Klaim stempel digital buku ini untuk mengumpulkan +5 Poin di E-Paspor Baca.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={handleQuickClaimButton}
+                    style={{ backgroundColor: db.config.accentColor }}
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-extrabold text-[#10281B] shadow-xs hover:opacity-95 disabled:opacity-60 whitespace-nowrap shrink-0"
+                  >
+                    <Award className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>{saving ? 'Menyimpan...' : 'Klaim Stempel (+5 Poin)'}</span>
+                  </button>
+                </div>
+
+                {quickClaimNotice && (
+                  <div
+                    role="status"
+                    className="animate-celebrate-pop flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-950/50 dark:text-emerald-200"
+                  >
+                    <Award className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+                    <span>{quickClaimNotice}</span>
+                  </div>
+                )}
+
                 <RealActionMissionCard
                   book={book}
                   existingRecord={existingRealActionRecord}
@@ -863,103 +924,224 @@ export function BookReaderModal({
                 />
 
                 <form onSubmit={handleCompleteReading} className="space-y-5">
-                <div className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="font-display text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
-                        Jurnal Membaca & Stempel Digital E-Paspor Baca
-                      </h3>
-                      <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
-                        Catat bagian favorit atau pesan cerita yang kamu tangkap untuk mendapatkan stempel digital E-Paspor Baca.
-                      </p>
-                    </div>
-                    <Award className="h-6 w-6 shrink-0" style={{ color: 'var(--brand-accent-ink)' }} />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <span className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]">
-                      Penilaian Cerita (Bintang)
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setStarRating(star)}
-                          aria-label={`Beri ${star} bintang`}
-                          className="rounded-lg p-1 hover:bg-[#F3EFE4] dark:hover:bg-[#1A2D24]"
-                        >
-                          <Star
-                            className={`h-5 w-5 ${
-                              star <= starRating
-                                ? 'fill-amber-400 text-amber-500'
-                                : 'text-[#CBD6D0] dark:text-[#3A5246]'
-                            }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="journal-note"
-                      className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]"
-                    >
-                      Catatan atau Kesan Pembaca
-                    </label>
-                    <textarea
-                      id="journal-note"
-                      rows={3}
-                      value={journalNote}
-                      onChange={(e) => setJournalNote(e.target.value)}
-                      placeholder="Contoh: Bagian favoritku adalah saat tokoh bekerja sama menolong sahabatnya!"
-                      className="mt-1.5 w-full rounded-xl border border-[#DFD7C4] bg-[#FBF7EE] px-3.5 py-2.5 text-sm text-[#16221A] focus:border-[#136B36] focus:outline-none dark:border-[#243B30] dark:bg-[#0F1C16] dark:text-[#ECF3EE]"
-                    />
-                  </div>
-
-                  {completedNotice ? (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-900 space-y-2 dark:border-emerald-500/40 dark:bg-emerald-950/40 dark:text-emerald-200">
-                      <p>{completedNotice}</p>
-                      {!session && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleExitReader();
-                            onOpenLogin();
-                          }}
-                          className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#111C17] border border-[#DCE4DF]"
-                        >
-                          Masuk Akun Anggota Sekarang
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      {!session && (
+                  <div className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-display text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                          Jurnal Membaca &amp; Catatan Kesan
+                        </h3>
                         <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
-                          Sedang membaca sebagai tamu. Masuk akun anggota agar +5 poin langsung masuk ke E-Paspor.
+                          Catat bagian favorit atau pesan cerita yang kamu tangkap untuk melengkapi jurnal E-Paspor Baca.
                         </p>
-                      )}
-                      <button
-                        type="submit"
-                        disabled={saving}
-                        style={{ backgroundColor: db.config.primaryColor }}
-                        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-60"
-                      >
-                        <Award className="h-4 w-4" aria-hidden="true" />
-                        {saving
-                          ? 'Menyimpan...'
-                          : 'Selesaikan & Dapatkan Stempel E-Paspor (+5 Poin)'}
-                      </button>
+                      </div>
+                      <Award className="h-6 w-6 shrink-0" style={{ color: 'var(--brand-accent-ink)' }} />
                     </div>
-                  )}
-                </div>
-              </form>
+
+                    <div className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]">
+                        Penilaian Cerita (Bintang)
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setStarRating(star)}
+                            aria-label={`Beri ${star} bintang`}
+                            className="rounded-lg p-1 hover:bg-[#F3EFE4] dark:hover:bg-[#1A2D24]"
+                          >
+                            <Star
+                              className={`h-5 w-5 ${
+                                star <= starRating
+                                  ? 'fill-amber-400 text-amber-500'
+                                  : 'text-[#CBD6D0] dark:text-[#3A5246]'
+                              }`}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="journal-note"
+                        className="block text-xs font-semibold text-[#16221A] dark:text-[#F1F7F3]"
+                      >
+                        Catatan atau Kesan Pembaca
+                      </label>
+                      <textarea
+                        id="journal-note"
+                        rows={3}
+                        value={journalNote}
+                        onChange={(e) => setJournalNote(e.target.value)}
+                        placeholder="Contoh: Bagian favoritku adalah saat tokoh bekerja sama menolong sahabatnya!"
+                        className="mt-1.5 w-full rounded-xl border border-[#DFD7C4] bg-[#FBF7EE] px-3.5 py-2.5 text-sm text-[#16221A] focus:border-[#136B36] focus:outline-none dark:border-[#243B30] dark:bg-[#0F1C16] dark:text-[#ECF3EE]"
+                      />
+                    </div>
+
+                    {completedNotice ? (
+                      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-900 space-y-2 dark:border-emerald-500/40 dark:bg-emerald-950/40 dark:text-emerald-200">
+                        <p>{completedNotice}</p>
+                        {!session && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleExitReader();
+                              onOpenLogin();
+                            }}
+                            className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#111C17] border border-[#DCE4DF]"
+                          >
+                            Masuk Akun Anggota Sekarang
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        {!session && (
+                          <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                            Sedang membaca sebagai tamu. Masuk akun anggota agar +5 poin langsung masuk ke E-Paspor.
+                          </p>
+                        )}
+                        <button
+                          type="submit"
+                          disabled={saving}
+                          style={{ backgroundColor: db.config.primaryColor }}
+                          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-60"
+                        >
+                          <Award className="h-4 w-4" aria-hidden="true" />
+                          {saving
+                            ? 'Menyimpan...'
+                            : 'Simpan Jurnal & Dapatkan Stempel E-Paspor (+5 Poin)'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </form>
               </div>
             )}
 
-            {/* Contextual Book Recommendations inside Quiz / Journal / PDF */}
+            {activeTab === 'info' && (
+              <div className="space-y-6">
+                {/* Official Book Details & Attribution */}
+                <section className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                        Informasi Buku &amp; Sumber Resmi
+                      </h3>
+                      <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                        Detail katalog, sasaran usia pembaca, serta lisensi penerbit resmi.
+                      </p>
+                    </div>
+                    {book.sumberResmiUrl && (
+                      <a
+                        href={book.sumberResmiUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ backgroundColor: db.config.primaryColor }}
+                        className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap"
+                      >
+                        <span>Buka Sumber Resmi</span>
+                        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                      </a>
+                    )}
+                  </div>
+
+                  <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 rounded-xl border border-[#DFD4BC] bg-[#F7F1E2] p-4 text-xs dark:border-[#274436] dark:bg-[#172B22]">
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Kode &amp; Sumber Katalog
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.kodeBuku} · {book.sumberKatalog ?? 'Master Katalog Batch 1'}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Subtema
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.subtema || book.kategori}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Format &amp; Durasi
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.format || 'Buku Digital'} · ±{book.estimasiMenit ?? 5} menit
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Sasaran Usia / Jenjang
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.sasaranUsia || book.jenjangPembaca || 'Semua Usia'}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Zona Petualangan
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.zona}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                        Lisensi
+                      </dt>
+                      <dd className="mt-0.5 font-semibold text-[#16221A] dark:text-[#ECF3EE]">
+                        {book.lisensi || 'Lisensi Terbuka'}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div className="space-y-1.5 text-sm leading-relaxed text-[#2D3E33] dark:text-[#D1E2D8]">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
+                      Sinopsis &amp; Catatan Kurasi
+                    </p>
+                    <p>{book.catatanKurasi?.trim() || book.deskripsi}</p>
+                  </div>
+                </section>
+
+                {/* Family Discussion Prompts (kept cleanly outside Flipbook) */}
+                <section className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-3 dark:border-[#243B30] dark:bg-[#122019]">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle
+                      className="h-4 w-4 shrink-0"
+                      style={{ color: 'var(--brand-primary-ink)' }}
+                      aria-hidden="true"
+                    />
+                    <h3 className="font-display text-base sm:text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                      Obrolan Keluarga Setelah Membaca
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                    Orang tua atau pendamping dapat memakai 3 pertanyaan pemantik ini bersama anak setelah menutup buku:
+                  </p>
+                  <ol className="space-y-2">
+                    {familyDiscussionPrompts.map((prompt, pIdx) => (
+                      <li
+                        key={prompt}
+                        className="flex items-start gap-2.5 rounded-xl border border-[#DFD4BC] bg-[#F7F1E2] p-3 text-xs sm:text-sm text-[#1C2820] dark:border-[#274436] dark:bg-[#172B22] dark:text-[#ECF3EE]"
+                      >
+                        <span
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[11px] font-bold text-white"
+                          style={{ backgroundColor: db.config.primaryColor }}
+                        >
+                          {pIdx + 1}
+                        </span>
+                        <span>{prompt}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              </div>
+            )}
+
+            {/* Contextual Book Recommendations inside Quiz / Journal / PDF / Info */}
             {recommendedBooks.length > 0 && (
               <section className="border-t border-[#E3DCCB] pt-5 space-y-3 dark:border-[#243B30]">
                 <p className="flex items-center gap-1.5 text-xs font-bold text-[#16221A] dark:text-[#F1F7F3]">
@@ -1010,7 +1192,7 @@ export function BookReaderModal({
         </main>
       )}
 
-      {/* Bottom Sticky Page Navigation Footer */}
+      {/* Bottom Sticky Reading Navigation Footer (Fokus Navigasi Halaman Buku Murni) */}
       {activeTab === 'read' && (
         <footer className="shrink-0 border-t border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-8 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-4">
@@ -1050,18 +1232,7 @@ export function BookReaderModal({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                disabled={saving}
-                onClick={handleQuickClaimButton}
-                style={{ backgroundColor: db.config.accentColor }}
-                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-extrabold text-[#10281B] hover:opacity-95 disabled:opacity-60 whitespace-nowrap shrink-0"
-              >
-                <Award className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>Selesai Baca &amp; Klaim Stempel</span>
-              </button>
-
+            <div className="flex items-center gap-2">
               {pageIdx < flipPages.length - 1 ? (
                 <button
                   type="button"
@@ -1076,13 +1247,12 @@ export function BookReaderModal({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setActiveTab('quiz')}
-                  style={{ backgroundColor: db.config.primaryColor }}
-                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
+                  onClick={() => handleSelectTab('quiz')}
+                  style={{ backgroundColor: db.config.accentColor }}
+                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap shrink-0"
                 >
-                  <span className="hidden sm:inline">Buka Kuis Cerita</span>
-                  <span className="sm:hidden">Kuis Cerita</span>
-                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <HelpCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span>Lanjut ke Kuis Cerita</span>
                 </button>
               )}
             </div>

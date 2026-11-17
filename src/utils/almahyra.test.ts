@@ -706,26 +706,37 @@ test('Creation moderation, privacy sanitization, 6 adventure zones, and clamped 
   assert.equal(clampValidatedReadingPoints(999), 10);
 });
 
-test('Digital Flipbook builder guarantees even balanced spreads, hard covers, and spread narration', () => {
+test('Digital Flipbook builder guarantees even balanced reading spreads, hard covers, and spread narration', () => {
   const booksToCheck = [
     DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-001')!,
+    DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-007')!,
     DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-008')!,
     DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-018')!,
   ];
 
   for (const book of booksToCheck) {
     const flipPages = buildFlipbookPages(book);
-    // Front cover + balanced inside pages (even) + back cover = even total pages >= 6
-    assert.ok(flipPages.length >= 6);
+    const readableChunks = getBookReadablePages(book, 260);
+    // Front cover + balanced reading inside pages (even) + back cover = even total pages >= 4
+    assert.ok(flipPages.length >= 4);
     assert.equal(flipPages.length % 2, 0, `Total flip pages must be even for ${book.kodeBuku}`);
     assert.equal(flipPages[0].kind, 'cover');
     assert.equal(flipPages[0].density, 'hard');
-    assert.equal(flipPages[1].kind, 'opener');
     assert.equal(flipPages[flipPages.length - 1].kind, 'back-cover');
     assert.equal(flipPages[flipPages.length - 1].density, 'hard');
     assert.ok(flipPages.some((p) => p.kind === 'story'));
-    assert.ok(flipPages.some((p) => p.kind === 'info'));
-    assert.ok(flipPages.some((p) => p.kind === 'closing'));
+    // Strictly focused on reading (no quiz/mission/info/discussion widgets inside flipbook pages)
+    assert.ok(
+      flipPages.every((p) =>
+        ['cover', 'opener', 'story', 'back-cover'].includes(p.kind),
+      ),
+    );
+
+    if (readableChunks.length % 2 === 1) {
+      assert.equal(flipPages[1].kind, 'opener');
+    } else {
+      assert.equal(flipPages[1].kind, 'story');
+    }
 
     // Visible indices in landscape vs portrait
     assert.deepEqual(getFlipbookVisibleIndices(0, flipPages.length, false), [0]);
@@ -738,7 +749,6 @@ test('Digital Flipbook builder guarantees even balanced spreads, hard covers, an
     );
 
     const spreadNarration = getFlipbookSpreadNarrationText(book, flipPages, 1, false);
-    assert.ok(spreadNarration.includes('Pembuka Cerita'));
     assert.ok(spreadNarration.length > 20);
   }
 });
