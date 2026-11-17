@@ -250,6 +250,12 @@ export function BookReaderModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTab, book, flipPages.length, handleExitReader, pageIdx]);
 
+  const handleCycleFontScale = useCallback(() => {
+    setFontScale((prev) =>
+      prev === 'normal' ? 'large' : prev === 'large' ? 'xlarge' : 'normal',
+    );
+  }, []);
+
   const handleToggleMusic = () => {
     if (!soundtrack) return;
     if (isMusicPlaying) {
@@ -400,44 +406,44 @@ export function BookReaderModal({
       aria-modal="true"
       aria-labelledby="reader-modal-title"
     >
-      {/* Top Reader Header: Separates Mode Baca (Flipbook/PDF) cleanly from Aktivitas & Info (Kuis/Misi/Info) */}
-      <header className="shrink-0 border-b border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-6 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2.5">
-          {/* Left: Back Button & Compact Meta */}
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <button
-              type="button"
-              onClick={handleExitReader}
-              aria-label="Kembali keluar dari mode membaca"
-              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1C2820] shadow-xs transition-colors hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] dark:hover:bg-[#21382D] whitespace-nowrap shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>Kembali</span>
-            </button>
+      {/* Top Reader Header: Single compact row on mobile; hidden during fullscreen Flipbook reading for maximum portrait canvas */}
+      {(!isFullscreen || activeTab !== 'read') && (
+        <header className="shrink-0 border-b border-[#E3DCCB] bg-[#F3EFE4]/95 px-2 py-1.5 sm:px-6 sm:py-2.5 dark:border-[#243B30] dark:bg-[#13221B]/95">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 sm:gap-3">
+            {/* Left: Back Button & Desktop Meta */}
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0">
+              <button
+                type="button"
+                onClick={handleExitReader}
+                aria-label="Kembali keluar dari mode membaca"
+                className="inline-flex min-h-[38px] min-w-[38px] items-center justify-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1C2820] shadow-xs transition-colors hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] dark:hover:bg-[#21382D] whitespace-nowrap shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden sm:inline">Kembali</span>
+              </button>
 
-            <div className="hidden lg:flex items-center gap-2 text-xs text-[#546358] dark:text-[#A4B9AE] min-w-0">
-              <span className="font-mono-tabular font-semibold">{book.kodeBuku}</span>
-              <span aria-hidden="true">·</span>
-              <span className="font-semibold truncate" style={{ color: 'var(--brand-primary-ink)' }}>
-                {book.kategori}
-              </span>
-              <span aria-hidden="true">·</span>
-              <span className="whitespace-nowrap">{book.jenjangPembaca ?? 'Semua Usia'}</span>
+              <div className="hidden lg:flex items-center gap-2 text-xs text-[#546358] dark:text-[#A4B9AE] min-w-0">
+                <span className="font-mono-tabular font-semibold">{book.kodeBuku}</span>
+                <span aria-hidden="true">·</span>
+                <span className="font-semibold truncate" style={{ color: 'var(--brand-primary-ink)' }}>
+                  {book.kategori}
+                </span>
+                <span aria-hidden="true">·</span>
+                <span className="whitespace-nowrap">{book.jenjangPembaca ?? 'Semua Usia'}</span>
+              </div>
             </div>
-          </div>
 
-          {/* Center/Right: Strictly Separated Mode Baca vs Fitur Lain Tabs + Actions */}
-          <div className="flex flex-wrap items-center gap-2">
+            {/* Center: Single-line horizontally scrollable Reading & Companion Tabs */}
             <nav
               aria-label="Navigasi Bacaan dan Fitur Pendamping"
-              className="flex flex-wrap items-center gap-2"
+              className="flex flex-1 min-w-0 items-center sm:justify-end gap-1.5 overflow-x-auto py-0.5"
             >
               {/* Group 1: Mode Baca (Flipbook & PDF Murni) */}
-              <div className="inline-flex items-center gap-1 rounded-xl border border-[#CED8CF] bg-[#E8EFE9] p-0.5 dark:border-[#274636] dark:bg-[#11241B]">
+              <div className="inline-flex items-center gap-0.5 sm:gap-1 rounded-xl border border-[#CED8CF] bg-[#E8EFE9] p-0.5 dark:border-[#274636] dark:bg-[#11241B] shrink-0">
                 <button
                   type="button"
                   onClick={() => handleSelectTab('read')}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors whitespace-nowrap ${
+                  className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 sm:px-2.5 py-1 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
                     activeTab === 'read'
                       ? 'text-white shadow-xs'
                       : 'text-[#314A3B] hover:text-[#111E16] dark:text-[#B5CDC0] dark:hover:text-white'
@@ -445,14 +451,15 @@ export function BookReaderModal({
                   style={activeTab === 'read' ? { backgroundColor: db.config.primaryColor } : undefined}
                 >
                   <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>Baca Flipbook</span>
+                  <span className="sm:hidden">Baca</span>
+                  <span className="hidden sm:inline">Baca Flipbook</span>
                 </button>
 
                 {book.pdfUrl && (
                   <button
                     type="button"
                     onClick={() => handleSelectTab('pdf')}
-                    className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 sm:px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                       activeTab === 'pdf'
                         ? 'text-white shadow-xs'
                         : 'text-[#314A3B] hover:text-[#111E16] dark:text-[#B5CDC0] dark:hover:text-white'
@@ -467,15 +474,15 @@ export function BookReaderModal({
 
               <span
                 aria-hidden="true"
-                className="hidden sm:inline-block h-5 w-px bg-[#D4CCB8] dark:bg-[#2A4638]"
+                className="hidden sm:inline-block h-5 w-px bg-[#D4CCB8] dark:bg-[#2A4638] shrink-0"
               />
 
               {/* Group 2: Fitur Lain di Luar Flipbook (Kuis, Misi & Paspor, Info & Sumber) */}
-              <div className="inline-flex items-center gap-1 rounded-xl border border-[#DFD7C4] bg-[#ECE6D8] p-0.5 dark:border-[#243B30] dark:bg-[#0F1C16]">
+              <div className="inline-flex items-center gap-0.5 sm:gap-1 rounded-xl border border-[#DFD7C4] bg-[#ECE6D8] p-0.5 dark:border-[#243B30] dark:bg-[#0F1C16] shrink-0">
                 <button
                   type="button"
                   onClick={() => handleSelectTab('quiz')}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                  className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 sm:px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                     activeTab === 'quiz'
                       ? 'text-white shadow-xs'
                       : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
@@ -489,7 +496,7 @@ export function BookReaderModal({
                 <button
                   type="button"
                   onClick={() => handleSelectTab('journal')}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                  className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 sm:px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                     activeTab === 'journal'
                       ? 'text-[#10281B] shadow-xs font-bold'
                       : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
@@ -497,13 +504,14 @@ export function BookReaderModal({
                   style={activeTab === 'journal' ? { backgroundColor: db.config.accentColor } : undefined}
                 >
                   <NotebookPen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>Misi &amp; Paspor</span>
+                  <span className="sm:hidden">Misi</span>
+                  <span className="hidden sm:inline">Misi &amp; Paspor</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleSelectTab('info')}
-                  className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                  className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg px-2 sm:px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
                     activeTab === 'info'
                       ? 'text-white shadow-xs'
                       : 'text-[#4B5A50] hover:text-[#1C2820] dark:text-[#A4B9AE] dark:hover:text-white'
@@ -511,202 +519,176 @@ export function BookReaderModal({
                   style={activeTab === 'info' ? { backgroundColor: db.config.primaryColor } : undefined}
                 >
                   <Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span className="hidden xs:inline">Info &amp; Sumber</span>
-                  <span className="xs:hidden">Info</span>
+                  <span className="sm:hidden">Info</span>
+                  <span className="hidden sm:inline">Info &amp; Sumber</span>
                 </button>
               </div>
             </nav>
 
-            {activeTab === 'read' && (
-              <div className="hidden md:inline-flex items-center rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
-                {(
-                  [
-                    { id: 'normal', label: 'A' },
-                    { id: 'large', label: 'A+' },
-                    { id: 'xlarge', label: 'A++' },
-                  ] as const
-                ).map((sz) => (
-                  <button
-                    key={sz.id}
-                    type="button"
-                    onClick={() => setFontScale(sz.id)}
-                    aria-label={`Ukuran huruf ${sz.label}`}
-                    className={`rounded-lg px-2 py-1 font-bold transition-colors ${
-                      fontScale === sz.id
-                        ? 'bg-[#136B36] text-white'
-                        : 'text-[#546358] dark:text-[#A4B9AE]'
-                    }`}
-                  >
-                    {sz.label}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={() =>
-                onRecordReading({
-                  bookId: book.id,
-                  lastPage: pageIdx,
-                  totalPages: flipPages.length,
-                  toggleFavorite: true,
-                })
-              }
-              aria-pressed={isFavorite}
-              aria-label={isFavorite ? 'Hapus dari favorit' : 'Simpan ke favorit'}
-              className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
-                isFavorite
-                  ? 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-950/40 dark:text-rose-200'
-                  : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]'
-              }`}
-            >
-              <Heart className={`h-3.5 w-3.5 ${isFavorite ? 'fill-current' : ''}`} />
-              <span className="hidden lg:inline">{isFavorite ? 'Difavoritkan' : 'Favorit'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Reading-Only Background Music & Voice Narration Sub-Strip */}
-        {activeTab === 'read' && soundtrack && (
-          <div className="mx-auto mt-2 flex max-w-6xl flex-wrap items-center justify-between gap-2 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7]/90 px-3 py-1.5 text-xs dark:border-[#243B30] dark:bg-[#162720]/90">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-lg text-white shrink-0"
-                style={{ backgroundColor: db.config.accentColor }}
-              >
-                <Music className="h-3 w-3" aria-hidden="true" />
-              </span>
-              <div className="min-w-0 truncate">
-                <span className="font-semibold text-[#1C2820] dark:text-[#ECF3EE]">
-                  Musik Cerita: {soundtrack.title}
-                </span>
-                <span className="hidden sm:inline text-[#546358] dark:text-[#A4B9AE]">
-                  {' '}· Instrumen: {soundtrack.instrumentsLabel} ({soundtrack.moodLabel})
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="hidden lg:inline-flex items-center gap-1.5 text-[11px] text-[#546358] dark:text-[#A4B9AE]">
-                <span>Volume</span>
-                <input
-                  type="range"
-                  min={0.08}
-                  max={0.55}
-                  step={0.05}
-                  value={musicVolume}
-                  onChange={(e) => {
-                    const nextVol = Number(e.target.value);
-                    setMusicVolume(nextVol);
-                    storyAudioEngine.setVolume(nextVol);
-                  }}
-                  aria-label="Atur volume musik cerita"
-                  className="w-16 accent-[#136B36]"
-                />
-              </label>
+            {/* Right: Desktop Font Scale + Favorite */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {activeTab === 'read' && (
+                <div className="hidden md:inline-flex items-center rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
+                  {(
+                    [
+                      { id: 'normal', label: 'A' },
+                      { id: 'large', label: 'A+' },
+                      { id: 'xlarge', label: 'A++' },
+                    ] as const
+                  ).map((sz) => (
+                    <button
+                      key={sz.id}
+                      type="button"
+                      onClick={() => setFontScale(sz.id)}
+                      aria-label={`Ukuran huruf ${sz.label}`}
+                      className={`rounded-lg px-2 py-1 font-bold transition-colors ${
+                        fontScale === sz.id
+                          ? 'bg-[#136B36] text-white'
+                          : 'text-[#546358] dark:text-[#A4B9AE]'
+                      }`}
+                    >
+                      {sz.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <button
                 type="button"
-                onClick={handleToggleMusic}
-                aria-pressed={isMusicPlaying}
-                style={
-                  isMusicPlaying
-                    ? { backgroundColor: db.config.accentColor, color: '#10281B' }
-                    : { backgroundColor: db.config.primaryColor, color: '#FFFFFF' }
+                onClick={() =>
+                  onRecordReading({
+                    bookId: book.id,
+                    lastPage: pageIdx,
+                    totalPages: flipPages.length,
+                    toggleFavorite: true,
+                  })
                 }
-                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition-opacity hover:opacity-95 whitespace-nowrap"
+                aria-pressed={isFavorite}
+                aria-label={isFavorite ? 'Hapus dari favorit' : 'Simpan ke favorit'}
+                className={`inline-flex min-h-[38px] min-w-[38px] items-center justify-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+                  isFavorite
+                    ? 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-950/40 dark:text-rose-200'
+                    : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]'
+                }`}
               >
-                {isMusicPlaying ? (
-                  <>
-                    <Pause className="h-3 w-3" aria-hidden="true" />
-                    Jeda Musik Cerita
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3" aria-hidden="true" />
-                    Putar Musik Cerita
-                  </>
-                )}
+                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                <span className="hidden lg:inline">{isFavorite ? 'Difavoritkan' : 'Favorit'}</span>
               </button>
-
-              <button
-                type="button"
-                onClick={handleToggleSpeech}
-                aria-pressed={isSpeaking}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-3 py-1 text-[11px] font-bold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE] whitespace-nowrap"
-              >
-                {isSpeaking ? (
-                  <>
-                    <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
-                    Hentikan Suara
-                  </>
-                ) : (
-                  <>
-                    <Volume2
-                      className="h-3.5 w-3.5"
-                      style={{ color: 'var(--brand-primary-ink)' }}
-                      aria-hidden="true"
-                    />
-                    Bacakan Cerita
-                  </>
-                )}
-              </button>
-
-              <select
-                aria-label="Kecepatan suara narasi"
-                value={speechRate}
-                onChange={(e) => setSpeechRate(Number(e.target.value))}
-                className="hidden sm:block rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-1.5 py-1 text-[11px] font-semibold text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
-              >
-                <option value={0.9}>0.9x Santai</option>
-                <option value={1}>1.0x Normal</option>
-                <option value={1.15}>1.15x Cepat</option>
-              </select>
             </div>
           </div>
-        )}
-      </header>
+
+          {/* Desktop/Tablet Soundtrack & Voice Narration Bar (Mobile quick buttons are built directly into StoryFlipbookReader bar) */}
+          {activeTab === 'read' && soundtrack && (
+            <div className="hidden md:flex mx-auto mt-2 max-w-6xl items-center justify-between gap-2 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7]/90 px-3 py-1.5 text-xs dark:border-[#243B30] dark:bg-[#162720]/90">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span
+                  className="flex h-6 w-6 items-center justify-center rounded-lg text-white shrink-0"
+                  style={{ backgroundColor: db.config.accentColor }}
+                >
+                  <Music className="h-3 w-3" aria-hidden="true" />
+                </span>
+                <div className="min-w-0 truncate">
+                  <span className="font-semibold text-[#1C2820] dark:text-[#ECF3EE]">
+                    Musik Cerita: {soundtrack.title}
+                  </span>
+                  <span className="text-[#546358] dark:text-[#A4B9AE]">
+                    {' '}· Instrumen: {soundtrack.instrumentsLabel} ({soundtrack.moodLabel})
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <label className="hidden lg:inline-flex items-center gap-1.5 text-[11px] text-[#546358] dark:text-[#A4B9AE]">
+                  <span>Volume</span>
+                  <input
+                    type="range"
+                    min={0.08}
+                    max={0.55}
+                    step={0.05}
+                    value={musicVolume}
+                    onChange={(e) => {
+                      const nextVol = Number(e.target.value);
+                      setMusicVolume(nextVol);
+                      storyAudioEngine.setVolume(nextVol);
+                    }}
+                    aria-label="Atur volume musik cerita"
+                    className="w-16 accent-[#136B36]"
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  onClick={handleToggleMusic}
+                  aria-pressed={isMusicPlaying}
+                  style={
+                    isMusicPlaying
+                      ? { backgroundColor: db.config.accentColor, color: '#10281B' }
+                      : { backgroundColor: db.config.primaryColor, color: '#FFFFFF' }
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-bold transition-opacity hover:opacity-95 whitespace-nowrap"
+                >
+                  {isMusicPlaying ? (
+                    <>
+                      <Pause className="h-3 w-3" aria-hidden="true" />
+                      Jeda Musik Cerita
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-3 w-3" aria-hidden="true" />
+                      Putar Musik Cerita
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleToggleSpeech}
+                  aria-pressed={isSpeaking}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-3 py-1 text-[11px] font-bold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE] whitespace-nowrap"
+                >
+                  {isSpeaking ? (
+                    <>
+                      <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
+                      Hentikan Suara
+                    </>
+                  ) : (
+                    <>
+                      <Volume2
+                        className="h-3.5 w-3.5"
+                        style={{ color: 'var(--brand-primary-ink)' }}
+                        aria-hidden="true"
+                      />
+                      Bacakan Cerita
+                    </>
+                  )}
+                </button>
+
+                <select
+                  aria-label="Kecepatan suara narasi"
+                  value={speechRate}
+                  onChange={(e) => setSpeechRate(Number(e.target.value))}
+                  className="rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-1.5 py-1 text-[11px] font-semibold text-[#1C2820] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
+                >
+                  <option value={0.9}>0.9x Santai</option>
+                  <option value={1}>1.0x Normal</option>
+                  <option value={1.15}>1.15x Cepat</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </header>
+      )}
 
       {/* Main Content Stage */}
       {activeTab === 'read' && flipPages.length > 0 ? (
         <main className="flex-1 min-h-0 flex flex-col overflow-hidden">
           {speechMessage && (
-            <div className="shrink-0 bg-[#F3EFE4] px-3 py-2 sm:px-6 border-b border-[#E3DCCB] dark:bg-[#13221B] dark:border-[#243B30]">
-              <p className="mx-auto max-w-6xl rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] px-3.5 py-1.5 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#162720] dark:text-[#A4B9AE]">
+            <div className="shrink-0 bg-[#F3EFE4] px-3 py-1.5 sm:px-6 border-b border-[#E3DCCB] dark:bg-[#13221B] dark:border-[#243B30]">
+              <p className="mx-auto max-w-6xl rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] px-3.5 py-1 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#162720] dark:text-[#A4B9AE]">
                 {speechMessage}
               </p>
             </div>
           )}
-
-          {/* Mobile compact font-scale strip */}
-          <div className="shrink-0 flex items-center justify-between gap-2 border-b border-[#E3DCCB] bg-[#F7F3E8] px-3 py-1.5 md:hidden dark:border-[#243B30] dark:bg-[#101F18]">
-            <span className="text-[11px] font-semibold text-[#546358] dark:text-[#A4B9AE]">
-              {book.kategori} · {book.estimasiMenit ?? 5} mnt
-            </span>
-            <div className="inline-flex items-center rounded-lg border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
-              {(
-                [
-                  { id: 'normal', label: 'A' },
-                  { id: 'large', label: 'A+' },
-                  { id: 'xlarge', label: 'A++' },
-                ] as const
-              ).map((sz) => (
-                <button
-                  key={sz.id}
-                  type="button"
-                  onClick={() => setFontScale(sz.id)}
-                  className={`rounded-md px-2 py-0.5 font-bold ${
-                    fontScale === sz.id
-                      ? 'bg-[#047857] text-white'
-                      : 'text-[#546358] dark:text-[#A4B9AE]'
-                  }`}
-                >
-                  {sz.label}
-                </button>
-              ))}
-            </div>
-          </div>
 
           <StoryFlipbookReader
             ref={flipbookRef}
@@ -718,9 +700,15 @@ export function BookReaderModal({
             primaryColor={db.config.primaryColor}
             accentColor={db.config.accentColor}
             isFullscreen={isFullscreen}
+            hasSoundtrack={Boolean(soundtrack)}
+            isMusicPlaying={isMusicPlaying}
+            isSpeaking={isSpeaking}
             onPageChange={handleFlipPageChange}
             onOrientationChange={setIsFlipbookPortrait}
             onToggleFullscreen={handleToggleFullscreen}
+            onCycleFontScale={handleCycleFontScale}
+            onToggleMusic={handleToggleMusic}
+            onToggleSpeech={handleToggleSpeech}
           />
         </main>
       ) : (
@@ -1194,13 +1182,13 @@ export function BookReaderModal({
 
       {/* Bottom Sticky Reading Navigation Footer (Fokus Navigasi Halaman Buku Murni) */}
       {activeTab === 'read' && (
-        <footer className="shrink-0 border-t border-[#E3DCCB] bg-[#F3EFE4]/95 px-3 py-2.5 sm:px-8 sm:py-3 dark:border-[#243B30] dark:bg-[#13221B]/95">
+        <footer className="shrink-0 border-t border-[#E3DCCB] bg-[#F3EFE4]/95 px-2.5 py-1.5 sm:px-8 sm:py-2.5 dark:border-[#243B30] dark:bg-[#13221B]/95">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-4">
             <button
               type="button"
               disabled={pageIdx === 0}
               onClick={() => flipbookRef.current?.flipPrev()}
-              className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#ECE6D8] disabled:opacity-40 dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
+              className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#ECE6D8] disabled:opacity-40 dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
             >
               <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Halaman Sebelumnya</span>
@@ -1238,7 +1226,7 @@ export function BookReaderModal({
                   type="button"
                   onClick={() => flipbookRef.current?.flipNext()}
                   style={{ backgroundColor: db.config.primaryColor }}
-                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-1.5 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
                 >
                   <span className="hidden sm:inline">Halaman Berikutnya</span>
                   <span className="sm:hidden">Berikutnya</span>
@@ -1249,7 +1237,7 @@ export function BookReaderModal({
                   type="button"
                   onClick={() => handleSelectTab('quiz')}
                   style={{ backgroundColor: db.config.accentColor }}
-                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap shrink-0"
+                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-1.5 text-xs sm:text-sm font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap shrink-0"
                 >
                   <HelpCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <span>Lanjut ke Kuis Cerita</span>

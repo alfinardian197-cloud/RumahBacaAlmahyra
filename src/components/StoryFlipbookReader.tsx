@@ -16,7 +16,11 @@ import {
   List,
   Maximize2,
   Minimize2,
+  Music,
+  Pause,
   RotateCcw,
+  Volume2,
+  VolumeX,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
@@ -43,9 +47,15 @@ interface StoryFlipbookReaderProps {
   primaryColor: string;
   accentColor: string;
   isFullscreen: boolean;
+  hasSoundtrack?: boolean;
+  isMusicPlaying?: boolean;
+  isSpeaking?: boolean;
   onPageChange: (nextIdx: number, isPortrait: boolean) => void;
   onOrientationChange?: (isPortrait: boolean) => void;
   onToggleFullscreen: () => void;
+  onCycleFontScale?: () => void;
+  onToggleMusic?: () => void;
+  onToggleSpeech?: () => void;
 }
 
 interface PortalMountState {
@@ -55,7 +65,7 @@ interface PortalMountState {
 
 function getPreferredIsPortrait(): boolean {
   if (typeof window === 'undefined') return false;
-  return window.innerWidth < 768;
+  return window.innerWidth < 768 || window.innerHeight > window.innerWidth * 1.15;
 }
 
 function getPrefersReducedMotion(): boolean {
@@ -76,9 +86,15 @@ export const StoryFlipbookReader = forwardRef<
     primaryColor,
     accentColor,
     isFullscreen,
+    hasSoundtrack = false,
+    isMusicPlaying = false,
+    isSpeaking = false,
     onPageChange,
     onOrientationChange,
     onToggleFullscreen,
+    onCycleFontScale,
+    onToggleMusic,
+    onToggleSpeech,
   },
   ref,
 ) {
@@ -91,13 +107,16 @@ export const StoryFlipbookReader = forwardRef<
   const [isPortrait, setIsPortrait] = useState<boolean>(getPreferredIsPortrait);
   const [zoomScale, setZoomScale] = useState<number>(1);
   const [showToc, setShowToc] = useState<boolean>(false);
-  const [stageDims, setStageDims] = useState<{ w: number; h: number }>({
-    w: 960,
-    h: 580,
+  const [stageDims, setStageDims] = useState<{ w: number; h: number }>(() => {
+    if (typeof window === 'undefined') return { w: 960, h: 580 };
+    return {
+      w: Math.max(280, window.innerWidth),
+      h: Math.max(360, window.innerHeight - 140),
+    };
   });
   const [portalMount, setPortalMount] = useState<PortalMountState | null>(null);
 
-  // Track responsive portrait (<768px) vs desktop 2-page spread (>=768px)
+  // Track responsive portrait (<768px or tall portrait screen such as 1080x1920) vs desktop spread
   useEffect(() => {
     const handleResize = () => {
       const nextPortrait = getPreferredIsPortrait();
@@ -113,7 +132,7 @@ export const StoryFlipbookReader = forwardRef<
     return () => window.removeEventListener('resize', handleResize);
   }, [onOrientationChange]);
 
-  // Observe available stage dimensions so the open book always scales cleanly inside one screen
+  // Observe available stage dimensions so the book fills the portrait or spread canvas cleanly
   useEffect(() => {
     const el = stageViewportRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
@@ -122,16 +141,25 @@ export const StoryFlipbookReader = forwardRef<
       if (!rect) return;
       setStageDims({
         w: Math.max(280, Math.floor(rect.width)),
-        h: Math.max(320, Math.floor(rect.height)),
+        h: Math.max(340, Math.floor(rect.height)),
       });
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
+  // Quantized portrait aspect ratio (supports 9:16 mobile & 1080x1920 fullscreen portrait without jitter remounts)
+  const portraitAspectBucket = useMemo(() => {
+    if (!isPortrait) return 500 / 520;
+    const rawRatio = stageDims.h > 0 ? stageDims.w / stageDims.h : 0.58;
+    const clamped = Math.max(0.54, Math.min(0.72, rawRatio));
+    return Number((Math.round(clamped * 25) / 25).toFixed(2));
+  }, [isPortrait, stageDims.h, stageDims.w]);
+
   const pagesSignature = useMemo(
-    () => `${book.id}:${flipPages.length}:${isPortrait ? 'P' : 'L'}`,
-    [book.id, flipPages.length, isPortrait],
+    () =>
+      `${book.id}:${flipPages.length}:${isPortrait ? `P-${portraitAspectBucket}` : 'L'}`,
+    [book.id, flipPages.length, isPortrait, portraitAspectBucket],
   );
 
   // Mount & manage StPageFlip in a DOM-isolated container with React Portals inside each page wrapper
@@ -168,15 +196,20 @@ export const StoryFlipbookReader = forwardRef<
         ? currentPageIndex
         : 0;
 
-    // Rasio 500:520 lebih proporsional & lega agar teks cerita mengisi halaman secara penuh tanpa ruang kosong di bawah
+    const pfBaseWidth = isPortrait ? 540 : 500;
+    const pfBaseHeight = isPortrait
+      ? Math.round(540 / portraitAspectBucket)
+      : 520;
+
+    // Portrait mode fills up to 1080x1920 cleanly; desktop keeps crisp balanced 2-page spread
     const pf = new PageFlip(bookBlock, {
-      width: 500,
-      height: 520,
+      width: pfBaseWidth,
+      height: pfBaseHeight,
       size: 'stretch',
       minWidth: 260,
-      maxWidth: 560,
+      maxWidth: isPortrait ? 1160 : 680,
       minHeight: 320,
-      maxHeight: 540,
+      maxHeight: isPortrait ? 1960 : 740,
       startPage: startAt,
       drawShadow: true,
       maxShadowOpacity: 0.32,
@@ -273,18 +306,18 @@ export const StoryFlipbookReader = forwardRef<
     [flipNext, flipPrev, flipToPage],
   );
 
-  // Compute optimal open-book container width fitting within stage dimensions + zoomScale
+  // Compute optimal container width filling edge-to-edge portrait (390x844 or 1080x1920) or desktop spread
   const bookContainerWidth = useMemo(() => {
-    const horizontalPadding = isPortrait ? 16 : 96;
-    const verticalPadding = 20;
+    const horizontalPadding = isPortrait ? 8 : 96;
+    const verticalPadding = isPortrait ? 8 : 20;
     const availW = Math.max(260, stageDims.w - horizontalPadding);
     const availH = Math.max(320, stageDims.h - verticalPadding);
-    const singleRatio = 500 / 520;
+    const singleRatio = isPortrait ? portraitAspectBucket : 500 / 520;
     const targetAspect = isPortrait ? singleRatio : singleRatio * 2;
     const maxByHeight = Math.floor(availH * targetAspect);
-    const baseFit = Math.min(availW, maxByHeight, isPortrait ? 480 : 1040);
+    const baseFit = Math.min(availW, maxByHeight, isPortrait ? 1120 : 1080);
     return Math.max(260, Math.min(availW, Math.round(baseFit * zoomScale)));
-  }, [isPortrait, stageDims.h, stageDims.w, zoomScale]);
+  }, [isPortrait, portraitAspectBucket, stageDims.h, stageDims.w, zoomScale]);
 
   const visibleIndices = useMemo(
     () => getFlipbookVisibleIndices(currentPageIndex, flipPages.length, isPortrait),
@@ -293,9 +326,9 @@ export const StoryFlipbookReader = forwardRef<
 
   const spreadLabel = useMemo(() => {
     if (flipPages.length === 0) return '0 / 0';
-    if (currentPageIndex === 0) return `Sampul Depan · 1 / ${flipPages.length}`;
+    if (currentPageIndex === 0) return `Sampul · 1 / ${flipPages.length}`;
     if (currentPageIndex >= flipPages.length - 1) {
-      return `Sampul Belakang · ${flipPages.length} / ${flipPages.length}`;
+      return `Penutup · ${flipPages.length} / ${flipPages.length}`;
     }
     if (visibleIndices.length === 2) {
       return `Halaman ${visibleIndices[0] + 1}–${visibleIndices[1] + 1} dari ${flipPages.length}`;
@@ -303,22 +336,25 @@ export const StoryFlipbookReader = forwardRef<
     return `Halaman ${currentPageIndex + 1} dari ${flipPages.length}`;
   }, [currentPageIndex, flipPages.length, visibleIndices]);
 
-  // Story typography helpers — scale text slightly fuller on prose-only pages so sheets feel richly filled
+  // Crisp, generous reading typography sized for comfortable legibility on mobile portrait & 1080x1920 fullscreen
   const getStoryTextClass = (hasMediaOrMoral: boolean) => {
     if (fontScale === 'xlarge') {
       return hasMediaOrMoral
-        ? 'text-[16px] sm:text-[18px] lg:text-[19px] leading-[1.7]'
-        : 'text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.78]';
+        ? 'text-[18.5px] sm:text-[19.5px] lg:text-[20px] leading-[1.76]'
+        : 'text-[20.5px] sm:text-[21.5px] lg:text-[23px] leading-[1.82]';
     }
     if (fontScale === 'large') {
       return hasMediaOrMoral
-        ? 'text-[14.5px] sm:text-[16px] lg:text-[17px] leading-[1.68]'
-        : 'text-[16.5px] sm:text-[18px] lg:text-[19.5px] leading-[1.76]';
+        ? 'text-[17px] sm:text-[17.5px] lg:text-[18px] leading-[1.74]'
+        : 'text-[18.5px] sm:text-[19.5px] lg:text-[20.5px] leading-[1.8]';
     }
     return hasMediaOrMoral
-      ? 'text-[13.5px] sm:text-[14.5px] lg:text-[15.5px] leading-[1.65]'
-      : 'text-[15px] sm:text-[16px] lg:text-[17px] leading-[1.74]';
+      ? 'text-[15.5px] sm:text-[16px] lg:text-[16.5px] leading-[1.72]'
+      : 'text-[17px] sm:text-[17.5px] lg:text-[18px] leading-[1.78]';
   };
+
+  const fontScaleLabel =
+    fontScale === 'xlarge' ? 'A++' : fontScale === 'large' ? 'A+' : 'A';
 
   const isComic = book.kategori === 'Komik Edukasi';
   const atCover = currentPageIndex === 0;
@@ -354,7 +390,7 @@ export const StoryFlipbookReader = forwardRef<
             <span>Rumah Baca Almahyra</span>
           </div>
 
-          {/* Center Book Artwork Frame — fits natural cover ratio without empty sidebars */}
+          {/* Center Book Artwork Frame — scales gracefully across phone portrait and 1080x1920 */}
           <div className="relative z-10 my-2 flex flex-1 min-h-0 flex-col items-center justify-center pl-2">
             {book.coverUrl ? (
               <div className="w-fit max-w-full overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-[#05351D]/70 p-1.5 shadow-xl">
@@ -362,16 +398,16 @@ export const StoryFlipbookReader = forwardRef<
                   src={book.coverUrl}
                   alt={`Sampul ${book.judul}`}
                   loading="eager"
-                  className="block max-h-[215px] sm:max-h-[245px] w-auto max-w-full rounded-xl object-contain"
+                  className="block max-h-[34vh] min-h-[160px] w-auto max-w-full rounded-xl object-contain"
                   renderFallback={() => (
-                    <div className="aspect-[3/4] w-[155px] sm:w-[175px]">
+                    <div className="aspect-[3/4] w-[165px] sm:w-[210px]">
                       <CustomBookCoverSvg book={book} />
                     </div>
                   )}
                 />
               </div>
             ) : (
-              <div className="aspect-[3/4] w-[155px] sm:w-[175px] overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-white/10 shadow-xl">
+              <div className="aspect-[3/4] w-[165px] sm:w-[210px] overflow-hidden rounded-2xl border-2 border-amber-300/80 bg-white/10 shadow-xl">
                 <CustomBookCoverSvg book={book} />
               </div>
             )}
@@ -479,7 +515,7 @@ export const StoryFlipbookReader = forwardRef<
     return (
       <article className="flipbook-paper-sheet relative flex h-full w-full flex-col justify-between p-4 sm:p-6">
         {/* Top Page Running Header */}
-        <header className="shrink-0 flex items-center justify-between gap-2 border-b border-[#E7DCC4] pb-2 text-[11px] dark:border-[#244133]">
+        <header className="shrink-0 flex items-center justify-between gap-2 border-b border-[#E7DCC4] pb-2 text-[11px] sm:text-xs dark:border-[#244133]">
           <span
             className="font-bold tracking-wide truncate"
             style={{ color: 'var(--brand-primary-ink)' }}
@@ -491,8 +527,8 @@ export const StoryFlipbookReader = forwardRef<
           </span>
         </header>
 
-        {/* Vertically Balanced Middle Reading Body — centers compact passages naturally to eliminate empty bottom voids */}
-        <div className="my-2 flex-1 min-h-0 overflow-y-auto pr-1 flex flex-col">
+        {/* Vertically Balanced Middle Reading Body */}
+        <div className="my-2 flex-1 min-h-0 overflow-y-auto px-0.5 flex flex-col">
           <div className="my-auto space-y-4 py-1">
             {/* OPENER */}
             {page.kind === 'opener' && (
@@ -504,32 +540,32 @@ export const StoryFlipbookReader = forwardRef<
                         src={book.coverUrl}
                         alt={`Ilustrasi pembuka ${book.judul}`}
                         loading="eager"
-                        className="block max-h-[165px] sm:max-h-[185px] w-auto max-w-full rounded-lg object-contain"
+                        className="block max-h-[175px] sm:max-h-[205px] w-auto max-w-full rounded-lg object-contain"
                         renderFallback={() => (
-                          <div className="aspect-[3/4] w-[130px] sm:w-[145px]">
+                          <div className="aspect-[3/4] w-[130px] sm:w-[150px]">
                             <CustomBookCoverSvg book={book} />
                           </div>
                         )}
                       />
                     </div>
                   ) : (
-                    <div className="aspect-[3/4] w-[130px] sm:w-[145px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                    <div className="aspect-[3/4] w-[130px] sm:w-[150px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
                       <CustomBookCoverSvg book={book} />
                     </div>
                   )}
                 </div>
 
                 <div className="space-y-1 text-center">
-                  <h2 className="font-display text-lg sm:text-xl font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]">
+                  <h2 className="font-display text-xl sm:text-2xl font-extrabold leading-snug text-[#142119] dark:text-[#F1F7F3]">
                     {book.judul}
                   </h2>
-                  <p className="text-xs text-[#546358] dark:text-[#A4B9AE]">
+                  <p className="text-xs sm:text-sm text-[#546358] dark:text-[#A4B9AE]">
                     Penulis: {book.penulis}
                   </p>
                 </div>
 
                 <p
-                  className={`text-[#212E26] dark:text-[#E2ECE5] first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:font-display first-letter:text-4xl first-letter:font-extrabold first-letter:leading-[0.86] first-letter:text-[#087C3B] dark:first-letter:text-[#6EE7B7] ${getStoryTextClass(
+                  className={`font-normal text-[#142119] dark:text-[#EFF7F2] ${getStoryTextClass(
                     true,
                   )}`}
                 >
@@ -542,7 +578,7 @@ export const StoryFlipbookReader = forwardRef<
             {page.kind === 'story' && (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-display text-base sm:text-lg font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]">
+                  <h3 className="font-display text-lg sm:text-xl font-extrabold leading-snug text-[#142119] dark:text-[#F1F7F3]">
                     {page.storyPageNumber === 1 ? book.judul : page.chapterLabel}
                   </h3>
                   {page.storyPageNumber === 1 && isComic && (
@@ -563,16 +599,16 @@ export const StoryFlipbookReader = forwardRef<
                           src={book.coverUrl}
                           alt={`Ilustrasi cerita ${book.judul}`}
                           loading="eager"
-                          className="block max-h-[160px] sm:max-h-[180px] w-auto max-w-full rounded-lg object-contain"
+                          className="block max-h-[170px] sm:max-h-[195px] w-auto max-w-full rounded-lg object-contain"
                           renderFallback={() => (
-                            <div className="aspect-[3/4] w-[125px] sm:w-[140px]">
+                            <div className="aspect-[3/4] w-[125px] sm:w-[145px]">
                               <CustomBookCoverSvg book={book} />
                             </div>
                           )}
                         />
                       </div>
                     ) : (
-                      <div className="aspect-[3/4] w-[125px] sm:w-[140px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
+                      <div className="aspect-[3/4] w-[125px] sm:w-[145px] overflow-hidden rounded-xl border border-[#DFD4BC] bg-[#F3ECD9] shadow-xs dark:border-[#274436] dark:bg-[#0D1A14]">
                         <CustomBookCoverSvg book={book} />
                       </div>
                     )}
@@ -580,7 +616,7 @@ export const StoryFlipbookReader = forwardRef<
                 )}
 
                 <p
-                  className={`whitespace-pre-line font-normal text-[#1E2B22] dark:text-[#E5EFE9] first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:font-display first-letter:text-4xl sm:first-letter:text-[44px] first-letter:font-extrabold first-letter:leading-[0.86] first-letter:text-[#087C3B] dark:first-letter:text-[#6EE7B7] ${getStoryTextClass(
+                  className={`whitespace-pre-line font-normal text-[#142119] dark:text-[#EFF7F2] ${getStoryTextClass(
                     hasMediaOrMoral,
                   )}`}
                 >
@@ -595,13 +631,13 @@ export const StoryFlipbookReader = forwardRef<
                     >
                       Pesan Cerita
                     </p>
-                    <p className="mt-1 text-xs sm:text-sm leading-relaxed text-[#1C2820] dark:text-[#ECF3EE]">
+                    <p className="mt-1 text-sm leading-relaxed text-[#142119] dark:text-[#ECF3EE]">
                       {page.moralMessage}
                     </p>
                   </div>
                 )}
 
-                {/* Subtle botanical storybook flourish when page is pure prose so it reads cleanly with zero clutter */}
+                {/* Subtle botanical storybook divider on pure prose pages */}
                 {!hasMediaOrMoral && (
                   <div
                     aria-hidden="true"
@@ -628,7 +664,7 @@ export const StoryFlipbookReader = forwardRef<
         </div>
 
         {/* Bottom Paper Page Corner Indicator */}
-        <footer className="shrink-0 flex items-center justify-between gap-2 border-t border-[#E7DCC4] pt-2 text-[10px] sm:text-[11px] text-[#5B6D62] dark:border-[#244133] dark:text-[#9BB5A8]">
+        <footer className="shrink-0 flex items-center justify-between gap-2 border-t border-[#E7DCC4] pt-2 text-[11px] text-[#5B6D62] dark:border-[#244133] dark:text-[#9BB5A8]">
           <span className="truncate">{book.judul}</span>
           <span className="hidden sm:inline whitespace-nowrap">
             Geser atau klik tepi halaman
@@ -640,22 +676,22 @@ export const StoryFlipbookReader = forwardRef<
 
   return (
     <div className="flipbook-stage-bg relative flex flex-1 min-h-0 flex-col overflow-hidden">
-      {/* Compact Flipbook Controls Sub-Bar (Daftar Isi, Indicator, Zoom, Fullscreen) */}
-      <div className="shrink-0 border-b border-[#DDD4BE] bg-[#F7F3E8]/90 px-3 py-2 sm:px-6 dark:border-[#213A2E] dark:bg-[#101F18]/90">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+      {/* Compact Single-Line Reading Controls Bar (Daftar Isi, Page Indicator, Mobile Quick Tools, Zoom, Fullscreen) */}
+      <div className="shrink-0 border-b border-[#DDD4BE] bg-[#F7F3E8]/95 px-2 py-1.5 sm:px-6 dark:border-[#213A2E] dark:bg-[#101F18]/95">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-1.5 sm:gap-3">
           {/* Left: Table of Contents Popover Trigger + Spread Indicator */}
-          <div className="relative flex items-center gap-2 sm:gap-3">
+          <div className="relative flex min-w-0 items-center gap-1.5 sm:gap-3">
             <button
               type="button"
               onClick={() => setShowToc((prev) => !prev)}
               aria-expanded={showToc}
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs font-bold text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
+              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-2.5 sm:px-3 py-1 text-xs font-bold text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
             >
               <List className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <span>Daftar Isi</span>
             </button>
 
-            <span className="font-mono-tabular text-xs font-semibold text-[#47584D] dark:text-[#B4C9BE] whitespace-nowrap">
+            <span className="font-mono-tabular text-[11px] sm:text-xs font-semibold text-[#47584D] dark:text-[#B4C9BE] truncate">
               {spreadLabel}
             </span>
 
@@ -663,7 +699,7 @@ export const StoryFlipbookReader = forwardRef<
               <div
                 role="menu"
                 aria-label="Daftar Isi Buku Flipbook"
-                className="absolute left-0 top-11 z-40 w-72 max-h-72 overflow-y-auto rounded-2xl border border-[#D4CCB8] bg-[#FFFDF7] p-2 shadow-xl dark:border-[#2D473B] dark:bg-[#14251D]"
+                className="absolute left-0 top-10 z-40 w-72 max-h-72 overflow-y-auto rounded-2xl border border-[#D4CCB8] bg-[#FFFDF7] p-2 shadow-xl dark:border-[#2D473B] dark:bg-[#14251D]"
               >
                 <p className="px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#5B6D62] dark:text-[#9BB5A8]">
                   Pilih Halaman Cerita
@@ -693,8 +729,65 @@ export const StoryFlipbookReader = forwardRef<
             )}
           </div>
 
-          {/* Right: Zoom Controls + Fullscreen Toggle */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Right: Quick Reading Controls (Mobile or Fullscreen) + Desktop Zoom + Fullscreen Toggle */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {onCycleFontScale && (
+              <button
+                type="button"
+                onClick={onCycleFontScale}
+                aria-label={`Ubah ukuran teks bacaan (saat ini ${fontScaleLabel})`}
+                className={`${
+                  isFullscreen ? 'inline-flex' : 'inline-flex md:hidden'
+                } min-h-[36px] min-w-[38px] items-center justify-center rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-2 py-1 text-xs font-extrabold text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0`}
+              >
+                {fontScaleLabel}
+              </button>
+            )}
+
+            {hasSoundtrack && onToggleMusic && (
+              <button
+                type="button"
+                onClick={onToggleMusic}
+                aria-pressed={isMusicPlaying}
+                aria-label={isMusicPlaying ? 'Jeda musik cerita' : 'Putar musik cerita'}
+                className={`${
+                  isFullscreen ? 'inline-flex' : 'inline-flex md:hidden'
+                } min-h-[36px] min-w-[36px] items-center justify-center rounded-xl border px-2 py-1 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
+                  isMusicPlaying
+                    ? 'border-amber-400 bg-amber-400 text-[#10281B]'
+                    : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE]'
+                }`}
+              >
+                {isMusicPlaying ? (
+                  <Pause className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Music className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </button>
+            )}
+
+            {onToggleSpeech && (
+              <button
+                type="button"
+                onClick={onToggleSpeech}
+                aria-pressed={isSpeaking}
+                aria-label={isSpeaking ? 'Hentikan suara narasi' : 'Bacakan cerita'}
+                className={`${
+                  isFullscreen ? 'inline-flex' : 'inline-flex md:hidden'
+                } min-h-[36px] min-w-[36px] items-center justify-center rounded-xl border px-2 py-1 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
+                  isSpeaking
+                    ? 'border-emerald-500 bg-emerald-600 text-white'
+                    : 'border-[#D4CCB8] bg-[#FFFDF7] text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE]'
+                }`}
+              >
+                {isSpeaking ? (
+                  <VolumeX className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </button>
+            )}
+
             <div className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] p-0.5 text-xs dark:border-[#2D473B] dark:bg-[#192D24]">
               <button
                 type="button"
@@ -726,17 +819,18 @@ export const StoryFlipbookReader = forwardRef<
               type="button"
               onClick={onToggleFullscreen}
               aria-pressed={isFullscreen}
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs font-bold text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
+              aria-label={isFullscreen ? 'Keluar layar penuh' : 'Mode layar penuh'}
+              className="inline-flex min-h-[36px] min-w-[36px] items-center justify-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-2.5 sm:px-3 py-1 text-xs font-bold text-[#1C2820] hover:bg-[#ECE6D8] dark:border-[#2D473B] dark:bg-[#192D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
             >
               {isFullscreen ? (
                 <>
                   <Minimize2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span className="hidden xs:inline">Keluar Layar Penuh</span>
+                  <span className="hidden sm:inline">Keluar Layar Penuh</span>
                 </>
               ) : (
                 <>
                   <Maximize2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span className="hidden xs:inline">Layar Penuh</span>
+                  <span className="hidden sm:inline">Layar Penuh</span>
                 </>
               )}
             </button>
@@ -744,10 +838,10 @@ export const StoryFlipbookReader = forwardRef<
         </div>
       </div>
 
-      {/* Central Physical Book Flip Viewport */}
+      {/* Central Physical Book Flip Viewport — edge-to-edge on portrait screens */}
       <div
         ref={stageViewportRef}
-        className="relative flex flex-1 min-h-0 w-full items-center justify-center overflow-hidden px-2 py-3 sm:px-6"
+        className="relative flex flex-1 min-h-0 w-full items-center justify-center overflow-hidden px-1 py-1 sm:px-6 sm:py-3"
       >
         {/* Left Quick Turn Button (Desktop) */}
         <button
