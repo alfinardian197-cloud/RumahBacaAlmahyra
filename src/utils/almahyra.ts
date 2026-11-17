@@ -252,6 +252,8 @@ export function filterBooksAdvanced(
     query?: string;
     category?: string;
     readerLevel?: string;
+    zona?: string;
+    sumberKatalog?: string;
     maxMinutes?: number;
     onlyActive?: boolean;
     onlyAvailable?: boolean;
@@ -262,12 +264,16 @@ export function filterBooksAdvanced(
   const q = (opts.query ?? '').trim().toLowerCase();
   const category = opts.category ?? 'Semua';
   const readerLevel = opts.readerLevel ?? 'Semua';
+  const zona = opts.zona ?? 'Semua';
+  const sumberKatalog = opts.sumberKatalog ?? 'Semua';
   const onlyActive = opts.onlyActive !== false;
 
   return books.filter((b) => {
     if (onlyActive && b.aktif === false) return false;
     if (opts.onlyAvailable && b.status !== 'Tersedia') return false;
     if (category !== 'Semua' && b.kategori !== category) return false;
+    if (zona !== 'Semua' && b.zona !== zona) return false;
+    if (sumberKatalog !== 'Semua' && b.sumberKatalog !== sumberKatalog) return false;
     if (
       readerLevel !== 'Semua' &&
       (b.jenjangPembaca ?? 'Semua Usia') !== readerLevel &&
@@ -286,7 +292,12 @@ export function filterBooksAdvanced(
       b.kodeBuku.toLowerCase().includes(q) ||
       b.zona.toLowerCase().includes(q) ||
       b.kategori.toLowerCase().includes(q) ||
-      b.deskripsi.toLowerCase().includes(q)
+      b.deskripsi.toLowerCase().includes(q) ||
+      (b.subtema ?? '').toLowerCase().includes(q) ||
+      (b.sasaranUsia ?? '').toLowerCase().includes(q) ||
+      (b.format ?? '').toLowerCase().includes(q) ||
+      (b.sumberKatalog ?? '').toLowerCase().includes(q) ||
+      (b.catatanKurasi ?? '').toLowerCase().includes(q)
     );
   });
 }
@@ -425,6 +436,192 @@ export function getBookReadablePages(book: Book, maxCharsPerPage = 290): BookPag
 
   return paginated;
 }
+
+export type FlipbookPageKind =
+  | 'cover'
+  | 'opener'
+  | 'story'
+  | 'info'
+  | 'discussion'
+  | 'closing'
+  | 'back-cover';
+
+export interface FlipbookPageEntry {
+  id: string;
+  index: number;
+  kind: FlipbookPageKind;
+  density: 'hard' | 'soft';
+  tocTitle: string;
+  chapterLabel: string;
+  heading: string;
+  body?: string;
+  moralMessage?: string;
+  storyPageNumber?: number;
+  totalStoryPages?: number;
+  discussionPrompts?: string[];
+  hasIllustrationFrame?: boolean;
+}
+
+export function buildFlipbookPages(
+  book: Book,
+  maxCharsPerPage = 260,
+): FlipbookPageEntry[] {
+  const storyChunks = getBookReadablePages(book, maxCharsPerPage);
+  const insideDraft: Omit<FlipbookPageEntry, 'index'>[] = [];
+
+  // 1. Pembuka cerita (halaman kiri saat buku pertama kali dibuka)
+  insideDraft.push({
+    id: `${book.id}-opener`,
+    kind: 'opener',
+    density: 'soft',
+    tocTitle: 'Pembuka & Pengantar Cerita',
+    chapterLabel: 'Pembuka Cerita',
+    heading: book.judul,
+    body: book.deskripsi,
+    hasIllustrationFrame: true,
+  });
+
+  // 2. Halaman isi cerita (berpasangan dengan selingan ilustrasi visual)
+  storyChunks.forEach((chunk, idx) => {
+    insideDraft.push({
+      id: `${book.id}-story-${idx + 1}`,
+      kind: 'story',
+      density: 'soft',
+      tocTitle: chunk.judulBab,
+      chapterLabel: chunk.judulBab,
+      heading: book.judul,
+      body: chunk.isi,
+      moralMessage: chunk.pesanMoral,
+      storyPageNumber: idx + 1,
+      totalStoryPages: storyChunks.length,
+      hasIllustrationFrame: idx % 2 === 0,
+    });
+  });
+
+  // 3. Halaman Informasi Buku, Kurasi & Sumber Resmi
+  insideDraft.push({
+    id: `${book.id}-info`,
+    kind: 'info',
+    density: 'soft',
+    tocTitle: 'Informasi & Sumber Resmi',
+    chapterLabel: 'Informasi Bacaan',
+    heading: 'Fakta Buku & Sumber Resmi',
+    body:
+      book.catatanKurasi?.trim() ||
+      `Bacaan ${book.kategori} untuk ${book.sasaranUsia ?? book.jenjangPembaca ?? 'semua usia'} di ${book.zona}, Rumah Baca Almahyra.`,
+  });
+
+  // 4. Penyeimbang spread genap: tambahkan Obrolan Keluarga jika jumlah halaman dalam ganjil
+  // Supaya total halaman dalam (tanpa sampul depan & belakang) SELALU genap & setiap spread 2 halaman penuh
+  if ((insideDraft.length + 1) % 2 !== 0) {
+    insideDraft.push({
+      id: `${book.id}-discussion`,
+      kind: 'discussion',
+      density: 'soft',
+      tocTitle: 'Obrolan Keluarga & Refleksi',
+      chapterLabel: 'Obrolan Keluarga',
+      heading: 'Ayo Ceritakan Kembali!',
+      body: `Ajak ayah, ibu, atau sahabat di Rumah Baca Almahyra mendiskusikan kisah "${book.judul}".`,
+      discussionPrompts: [
+        `Siapa tokoh atau peristiwa paling berkesan di "${book.judul}"?`,
+        `Hal baru apa tentang ${book.kategori.toLowerCase()} yang kamu temukan hari ini?`,
+        'Bagaimana cara kita mempraktikkan pesan baik cerita ini di rumah atau Dusun Grontol?',
+      ],
+    });
+  }
+
+  // 5. Penutup cerita + Misi Petualang Nyata + Klaim Stempel
+  insideDraft.push({
+    id: `${book.id}-closing`,
+    kind: 'closing',
+    density: 'soft',
+    tocTitle: 'Penutup & Misi Aksi Nyata',
+    chapterLabel: 'Penutup & Aksi Nyata',
+    heading: 'Tamat & Tantangan Aksi Nyata!',
+    body:
+      'Hore! Kamu telah membaca kisah ini sampai selesai. Klaim stempel E-Paspor Baca dan selesaikan Misi Petualang Nyata di bawah ini!',
+  });
+
+  const allDraft: Omit<FlipbookPageEntry, 'index'>[] = [
+    {
+      id: `${book.id}-front-cover`,
+      kind: 'cover',
+      density: 'hard',
+      tocTitle: 'Sampul Depan',
+      chapterLabel: 'Sampul Buku',
+      heading: book.judul,
+      body: book.deskripsi,
+      hasIllustrationFrame: true,
+    },
+    ...insideDraft,
+    {
+      id: `${book.id}-back-cover`,
+      kind: 'back-cover',
+      density: 'hard',
+      tocTitle: 'Sampul Belakang',
+      chapterLabel: 'Rumah Baca Almahyra',
+      heading: 'Terima Kasih Sudah Membaca!',
+      body: `Terus bertualang bersama koleksi ${book.kategori} dan kumpulkan stempel E-Paspor Baca di Rumah Baca Almahyra, Dusun Grontol, Desa Tlogosari.`,
+    },
+  ];
+
+  return allDraft.map((entry, index) => ({
+    ...entry,
+    index,
+  }));
+}
+
+export function getFlipbookVisibleIndices(
+  currentPageIndex: number,
+  totalPages: number,
+  isPortrait: boolean,
+): number[] {
+  if (totalPages <= 0) return [];
+  const safeIdx = Math.max(0, Math.min(totalPages - 1, currentPageIndex));
+  if (isPortrait || safeIdx === 0 || safeIdx === totalPages - 1) {
+    return [safeIdx];
+  }
+  // In landscape showCover mode: spreads are (1,2), (3,4), (5,6), ...
+  const leftIdx = safeIdx % 2 === 1 ? safeIdx : safeIdx - 1;
+  const rightIdx = leftIdx + 1;
+  if (rightIdx < totalPages - 1) {
+    return [leftIdx, rightIdx];
+  }
+  return [leftIdx];
+}
+
+export function getFlipbookSpreadNarrationText(
+  book: Book,
+  flipPages: FlipbookPageEntry[],
+  currentPageIndex: number,
+  isPortrait: boolean,
+): string {
+  const visibleIndices = getFlipbookVisibleIndices(
+    currentPageIndex,
+    flipPages.length,
+    isPortrait,
+  );
+  if (visibleIndices.length === 0) return book.judul;
+
+  const segments = visibleIndices
+    .map((idx) => {
+      const p = flipPages[idx];
+      if (!p) return '';
+      if (p.kind === 'cover') {
+        return `${book.judul}. Ditulis oleh ${book.penulis}. ${book.deskripsi}`;
+      }
+      if (p.kind === 'discussion' && p.discussionPrompts?.length) {
+        return `${p.chapterLabel}. ${p.body ?? ''} ${p.discussionPrompts.join(' ')}`;
+      }
+      return `${p.chapterLabel}. ${p.body ?? ''} ${
+        p.moralMessage ? `Pesan cerita: ${p.moralMessage}` : ''
+      }`.trim();
+    })
+    .filter(Boolean);
+
+  return segments.join(' ').trim() || book.judul;
+}
+
 
 export function getBookQuizQuestions(book: Book): BookQuizQuestion[] {
   if (book.kuis && book.kuis.length > 0) {
@@ -766,14 +963,41 @@ const LEGACY_GENERIC_COVER_URLS = new Set([
   '/images/illustration_telaga_community_1794805036320.jpg',
 ]);
 
+const LEGACY_PRE_BATCH1_BOOK_CODES = new Set([
+  'IMG-001',
+  'FBL-002',
+  'SNS-003',
+  'DNG-004',
+  'KMK-005',
+  'LNG-006',
+  'SJR-007',
+  'INS-008',
+  'BDY-009',
+  'ENS-010',
+  'KMK-011',
+  'NSN-012',
+]);
+
+function isLegacyPreBatch1Book(book: Pick<Book, 'id' | 'kodeBuku'>): boolean {
+  const code = (book.kodeBuku ?? '').trim();
+  const id = (book.id ?? '').trim();
+  return (
+    /^bk-\d+$/i.test(id) ||
+    code.startsWith('BUDI-') ||
+    LEGACY_PRE_BATCH1_BOOK_CODES.has(code)
+  );
+}
+
 export function hydrateDatabaseWithDefaults(
   incoming: Partial<AlmahyraDatabase>,
   fallback: AlmahyraDatabase,
 ): AlmahyraDatabase {
   const defaultBooksByCode = new Map(fallback.books.map((b) => [b.kodeBuku, b]));
-  const rawBooks = Array.isArray(incoming.books) && incoming.books.length > 0
-    ? incoming.books
-    : fallback.books;
+  const incomingNonLegacyBooks = Array.isArray(incoming.books)
+    ? incoming.books.filter((b) => !isLegacyPreBatch1Book(b))
+    : [];
+  const rawBooks =
+    incomingNonLegacyBooks.length > 0 ? incomingNonLegacyBooks : fallback.books;
 
   const mergedBooks: Book[] = rawBooks.map((b) => {
     const def = defaultBooksByCode.get(b.kodeBuku);
@@ -782,6 +1006,9 @@ export function hydrateDatabaseWithDefaults(
       def?.coverUrl &&
         (!rawTrimmedCover || LEGACY_GENERIC_COVER_URLS.has(rawTrimmedCover)),
     );
+    const resolvedCover = shouldUpgradeLegacyGenericCover
+      ? normalizeAssetUrl(def?.coverUrl)
+      : normalizeAssetUrl(b.coverUrl) || normalizeAssetUrl(def?.coverUrl);
     return {
       ...def,
       ...b,
@@ -790,16 +1017,14 @@ export function hydrateDatabaseWithDefaults(
       aktif: b.aktif ?? true,
       pilihanAlmahyra: b.pilihanAlmahyra ?? def?.pilihanAlmahyra ?? false,
       dibacaCount: b.dibacaCount ?? def?.dibacaCount ?? 0,
-      tanggalTerbit: b.tanggalTerbit ?? def?.tanggalTerbit ?? '2026-11-01',
+      tanggalTerbit: b.tanggalTerbit ?? def?.tanggalTerbit ?? '2026-11-17',
       isiBacaan: b.isiBacaan && b.isiBacaan.length > 0 ? b.isiBacaan : def?.isiBacaan,
       kuis: b.kuis && b.kuis.length > 0 ? b.kuis : def?.kuis,
-      coverUrl: shouldUpgradeLegacyGenericCover
-        ? normalizeAssetUrl(def?.coverUrl)
-        : normalizeAssetUrl(b.coverUrl) || normalizeAssetUrl(def?.coverUrl),
+      coverUrl: resolvedCover || undefined,
     };
   });
 
-  // Ensure curated new categories books exist if migrating from older 8-book DB
+  // Ensure every Batch 1 catalog book is present
   const existingCodes = new Set(mergedBooks.map((b) => b.kodeBuku));
   for (const defBook of fallback.books) {
     if (!existingCodes.has(defBook.kodeBuku)) {
@@ -807,6 +1032,7 @@ export function hydrateDatabaseWithDefaults(
     }
   }
 
+  const validBookIds = new Set(mergedBooks.map((b) => b.id));
   const upgradeMemberCode = (code: string | undefined): string => {
     if (!code) return '';
     return code.replace(/^ALM-/i, 'ALMA-');
@@ -848,7 +1074,12 @@ export function hydrateDatabaseWithDefaults(
     nomorInduk: upgradeMemberCode(m.nomorInduk),
   }));
 
-  const migratedLoans = (Array.isArray(incoming.loans) ? incoming.loans : fallback.loans).map(
+  const rawIncomingLoans = Array.isArray(incoming.loans)
+    ? incoming.loans.filter(
+        (l) => !LEGACY_PRE_BATCH1_BOOK_CODES.has(l.kodeBuku) && !l.kodeBuku.startsWith('BUDI-'),
+      )
+    : [];
+  const migratedLoans = (rawIncomingLoans.length > 0 ? rawIncomingLoans : fallback.loans).map(
     (l) => ({
       ...l,
       nomorInduk: upgradeMemberCode(l.nomorInduk),
@@ -856,25 +1087,29 @@ export function hydrateDatabaseWithDefaults(
   );
 
   const migratedPassportLogs = (
-    Array.isArray(incoming.passportLogs) ? incoming.passportLogs : fallback.passportLogs
+    Array.isArray(incoming.passportLogs) && incoming.passportLogs.length > 0
+      ? incoming.passportLogs
+      : fallback.passportLogs
   ).map((p) => ({
     ...p,
     nomorInduk: upgradeMemberCode(p.nomorInduk),
   }));
 
+  const rawProgress = Array.isArray(incoming.readingProgress)
+    ? incoming.readingProgress.filter((rp) => validBookIds.has(rp.bookId))
+    : [];
   const migratedProgress = (
-    Array.isArray(incoming.readingProgress) && incoming.readingProgress.length > 0
-      ? incoming.readingProgress
-      : (fallback.readingProgress ?? [])
+    rawProgress.length > 0 ? rawProgress : (fallback.readingProgress ?? [])
   ).map((rp) => ({
     ...rp,
     viewerKey: upgradeMemberCode(rp.viewerKey),
   }));
 
+  const rawJournals = Array.isArray(incoming.readingJournals)
+    ? incoming.readingJournals.filter((j) => validBookIds.has(j.bookId))
+    : [];
   const migratedJournals = (
-    Array.isArray(incoming.readingJournals) && incoming.readingJournals.length > 0
-      ? incoming.readingJournals
-      : (fallback.readingJournals ?? [])
+    rawJournals.length > 0 ? rawJournals : (fallback.readingJournals ?? [])
   ).map((j) => ({
     ...j,
     nomorInduk: upgradeMemberCode(j.nomorInduk),
@@ -1449,75 +1684,75 @@ export interface MiniQuizQuestion {
 export const MINI_QUIZ_TEBAK_CERITA: MiniQuizQuestion[] = [
   {
     id: 'mq-1',
-    storyRef: 'Pustaka Kaki Gunung & Lentera Senja',
-    question: 'Di mana anak-anak Dusun Grontol menyalakan lentera baca setiap sore?',
+    storyRef: 'Enggang yang Istimewa (ALM-001)',
+    question: 'Mengapa burung enggang disebut istimewa bagi kelestarian hutan Kalimantan?',
     options: [
-      'Di teras kayu yang hangat bersama keluarga',
-      'Di dalam gudang gelap yang terkunci',
-      'Di tengah jalan raya yang ramai kendaraan',
-      'Di atas atap sekolah sendirian',
+      'Membantu menyebarkan biji buah hutan agar tumbuh pohon baru',
+      'Memotong batang pohon tinggi dengan paruhnya',
+      'Menutup aliran sungai menggunakan daun kering',
+      'Tinggal di dalam dasar gua batu yang gelap',
     ],
     correctIndex: 0,
-    explanation: 'Teras kayu rumah yang hangat menjadi tempat nyaman anak-anak membaca bersama.',
+    explanation: 'Burung enggang membantu menebar biji tumbuhan hutan sehingga pepohonan terus tumbuh lestari!',
   },
   {
     id: 'mq-2',
-    storyRef: 'Dongeng Kancil & Sahabat Hutan',
-    question: 'Bagaimana Kancil membersihkan batu besar dan ranting yang menyumbat sungai?',
+    storyRef: 'Ting-Ting-Ting! (ALM-007)',
+    question: 'Alat musik tradisional dari bambu apa yang berbunyi ting-ting-ting dalam cerita tersebut?',
     options: [
-      'Mengajak Berang-berang, Gajah Kecil, dan Tupai bekerja sama',
-      'Menunggu hujan badai selama tiga bulan',
-      'Meninggalkan sungai lalu pindah ke kota',
-      'Menyuruh Kura-Kura mengangkat batu sendirian',
+      'Calung yang disusun sesuai tinggi-rendah nadanya',
+      'Gitar listrik yang memakai baterai besar',
+      'Terompet tembaga dari kapal laut',
+      'Drum plastik bekas kaleng cat',
     ],
     correctIndex: 0,
-    explanation: 'Dengan gotong royong bersama teman hutan, sungai kembali mengalir jernih!',
+    explanation: 'Calung dimainkan dengan mengetuk bilah bambu yang panjang-pendeknya menghasilkan tangga nada merdu.',
   },
   {
     id: 'mq-3',
-    storyRef: 'Ensiklopedia Sains Dapur & Kebun',
-    question: 'Proses apa yang membuat daun sawi putih berubah warna saat batangnya direndam air berwarna?',
+    storyRef: 'Lari! (ALM-008)',
+    question: 'Apa sikap tepat ketika melihat tanda bahaya gunung berapi mulai aktif?',
     options: [
-      'Kapilaritas yang menyerap air naik melalui pembuluh batang',
-      'Sawi meminum udara malam saat lampu padam',
-      'Daun sawi dicat dengan kuas gambar',
-      'Air membeku menjadi es di dalam gelas',
+      'Tetap tenang, memakai pelindung, dan menuju titik kumpul aman bersama keluarga',
+      'Mendekati puncak kawah untuk melihat asap dari dekat',
+      'Mengabaikan rambu jalur evakuasi desa',
+      'Bersembunyi di bawah atap rapuh tanpa memberi tahu siapa pun',
     ],
     correctIndex: 0,
-    explanation: 'Pembuluh kapiler tumbuhan mengangkut air dan zat warna hingga ke ujung daun.',
+    explanation: 'Ketenangan dan mengikuti jalur evakuasi aman adalah kunci keselamatan diri saat tanda bahaya muncul.',
   },
   {
     id: 'mq-4',
-    storyRef: 'Komik Edukasi: Kapten Pilah & Pasukan Kompos',
-    question: 'Tong warna apa yang dipilih Kapten Pilah untuk mengolah kulit buah & daun kering menjadi pupuk?',
+    storyRef: 'Penjelajahan Tiwi dan Boni (ALM-016)',
+    question: 'Planet apa di tata surya yang terkenal memiliki cincin es berkilauan?',
     options: [
-      'Tong hijau untuk kompos organik',
-      'Tong merah khusus baterai bekas',
-      'Kantong plastik hitam lalu dibuang ke sungai',
-      'Kotak kaca yang diletakkan di lemari es',
+      'Saturnus',
+      'Merkurius',
+      'Mars',
+      'Venus',
     ],
     correctIndex: 0,
-    explanation: 'Sampah organik di tong hijau bisa diolah menjadi kompos yang menyuburkan kebun!',
+    explanation: 'Saturnus terkenal dengan sistem cincin es dan debu ruang angkasa yang indah mengitarinya!',
   },
   {
     id: 'mq-5',
-    storyRef: 'Bintang Kertas dari Negeri Angin',
-    question: 'Apa pesan utama dari cerita Hana yang menerbangkan bintang dan burung kertas?',
+    storyRef: 'Perahu Botol (ALM-018)',
+    question: 'Mengapa botol plastik bersih yang ditutup rapat bisa membuat perahu mengapung di air?',
     options: [
-      'Kreativitas sederhana yang dibagikan dengan tulus bisa menumbuhkan persahabatan',
-      'Kita tidak perlu menyapa tetangga di seberang desa',
-      'Kertas bekas harus langsung dibakar di halaman',
-      'Membaca buku hanya boleh dilakukan saat liburan saja',
+      'Udara terperangkap di dalam botol memberi daya apung ke atas',
+      'Botol plastik berubah menjadi bongkahan besi berat',
+      'Air sungai selalu membeku menjadi es di bawah botol',
+      'Karena tutup botol dicat warna kuning cerah',
     ],
     correctIndex: 0,
-    explanation: 'Karya kecil yang tulus mampu menyambung persahabatan dan keceriaan bersama.',
+    explanation: 'Udara ringan di dalam botol tertutup rapat menghasilkan gaya apung untuk proyek daur ulang ramah lingkungan!',
   },
 ];
 
 export function getBookRealActionMission(
-  book: Pick<Book, 'judul' | 'kategori' | 'zona' | 'deskripsi'>,
+  book: Pick<Book, 'judul' | 'kategori' | 'zona' | 'deskripsi'> & { subtema?: string },
 ): RealActionMissionSpec {
-  const haystack = `${book.judul} ${book.kategori} ${book.zona} ${book.deskripsi}`.toLowerCase();
+  const haystack = `${book.judul} ${book.kategori} ${book.zona} ${book.subtema ?? ''} ${book.deskripsi}`.toLowerCase();
 
   if (
     book.kategori === 'Lingkungan dan Alam' ||

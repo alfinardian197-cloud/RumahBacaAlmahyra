@@ -90,6 +90,15 @@ export interface Book {
   pdfUrl?: string;
   pdfNamaFile?: string;
   lisensi?: string;
+  subtema?: string;
+  sasaranUsia?: string;
+  format?: string;
+  bahasa?: string;
+  sumberResmiUrl?: string;
+  caraIntegrasi?: string;
+  statusKurasi?: string;
+  catatanKurasi?: string;
+  sumberKatalog?: string;
   isiBacaan?: BookPage[];
   kuis?: BookQuizQuestion[];
 }

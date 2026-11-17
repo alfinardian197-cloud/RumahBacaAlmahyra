@@ -208,10 +208,13 @@ export function PublicLanding({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedLevel, setSelectedLevel] = useState('Semua');
+  const [selectedZona, setSelectedZona] = useState('Semua');
+  const [selectedSumber, setSelectedSumber] = useState('Semua');
   const [quick5MinOnly, setQuick5MinOnly] = useState(false);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [availableOnly, setAvailableOnly] = useState(false);
   const [showAllBooksInline, setShowAllBooksInline] = useState(false);
+  const [visibleBookCount, setVisibleBookCount] = useState(24);
   const [journeyStep, setJourneyStep] = useState(1);
   const [heroSlide, setHeroSlide] = useState(0);
   const [certModalOpen, setCertModalOpen] = useState(false);
@@ -265,12 +268,28 @@ export function PublicLanding({
     return ['Semua', ...base];
   }, [db.readerLevels]);
 
+  const zoneOptions = useMemo(() => {
+    const set = new Set(books.filter((b) => b.aktif !== false).map((b) => b.zona));
+    return ['Semua', ...Array.from(set)];
+  }, [books]);
+
+  const sumberOptions = useMemo(() => {
+    const set = new Set(
+      books
+        .filter((b) => b.aktif !== false && b.sumberKatalog)
+        .map((b) => b.sumberKatalog as string),
+    );
+    return ['Semua', ...Array.from(set)];
+  }, [books]);
+
   const filteredBooks = useMemo(
     () =>
       filterBooksAdvanced(books, {
         query: searchQuery,
         category: selectedCategory,
         readerLevel: selectedLevel,
+        zona: selectedZona,
+        sumberKatalog: selectedSumber,
         maxMinutes: quick5MinOnly ? 5 : undefined,
         favoriteBookIds,
         onlyFavorites: favoritesOnly,
@@ -282,6 +301,8 @@ export function PublicLanding({
       searchQuery,
       selectedCategory,
       selectedLevel,
+      selectedZona,
+      selectedSumber,
       quick5MinOnly,
       favoriteBookIds,
       favoritesOnly,
@@ -295,21 +316,27 @@ export function PublicLanding({
     Boolean(searchQuery.trim()) ||
     selectedCategory !== 'Semua' ||
     selectedLevel !== 'Semua' ||
+    selectedZona !== 'Semua' ||
+    selectedSumber !== 'Semua' ||
     quick5MinOnly ||
     favoritesOnly ||
     availableOnly ||
     showAllBooksInline;
 
   const displayedWorkspaceBooks = hasActiveFilter ? filteredBooks : shelves.pilihanAlmahyra;
+  const visibleWorkspaceBooks = displayedWorkspaceBooks.slice(0, visibleBookCount);
 
   const handleResetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('Semua');
     setSelectedLevel('Semua');
+    setSelectedZona('Semua');
+    setSelectedSumber('Semua');
     setQuick5MinOnly(false);
     setFavoritesOnly(false);
     setAvailableOnly(false);
     setShowAllBooksInline(false);
+    setVisibleBookCount(24);
   };
 
   const featuredMember: Member = useMemo(() => {
@@ -356,7 +383,7 @@ export function PublicLanding({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-bold tracking-wide text-[#08A9EF]">
-              Pilar Baca · Sampul Foto Kurasi Bebas Hak Cipta &amp; Koleksi BUDI Kemendikdasmen
+              Pilar Baca · Katalog Resmi Batch 1 ({stats.totalTitles} Judul Terkurasi)
             </p>
             <h2 className="font-display text-2xl font-bold tracking-tight text-[#111C17]">
               {hasActiveFilter
@@ -378,7 +405,10 @@ export function PublicLanding({
             )}
             <button
               type="button"
-              onClick={() => setShowAllBooksInline((v) => !v)}
+              onClick={() => {
+                setShowAllBooksInline((v) => !v);
+                setVisibleBookCount(24);
+              }}
               style={{
                 backgroundColor: showAllBooksInline ? '#F58220' : '#087C3B',
               }}
@@ -441,12 +471,15 @@ export function PublicLanding({
             </div>
           </div>
 
-          {/* Secondary Quick Filters + 10+ Category Selector */}
+          {/* Secondary Quick Filters + Category, Zona, & Sumber Katalog Selectors */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               aria-label="Filter kategori koleksi"
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setVisibleBookCount(24);
+              }}
               className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
             >
               {categories.map((cat) => (
@@ -457,9 +490,44 @@ export function PublicLanding({
             </select>
 
             <select
+              aria-label="Filter zona petualangan"
+              value={selectedZona}
+              onChange={(e) => {
+                setSelectedZona(e.target.value);
+                setVisibleBookCount(24);
+              }}
+              className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
+            >
+              {zoneOptions.map((z) => (
+                <option key={z} value={z}>
+                  Zona: {z}
+                </option>
+              ))}
+            </select>
+
+            <select
+              aria-label="Filter sumber katalog"
+              value={selectedSumber}
+              onChange={(e) => {
+                setSelectedSumber(e.target.value);
+                setVisibleBookCount(24);
+              }}
+              className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
+            >
+              {sumberOptions.map((src) => (
+                <option key={src} value={src}>
+                  Sumber: {src}
+                </option>
+              ))}
+            </select>
+
+            <select
               aria-label="Semua jenjang pembaca"
               value={selectedLevel}
-              onChange={(e) => setSelectedLevel(e.target.value)}
+              onChange={(e) => {
+                setSelectedLevel(e.target.value);
+                setVisibleBookCount(24);
+              }}
               className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
             >
               {readerLevels.map((lvl) => (
@@ -533,17 +601,34 @@ export function PublicLanding({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {displayedWorkspaceBooks.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              config={config}
-              progress={progressMap.get(book.id)}
-              onRead={onReadBook}
-              onToggleFavorite={onToggleFavorite}
-            />
-          ))}
+        <div className="space-y-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visibleWorkspaceBooks.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                config={config}
+                progress={progressMap.get(book.id)}
+                onRead={onReadBook}
+                onToggleFavorite={onToggleFavorite}
+              />
+            ))}
+          </div>
+
+          {displayedWorkspaceBooks.length > visibleBookCount && (
+            <div className="flex flex-col items-center gap-2 pt-2">
+              <p className="text-xs font-medium text-[#4A5D54]">
+                Menampilkan {visibleWorkspaceBooks.length} dari {displayedWorkspaceBooks.length} bahan bacaan
+              </p>
+              <button
+                type="button"
+                onClick={() => setVisibleBookCount((c) => c + 24)}
+                className="inline-flex items-center gap-2 rounded-xl border border-[#087C3B]/30 bg-white px-5 py-2.5 text-xs font-bold text-[#087C3B] hover:bg-[#E4F7EA] transition-colors"
+              >
+                Tampilkan 24 Buku Berikutnya ({displayedWorkspaceBooks.length - visibleWorkspaceBooks.length} Tersisa)
+              </button>
+            </div>
+          )}
         </div>
       )}
     </section>
@@ -1080,7 +1165,8 @@ export function PublicLanding({
                 db={db}
                 onReadBook={onReadBook}
                 onFilterByZone={(zoneName) => {
-                  setSearchQuery(zoneName.replace('Zona ', ''));
+                  setSelectedZona(zoneName);
+                  setVisibleBookCount(24);
                   scrollToSection('rak-pilihan-workspace');
                 }}
               />

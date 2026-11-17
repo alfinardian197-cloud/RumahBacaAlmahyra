@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import {
   ArrowLeft,
   Award,
   BookOpen,
-  BookmarkCheck,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -26,8 +25,9 @@ import type {
   ReadingProgress,
 } from '../types/almahyra';
 import {
+  buildFlipbookPages,
   getBookQuizQuestions,
-  getBookReadablePages,
+  getFlipbookSpreadNarrationText,
   isBookActive,
   type LocalDigitalPassportState,
 } from '../utils/almahyra';
@@ -38,6 +38,10 @@ import {
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { RealActionMissionCard } from './RealActionMissionCard';
 import { ResilientImage } from './ResilientImage';
+import {
+  StoryFlipbookReader,
+  type StoryFlipbookHandle,
+} from './StoryFlipbookReader';
 
 interface BookReaderModalProps {
   book: Book | null;
@@ -78,7 +82,7 @@ export function BookReaderModal({
   onClaimRealAction,
   onRecordReading,
 }: BookReaderModalProps) {
-  const pages = useMemo(() => (book ? getBookReadablePages(book) : []), [book]);
+  const flipPages = useMemo(() => (book ? buildFlipbookPages(book) : []), [book]);
   const quizQuestions = useMemo(() => (book ? getBookQuizQuestions(book) : []), [book]);
   const soundtrack = useMemo(
     () =>
@@ -88,8 +92,13 @@ export function BookReaderModal({
     [book],
   );
 
+  const modalRootRef = useRef<HTMLDivElement | null>(null);
+  const flipbookRef = useRef<StoryFlipbookHandle | null>(null);
+
   const [activeTab, setActiveTab] = useState<ReaderTab>('read');
   const [pageIdx, setPageIdx] = useState(0);
+  const [isFlipbookPortrait, setIsFlipbookPortrait] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [fontScale, setFontScale] = useState<'normal' | 'large' | 'xlarge'>('large');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechRate, setSpeechRate] = useState(1);
@@ -119,6 +128,9 @@ export function BookReaderModal({
     stopSpeech();
     storyAudioEngine.stop();
     setIsMusicPlaying(false);
+    if (typeof document !== 'undefined' && document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
     onClose();
   }, [onClose, stopSpeech]);
 
@@ -128,8 +140,8 @@ export function BookReaderModal({
       setIsMusicPlaying(false);
       return;
     }
-    const savedPage = Math.max(0, Math.min(pages.length - 1, progress?.lastPage ?? 0));
-    setPageIdx(savedPage);
+    // Selalu buka dari Sampul Depan tertutup sesuai konsep Flipbook Interaktif
+    setPageIdx(0);
     setActiveTab('read');
     setAnswers({});
     setQuizSubmitted(false);
@@ -149,26 +161,55 @@ export function BookReaderModal({
   }, [isSpeaking]);
 
   useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
     return () => {
       stopSpeech();
       storyAudioEngine.stop();
     };
   }, [stopSpeech]);
 
-  const handleTurnPage = useCallback(
-    async (nextIdx: number) => {
+  const handleFlipPageChange = useCallback(
+    async (nextIdx: number, portraitFlag: boolean) => {
       if (!book) return;
       stopSpeech();
-      const clamped = Math.max(0, Math.min(pages.length - 1, nextIdx));
+      setIsFlipbookPortrait(portraitFlag);
+      const clamped = Math.max(0, Math.min(flipPages.length - 1, nextIdx));
       setPageIdx(clamped);
       await onRecordReading({
         bookId: book.id,
         lastPage: clamped,
-        totalPages: pages.length,
+        totalPages: flipPages.length,
       });
     },
-    [book, onRecordReading, pages.length, stopSpeech],
+    [book, flipPages.length, onRecordReading, stopSpeech],
   );
+
+  const handleToggleFullscreen = useCallback(() => {
+    const targetEl = modalRootRef.current;
+    if (typeof document === 'undefined' || !targetEl) {
+      setIsFullscreen((prev) => !prev);
+      return;
+    }
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => setIsFullscreen(false));
+    } else if (typeof targetEl.requestFullscreen === 'function') {
+      void targetEl
+        .requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch(() => setIsFullscreen((prev) => !prev));
+    } else {
+      setIsFullscreen((prev) => !prev);
+    }
+  }, []);
 
   useEffect(() => {
     if (!book) return;
@@ -179,19 +220,23 @@ export function BookReaderModal({
         target?.tagName === 'TEXTAREA' ||
         target?.tagName === 'SELECT';
       if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          void document.exitFullscreen().catch(() => setIsFullscreen(false));
+          return;
+        }
         handleExitReader();
         return;
       }
       if (isTyping || activeTab !== 'read') return;
-      if (e.key === 'ArrowRight' && pageIdx < pages.length - 1) {
-        void handleTurnPage(pageIdx + 1);
+      if (e.key === 'ArrowRight' && pageIdx < flipPages.length - 1) {
+        flipbookRef.current?.flipNext();
       } else if (e.key === 'ArrowLeft' && pageIdx > 0) {
-        void handleTurnPage(pageIdx - 1);
+        flipbookRef.current?.flipPrev();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, book, handleExitReader, handleTurnPage, pageIdx, pages.length]);
+  }, [activeTab, book, flipPages.length, handleExitReader, pageIdx]);
 
   const handleToggleMusic = () => {
     if (!soundtrack) return;
@@ -208,10 +253,7 @@ export function BookReaderModal({
 
   if (!book) return null;
 
-  const currentPageData = pages[pageIdx] ?? pages[0];
-  const isComic = book.kategori === 'Komik Edukasi';
   const isFavorite = Boolean(progress?.isFavorite);
-  const isLastReadingPage = pageIdx === pages.length - 1;
   const existingRealActionRecord = localPassport?.realActionMissions?.find(
     (m) => m.bookId === book.id,
   );
@@ -250,9 +292,12 @@ export function BookReaderModal({
       return;
     }
 
-    const narrationText = `${book.judul}. ${currentPageData.judulBab}. ${currentPageData.isi} ${
-      currentPageData.pesanMoral ? `Pesan cerita: ${currentPageData.pesanMoral}` : ''
-    }`;
+    const narrationText = getFlipbookSpreadNarrationText(
+      book,
+      flipPages,
+      pageIdx,
+      isFlipbookPortrait,
+    );
     const utterance = new SpeechSynthesisUtterance(narrationText);
     utterance.lang = 'id-ID';
     utterance.rate = speechRate;
@@ -276,8 +321,8 @@ export function BookReaderModal({
         : { alreadyClaimed: false };
       await onRecordReading({
         bookId: book.id,
-        lastPage: pages.length - 1,
-        totalPages: pages.length,
+        lastPage: flipPages.length - 1,
+        totalPages: flipPages.length,
         completed: true,
         quizScore: quizSubmitted ? quizPercent : undefined,
         journalNote:
@@ -305,8 +350,8 @@ export function BookReaderModal({
       }
       await onRecordReading({
         bookId: book.id,
-        lastPage: pages.length - 1,
-        totalPages: pages.length,
+        lastPage: flipPages.length - 1,
+        totalPages: flipPages.length,
         completed: true,
         quizScore: quizSubmitted ? quizPercent : undefined,
         journalNote:
@@ -325,16 +370,9 @@ export function BookReaderModal({
     }
   };
 
-  // Large, relaxed line-height typography sized for one-screen reading without eye strain
-  const fontSizeClass =
-    fontScale === 'xlarge'
-      ? 'text-[19px] sm:text-[22px] lg:text-[24px] leading-[1.82]'
-      : fontScale === 'large'
-        ? 'text-[17px] sm:text-[19px] lg:text-[21px] leading-[1.78]'
-        : 'text-[15px] sm:text-[17px] lg:text-[18px] leading-[1.72]';
-
   return (
     <div
+      ref={modalRootRef}
       className="fixed inset-0 z-50 flex h-dvh w-screen flex-col overflow-hidden bg-[#FBF7EE] text-[#1C2820] dark:bg-[#0C1611] dark:text-[#ECF3EE]"
       role="dialog"
       aria-modal="true"
@@ -460,7 +498,7 @@ export function BookReaderModal({
                 onRecordReading({
                   bookId: book.id,
                   lastPage: pageIdx,
-                  totalPages: pages.length,
+                  totalPages: flipPages.length,
                   toggleFavorite: true,
                 })
               }
@@ -584,148 +622,77 @@ export function BookReaderModal({
       </header>
 
       {/* Main Content Stage */}
-      {activeTab === 'read' && currentPageData ? (
-        <main className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 py-4 sm:px-8 sm:py-6">
-          <div className="mx-auto my-auto w-full max-w-6xl space-y-4 sm:space-y-5">
-            {speechMessage && (
-              <p className="rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-4 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
-                {speechMessage}
-              </p>
-            )}
-
-            {quickClaimNotice && (
-              <div
-                role="status"
-                className="animate-celebrate-pop flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-950/50 dark:text-emerald-200"
-              >
-                <Award className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
-                <span>{quickClaimNotice}</span>
-              </div>
-            )}
-
-            {/* Mobile compact font-scale toggle */}
-            <div className="flex items-center justify-between gap-2 md:hidden">
-              <span className="text-[11px] font-semibold text-[#546358] dark:text-[#A4B9AE]">
-                {book.kategori} · {book.estimasiMenit ?? 5} mnt
-              </span>
-              <div className="inline-flex items-center rounded-lg border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
-                {(
-                  [
-                    { id: 'normal', label: 'A' },
-                    { id: 'large', label: 'A+' },
-                    { id: 'xlarge', label: 'A++' },
-                  ] as const
-                ).map((sz) => (
-                  <button
-                    key={sz.id}
-                    type="button"
-                    onClick={() => setFontScale(sz.id)}
-                    className={`rounded-md px-2 py-0.5 font-bold ${
-                      fontScale === sz.id
-                        ? 'bg-[#047857] text-white'
-                        : 'text-[#546358] dark:text-[#A4B9AE]'
-                    }`}
-                  >
-                    {sz.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Single-Screen Spread: Title + Illustration + Story Text Together */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-center md:gap-8 lg:gap-10">
-              {/* Illustration Pane */}
-              <div className="md:col-span-5 space-y-2">
-                <div className="overflow-hidden rounded-2xl border border-[#DFD7C4] bg-[#F3EFE4] shadow-md dark:border-[#243B30] dark:bg-[#13221B]">
-                  <div className="h-[23dvh] max-h-[210px] w-full md:h-auto md:max-h-[50dvh] md:aspect-4/3">
-                    {book.coverUrl ? (
-                      <ResilientImage
-                        src={book.coverUrl}
-                        alt={`Ilustrasi ${book.judul}`}
-                        loading="eager"
-                        className="h-full w-full object-cover object-[50%_28%]"
-                        renderFallback={() => <CustomBookCoverSvg book={book} />}
-                      />
-                    ) : (
-                      <CustomBookCoverSvg book={book} />
-                    )}
-                  </div>
-                </div>
-                <div className="hidden md:flex items-center justify-between rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-3.5 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
-                  <span className="inline-flex items-center gap-1.5 font-medium">
-                    <BookmarkCheck
-                      className="h-3.5 w-3.5 shrink-0"
-                      style={{ color: 'var(--brand-primary-ink)' }}
-                    />
-                    Penanda halaman tersimpan
-                  </span>
-                  <span className="truncate font-medium">Penulis: {book.penulis}</span>
-                </div>
-              </div>
-
-              {/* Title + Story Text Pane */}
-              <article
-                className={`${
-                  book.coverUrl ? 'md:col-span-7' : 'md:col-span-10 md:col-start-2'
-                } rounded-3xl border border-[#E2DAC8] bg-[#FFFDF7] p-4 sm:p-6 lg:p-8 shadow-sm dark:border-[#243B30] dark:bg-[#122019] space-y-3 sm:space-y-4`}
-              >
-                <div className="space-y-1.5 border-b border-[#EDE6D6] pb-3 dark:border-[#21382E]">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span
-                      className="text-xs sm:text-sm font-bold tracking-wide"
-                      style={{ color: 'var(--brand-primary-ink)' }}
-                    >
-                      {currentPageData.judulBab}
-                    </span>
-                    {isComic && (
-                      <span
-                        className="rounded-md px-2 py-0.5 text-[11px] font-bold text-white"
-                        style={{ backgroundColor: db.config.accentColor }}
-                      >
-                        Adegan Komik
-                      </span>
-                    )}
-                  </div>
-                  <h2
-                    id="reader-modal-title"
-                    className="font-display text-xl sm:text-2xl lg:text-[28px] font-extrabold leading-snug text-[#16221A] dark:text-[#F1F7F3]"
-                  >
-                    {book.judul}
-                  </h2>
-                </div>
-
-                <p
-                  className={`font-normal text-[#212E26] dark:text-[#E2ECE5] whitespace-pre-line ${fontSizeClass}`}
-                >
-                  {currentPageData.isi}
+      {activeTab === 'read' && flipPages.length > 0 ? (
+        <main className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          {(speechMessage || quickClaimNotice) && (
+            <div className="shrink-0 bg-[#F3EFE4] px-3 py-2 sm:px-6 space-y-1.5 border-b border-[#E3DCCB] dark:bg-[#13221B] dark:border-[#243B30]">
+              {speechMessage && (
+                <p className="mx-auto max-w-6xl rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] px-3.5 py-1.5 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#162720] dark:text-[#A4B9AE]">
+                  {speechMessage}
                 </p>
-
-                {currentPageData.pesanMoral && (
-                  <div className="rounded-2xl border border-[#D4E0CB] bg-[#F1F6EC] p-3.5 sm:p-4 dark:border-[#294335] dark:bg-[#172A21]">
-                    <p
-                      className="text-xs font-bold uppercase tracking-wider"
-                      style={{ color: 'var(--brand-primary-ink)' }}
-                    >
-                      Pesan Petualangan Literasi
-                    </p>
-                    <p className="mt-1 text-sm sm:text-base leading-relaxed text-[#1C2820] dark:text-[#ECF3EE]">
-                      {currentPageData.pesanMoral}
-                    </p>
-                  </div>
-                )}
-              </article>
+              )}
+              {quickClaimNotice && (
+                <div
+                  role="status"
+                  className="animate-celebrate-pop mx-auto max-w-6xl flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-3.5 py-2 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-950/50 dark:text-emerald-200"
+                >
+                  <Award className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+                  <span>{quickClaimNotice}</span>
+                </div>
+              )}
             </div>
+          )}
 
-            {isLastReadingPage && (
-              <div className="mt-6">
-                <RealActionMissionCard
-                  book={book}
-                  existingRecord={existingRealActionRecord}
-                  onClaimRealAction={handleRealActionClaim}
-                />
-              </div>
-            )}
+          {/* Mobile compact font-scale strip */}
+          <div className="shrink-0 flex items-center justify-between gap-2 border-b border-[#E3DCCB] bg-[#F7F3E8] px-3 py-1.5 md:hidden dark:border-[#243B30] dark:bg-[#101F18]">
+            <span className="text-[11px] font-semibold text-[#546358] dark:text-[#A4B9AE]">
+              {book.kategori} · {book.estimasiMenit ?? 5} mnt
+            </span>
+            <div className="inline-flex items-center rounded-lg border border-[#DFD7C4] bg-[#FFFDF7] p-0.5 text-[11px] dark:border-[#243B30] dark:bg-[#162720]">
+              {(
+                [
+                  { id: 'normal', label: 'A' },
+                  { id: 'large', label: 'A+' },
+                  { id: 'xlarge', label: 'A++' },
+                ] as const
+              ).map((sz) => (
+                <button
+                  key={sz.id}
+                  type="button"
+                  onClick={() => setFontScale(sz.id)}
+                  className={`rounded-md px-2 py-0.5 font-bold ${
+                    fontScale === sz.id
+                      ? 'bg-[#047857] text-white'
+                      : 'text-[#546358] dark:text-[#A4B9AE]'
+                  }`}
+                >
+                  {sz.label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          <StoryFlipbookReader
+            ref={flipbookRef}
+            book={book}
+            flipPages={flipPages}
+            currentPageIndex={pageIdx}
+            savedBookmarkPage={progress?.lastPage ?? 0}
+            fontScale={fontScale}
+            primaryColor={db.config.primaryColor}
+            accentColor={db.config.accentColor}
+            existingRealActionRecord={existingRealActionRecord}
+            savingStamp={saving}
+            isFullscreen={isFullscreen}
+            recommendedBooks={recommendedBooks}
+            onPageChange={handleFlipPageChange}
+            onOrientationChange={setIsFlipbookPortrait}
+            onQuickClaimStamp={handleQuickClaimButton}
+            onClaimRealAction={handleRealActionClaim}
+            onOpenQuiz={() => setActiveTab('quiz')}
+            onSwitchBook={onSwitchBook}
+            onToggleFullscreen={handleToggleFullscreen}
+          />
         </main>
       ) : (
         /* Non-Reading Tabs (PDF, Quiz, Journal & E-Paspor) */
@@ -1050,8 +1017,8 @@ export function BookReaderModal({
             <button
               type="button"
               disabled={pageIdx === 0}
-              onClick={() => handleTurnPage(pageIdx - 1)}
-              className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#ECE6D8] disabled:opacity-40 dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
+              onClick={() => flipbookRef.current?.flipPrev()}
+              className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-[#D4CCB8] bg-[#FFFDF7] px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#ECE6D8] disabled:opacity-40 dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE] whitespace-nowrap shrink-0"
             >
               <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Halaman Sebelumnya</span>
@@ -1060,15 +1027,15 @@ export function BookReaderModal({
 
             <div className="flex items-center gap-1.5 overflow-x-auto px-1">
               <span className="text-xs font-semibold text-[#546358] dark:text-[#A4B9AE] sm:hidden font-mono-tabular whitespace-nowrap">
-                Hal {pageIdx + 1} / {pages.length}
+                Hal {pageIdx + 1} / {flipPages.length}
               </span>
               <div className="hidden sm:flex items-center gap-1.5">
-                {pages.map((p, idx) => (
+                {flipPages.map((p, idx) => (
                   <button
-                    key={`${p.judulBab}-${idx}`}
+                    key={p.id}
                     type="button"
-                    onClick={() => handleTurnPage(idx)}
-                    aria-label={`Buka halaman ${idx + 1}`}
+                    onClick={() => flipbookRef.current?.flipToPage(idx)}
+                    aria-label={`Buka ${p.tocTitle}`}
                     aria-current={idx === pageIdx ? 'page' : undefined}
                     className={`h-8 min-w-8 rounded-lg px-2.5 font-mono-tabular text-xs font-bold transition-colors ${
                       idx === pageIdx
@@ -1089,18 +1056,18 @@ export function BookReaderModal({
                 disabled={saving}
                 onClick={handleQuickClaimButton}
                 style={{ backgroundColor: db.config.accentColor }}
-                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold text-white hover:opacity-95 disabled:opacity-60 whitespace-nowrap"
+                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-extrabold text-[#10281B] hover:opacity-95 disabled:opacity-60 whitespace-nowrap shrink-0"
               >
                 <Award className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>Selesai Baca &amp; Klaim Stempel</span>
               </button>
 
-              {pageIdx < pages.length - 1 ? (
+              {pageIdx < flipPages.length - 1 ? (
                 <button
                   type="button"
-                  onClick={() => handleTurnPage(pageIdx + 1)}
+                  onClick={() => flipbookRef.current?.flipNext()}
                   style={{ backgroundColor: db.config.primaryColor }}
-                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap"
+                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
                 >
                   <span className="hidden sm:inline">Halaman Berikutnya</span>
                   <span className="sm:hidden">Berikutnya</span>
@@ -1111,7 +1078,7 @@ export function BookReaderModal({
                   type="button"
                   onClick={() => setActiveTab('quiz')}
                   style={{ backgroundColor: db.config.primaryColor }}
-                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap"
+                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
                 >
                   <span className="hidden sm:inline">Buka Kuis Cerita</span>
                   <span className="sm:hidden">Kuis Cerita</span>

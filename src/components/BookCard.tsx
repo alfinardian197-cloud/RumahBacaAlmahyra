@@ -126,6 +126,7 @@ export function BookCard({
           </h3>
           <p className="text-xs font-medium text-[#4A5D54] truncate">
             {book.penulis}
+            {book.format ? ` · ${book.format}` : ''}
           </p>
 
           {!compact && (

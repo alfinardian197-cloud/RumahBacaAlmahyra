@@ -28,6 +28,7 @@ import {
   filterBooksAdvanced,
   SAHABAT_GALLERY_PHOTOS,
 } from '../utils/almahyra';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { ResilientImage } from './ResilientImage';
 
 interface AdventureJourneySectionProps {
@@ -59,7 +60,7 @@ export function AdventureJourneySection({
   const [forestCategory, setForestCategory] = useState<string>('Semua');
   const [forestLevel, setForestLevel] = useState<string>('Semua');
   const [selectedStoryBookId, setSelectedStoryBookId] = useState<string>(
-    db.books[0]?.id ?? 'bk-1',
+    db.books[0]?.id ?? 'alm-001',
   );
   const [friendSenderName, setFriendSenderName] = useState<string>('');
   const [copiedInvite, setCopiedInvite] = useState(false);
@@ -378,12 +379,18 @@ export function AdventureJourneySection({
                     }}
                     className="flex items-center gap-3 rounded-xl border border-[#DCE4DF] bg-white p-2.5 text-left transition-colors hover:border-[#BFD0C7]"
                   >
-                    <ResilientImage
-                      src={book.coverUrl}
-                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                      alt={book.judul}
-                      className="h-12 w-12 rounded-lg object-cover shrink-0"
-                    />
+                    <div className="h-12 w-12 overflow-hidden rounded-lg bg-[#EEF3F0] shrink-0">
+                      {book.coverUrl ? (
+                        <ResilientImage
+                          src={book.coverUrl}
+                          fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                          alt={book.judul}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <CustomBookCoverSvg book={book} />
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-[11px] font-semibold truncate" style={{ color: 'var(--brand-primary-ink)' }}>
                         {book.kategori} · {book.jenjangPembaca ?? 'SD Awal'}
@@ -413,12 +420,18 @@ export function AdventureJourneySection({
           {activeStepDef.stepNumber === 4 && spotlightBook && (
             <div className="space-y-4">
               <div className="flex flex-col gap-3 rounded-xl border border-[#DCE4DF] bg-white p-4 sm:flex-row sm:items-center">
-                <ResilientImage
-                  src={spotlightBook.coverUrl}
-                  fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                  alt={spotlightBook.judul}
-                  className="h-24 w-24 rounded-xl object-cover shrink-0"
-                />
+                <div className="h-24 w-24 overflow-hidden rounded-xl bg-[#EEF3F0] shrink-0">
+                  {spotlightBook.coverUrl ? (
+                    <ResilientImage
+                      src={spotlightBook.coverUrl}
+                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                      alt={spotlightBook.judul}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <CustomBookCoverSvg book={spotlightBook} />
+                  )}
+                </div>
                 <div className="min-w-0 flex-1 space-y-1">
                   <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
                     {spotlightBook.kategori} · {spotlightBook.estimasiMenit ?? 5} menit · {spotlightBook.lokasiRak}

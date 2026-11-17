@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, Image as ImageIcon, Star, Target, Trophy } from '
 import { DEFAULT_HERO_IMAGE_URL } from '../data/defaultDb';
 import type { Book, CreationWork } from '../types/almahyra';
 import { isBookActive } from '../utils/almahyra';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { ResilientImage } from './ResilientImage';
 
 interface HomepageShowcaseStageProps {
@@ -96,12 +97,19 @@ export function HomepageShowcaseStage({
             >
               <div>
                 <div className="aspect-4/3 w-full overflow-hidden rounded-lg bg-[#E7EEEA]">
-                  <ResilientImage
-                    src={book.coverUrl}
-                    fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                    alt={`Sampul ${book.judul}`}
-                    className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                  />
+                  {book.coverUrl ? (
+                    <ResilientImage
+                      src={book.coverUrl}
+                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                      alt={`Sampul ${book.judul}`}
+                      className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    />
+                  ) : (
+                    <CustomBookCoverSvg
+                      book={book}
+                      className="h-full w-full transition-transform duration-200 group-hover:scale-105"
+                    />
+                  )}
                 </div>
                 <p className="mt-2 font-display text-[11px] sm:text-xs font-bold leading-snug text-[#111C17] line-clamp-2">
                   {book.judul}

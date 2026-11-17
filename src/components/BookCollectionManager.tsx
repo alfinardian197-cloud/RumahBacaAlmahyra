@@ -26,6 +26,7 @@ import {
   DEFAULT_READER_LEVELS,
   parseBulkBooksCsv,
 } from '../utils/almahyra';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { ResilientImage } from './ResilientImage';
 
 interface BookCollectionManagerProps {
@@ -56,6 +57,7 @@ export function BookCollectionManager({
   // Filter / Table search
   const [adminSearch, setAdminSearch] = useState('');
   const [adminCatFilter, setAdminCatFilter] = useState('Semua');
+  const [visibleAdminCount, setVisibleAdminCount] = useState(30);
 
   // Book Form State (Add / Edit)
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -977,20 +979,24 @@ export function BookCollectionManager({
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EEF3F0]">
-                {filteredAdminBooks.map((b) => {
+                {filteredAdminBooks.slice(0, visibleAdminCount).map((b) => {
                   const isActiveBook = b.aktif !== false;
                   return (
                     <tr key={b.id} className="hover:bg-[#F8FAF9]">
                       <td className="py-3 pr-3">
                         <div className="flex items-center gap-2.5">
-                          {b.coverUrl && (
-                            <ResilientImage
-                              src={b.coverUrl}
-                              fallbackSrc={DEFAULT_BOOK_COVER_URL}
-                              alt={b.judul}
-                              className="h-10 w-10 rounded-lg object-cover border border-[#E2E8E5] shrink-0"
-                            />
-                          )}
+                          <div className="h-10 w-10 overflow-hidden rounded-lg border border-[#E2E8E5] shrink-0 bg-[#F2F6F4]">
+                            {b.coverUrl ? (
+                              <ResilientImage
+                                src={b.coverUrl}
+                                fallbackSrc={DEFAULT_BOOK_COVER_URL}
+                                alt={b.judul}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <CustomBookCoverSvg book={b} />
+                            )}
+                          </div>
                           <div>
                             <div className="font-semibold text-[#111C17]">{b.judul}</div>
                             <div className="font-mono-tabular text-[11px] text-[#4A5D54]">
@@ -1062,6 +1068,21 @@ export function BookCollectionManager({
               </tbody>
             </table>
           </div>
+
+          {filteredAdminBooks.length > visibleAdminCount && (
+            <div className="flex items-center justify-between border-t border-[#EEF3F0] pt-3 text-xs text-[#4A5D54]">
+              <span>
+                Menampilkan {Math.min(visibleAdminCount, filteredAdminBooks.length)} dari {filteredAdminBooks.length} buku
+              </span>
+              <button
+                type="button"
+                onClick={() => setVisibleAdminCount((c) => c + 30)}
+                className="rounded-lg border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-1.5 font-semibold text-[#111C17] hover:bg-[#EEF3F0]"
+              >
+                Muat 30 Baris Lagi
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import {
   authenticateUser,
   buildBorrowWhatsAppMessage,
   buildDonationWhatsAppMessage,
+  buildFlipbookPages,
   buildSahabatInvitationText,
   buildWhatsAppShareHref,
   calculateLevelInfo,
@@ -31,6 +32,8 @@ import {
   getBookReadablePages,
   getBookRealActionMission,
   getDefaultLocalPassportState,
+  getFlipbookSpreadNarrationText,
+  getFlipbookVisibleIndices,
   hydrateDatabaseWithDefaults,
   MINI_QUIZ_TEBAK_CERITA,
   normalizeAssetUrl,
@@ -261,8 +264,10 @@ test('resolveThemeMode and toggleThemeMode switch cleanly between light and dark
 test('DEFAULT_CATEGORIES covers all 10 required categories and filterBooksAdvanced respects active/minutes/favorites', () => {
   assert.equal(DEFAULT_CATEGORIES.length, 10);
   const books = DEFAULT_DB.books;
-  assert.ok(books.length >= 25);
-  assert.ok(books.some((b) => b.kodeBuku.startsWith('BUDI-')));
+  assert.equal(books.length, 252);
+  assert.ok(books.some((b) => b.kodeBuku === 'ALM-001'));
+  assert.ok(books.some((b) => b.kodeBuku === 'ALM-252'));
+  assert.equal(books.some((b) => b.kodeBuku.startsWith('BUDI-') || /^bk-\d+$/.test(b.id)), false);
   const usedCats = new Set(books.map((b) => b.kategori));
   for (const cat of DEFAULT_CATEGORIES) {
     assert.ok(usedCats.has(cat), `Missing book for category: ${cat}`);
@@ -403,16 +408,10 @@ test('getBookReadablePages splits overly long chapters across multiple pages cle
   assert.ok(rejoined.includes('Kalimat keempat'));
 });
 
-test('normalizeAssetUrl and hydrateDatabaseWithDefaults migrate legacy asset paths to /images/', () => {
+test('normalizeAssetUrl and hydrateDatabaseWithDefaults purge legacy pre-Batch-1 books and preserve Batch 1 metadata', () => {
   assert.equal(
     normalizeAssetUrl('/src/assets/images/book_cover_folktale_1794800503588.jpg'),
     '/images/book_cover_folktale_1794800503588.jpg',
-  );
-  assert.equal(
-    normalizeAssetUrl(
-      'https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
-    ),
-    '/images/budi/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
   );
   assert.equal(
     normalizeAssetUrl('https://example.com/custom-cover.jpg'),
@@ -427,24 +426,41 @@ test('normalizeAssetUrl and hydrateDatabaseWithDefaults migrate legacy asset pat
       },
       books: [
         {
-          ...DEFAULT_DB.books[0],
-          coverUrl: '/src/assets/images/book_cover_folktale_1794800503588.jpg',
+          id: 'bk-1',
+          kodeBuku: 'IMG-001',
+          judul: 'Pustaka Kaki Gunung & Lentera Senja',
+          penulis: 'Larasati Pramesti',
+          kategori: 'Cerita Nusantara',
+          zona: 'Zona Imajinasi',
+          status: 'Tersedia',
+          stok: 3,
+          lokasiRak: 'Rak A1',
+          deskripsi: 'Buku lama',
         },
         {
-          ...DEFAULT_DB.books[12],
-          coverUrl:
-            'https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+          id: 'bk-13',
+          kodeBuku: 'BUDI-9786231940254',
+          judul: 'Aduh, Sakit!',
+          penulis: 'Nabila Nurul Huda',
+          kategori: 'Kisah Inspiratif',
+          zona: 'Zona Pengetahuan',
+          status: 'Tersedia',
+          stok: 3,
+          lokasiRak: 'Rak B1',
+          deskripsi: 'Buku BUDI lama',
         },
       ],
     },
     DEFAULT_DB,
   );
   assert.equal(migrated.config.heroImageUrl, '/images/hero_reading_terrace_1794800502182.jpg');
-  assert.equal(migrated.books[0].coverUrl, '/images/book_cover_folktale_1794800503588.jpg');
-  assert.equal(
-    migrated.books[1].coverUrl,
-    '/images/budi/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
-  );
+  assert.equal(migrated.books.length, 252);
+  assert.equal(migrated.books.some((b) => b.kodeBuku === 'IMG-001'), false);
+  assert.equal(migrated.books.some((b) => b.kodeBuku.startsWith('BUDI-')), false);
+  const firstBatch = migrated.books.find((b) => b.kodeBuku === 'ALM-001');
+  assert.ok(firstBatch);
+  assert.equal(firstBatch.judul, 'Enggang yang Istimewa');
+  assert.ok(firstBatch.sumberResmiUrl?.startsWith('https://'));
 });
 
 test('Petualangan Almahyra defines all 7 journey steps, 3 real photos, and builds invitation copy', () => {
@@ -543,7 +559,7 @@ test('6 featured pilihanAlmahyra books, TK reader level, local digital passport 
 
   const tkFiltered = filterBooksAdvanced(DEFAULT_DB.books, { readerLevel: 'TK' });
   assert.ok(tkFiltered.length >= 2);
-  assert.ok(tkFiltered.some((b) => b.judul === 'Bintang Kertas dari Negeri Angin'));
+  assert.ok(tkFiltered.some((b) => b.kodeBuku === 'ALM-007' && b.judul === 'Ting-Ting-Ting!'));
 
   const initialPassport = getDefaultLocalPassportState();
   const targetBook = shelves.pilihanAlmahyra[0];
@@ -576,10 +592,10 @@ test('6 featured pilihanAlmahyra books, TK reader level, local digital passport 
   assert.ok(afterQuiz.badges.includes('Juara 100% Tebak Cerita'));
 });
 
-test('Misi Petualang Nyata tailors themes per book, adds +2 Bintang Ekstra, and unlocks Pahlawan Alam Grontol', () => {
-  const komposBook = DEFAULT_DB.books.find((b) => b.judul.includes('Kapten Pilah'))!;
-  const sainsBook = DEFAULT_DB.books.find((b) => b.judul.includes('Sains Dapur'))!;
-  const dongengBook = DEFAULT_DB.books.find((b) => b.judul.includes('Lentera Senja'))!;
+test('Misi Petualang Nyata tailors themes per Batch 1 book, adds +2 Bintang Ekstra, and unlocks Pahlawan Alam Grontol', () => {
+  const komposBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-018')!;
+  const sainsBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-008')!;
+  const dongengBook = DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-007')!;
 
   const mKompos = getBookRealActionMission(komposBook);
   assert.equal(mKompos.theme, 'kompos-lingkungan');
@@ -612,40 +628,17 @@ test('Misi Petualang Nyata tailors themes per book, adds +2 Bintang Ekstra, and 
   assert.equal(resDup.nextState.points, 2);
 });
 
-test('All curated and BUDI book covers point to existing local assets and legacy generic covers migrate cleanly', async () => {
-  const fs = await import('node:fs');
-  const path = await import('node:path');
-
-  const curatedCovers = new Set<string>();
+test('Every Batch 1 book preserves required catalog metadata and valid external source links when present', () => {
+  assert.equal(DEFAULT_DB.books.length, 252);
   for (const book of DEFAULT_DB.books) {
-    assert.ok(book.coverUrl, `Missing coverUrl on ${book.kodeBuku}`);
-    assert.ok(book.coverUrl.startsWith('/images/'), `Expected local /images path on ${book.kodeBuku}, got ${book.coverUrl}`);
-    const diskPath = path.join(process.cwd(), 'public', book.coverUrl);
-    assert.equal(fs.existsSync(diskPath), true, `Missing cover file on disk: ${diskPath}`);
-    if (book.coverUrl.startsWith('/images/covers/')) {
-      assert.equal(curatedCovers.has(book.coverUrl), false, `Duplicate curated cover ${book.coverUrl}`);
-      curatedCovers.add(book.coverUrl);
+    assert.ok(book.kodeBuku.startsWith('ALM-'), `Invalid kodeBuku: ${book.kodeBuku}`);
+    assert.ok(book.judul.length > 0);
+    assert.ok(book.sumberKatalog, `Missing sumberKatalog on ${book.kodeBuku}`);
+    assert.ok(book.format, `Missing format on ${book.kodeBuku}`);
+    if (book.sumberResmiUrl) {
+      assert.ok(book.sumberResmiUrl.startsWith('https://'), `Invalid URL on ${book.kodeBuku}`);
     }
   }
-  assert.equal(curatedCovers.size, 12);
-
-  const upgraded = hydrateDatabaseWithDefaults(
-    {
-      books: [
-        {
-          ...DEFAULT_DB.books[0],
-          coverUrl: '/images/book_cover_folktale_1794800503588.jpg',
-        },
-        {
-          ...DEFAULT_DB.books[4],
-          coverUrl: '/images/illustration_eco_garden_1794805037060.jpg',
-        },
-      ],
-    },
-    DEFAULT_DB,
-  );
-  assert.equal(upgraded.books.find((b) => b.kodeBuku === 'IMG-001')?.coverUrl, '/images/covers/bk-01-lentera-gunung.jpg');
-  assert.equal(upgraded.books.find((b) => b.kodeBuku === 'KMK-005')?.coverUrl, '/images/covers/bk-05-kapten-pilah.jpg');
 });
 
 test('Creation moderation, privacy sanitization, 6 adventure zones, and clamped reading points enforce safety rules', () => {
@@ -712,5 +705,43 @@ test('Creation moderation, privacy sanitization, 6 adventure zones, and clamped 
   assert.equal(clampValidatedReadingPoints(5), 5);
   assert.equal(clampValidatedReadingPoints(999), 10);
 });
+
+test('Digital Flipbook builder guarantees even balanced spreads, hard covers, and spread narration', () => {
+  const booksToCheck = [
+    DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-001')!,
+    DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-008')!,
+    DEFAULT_DB.books.find((b) => b.kodeBuku === 'ALM-018')!,
+  ];
+
+  for (const book of booksToCheck) {
+    const flipPages = buildFlipbookPages(book);
+    // Front cover + balanced inside pages (even) + back cover = even total pages >= 6
+    assert.ok(flipPages.length >= 6);
+    assert.equal(flipPages.length % 2, 0, `Total flip pages must be even for ${book.kodeBuku}`);
+    assert.equal(flipPages[0].kind, 'cover');
+    assert.equal(flipPages[0].density, 'hard');
+    assert.equal(flipPages[1].kind, 'opener');
+    assert.equal(flipPages[flipPages.length - 1].kind, 'back-cover');
+    assert.equal(flipPages[flipPages.length - 1].density, 'hard');
+    assert.ok(flipPages.some((p) => p.kind === 'story'));
+    assert.ok(flipPages.some((p) => p.kind === 'info'));
+    assert.ok(flipPages.some((p) => p.kind === 'closing'));
+
+    // Visible indices in landscape vs portrait
+    assert.deepEqual(getFlipbookVisibleIndices(0, flipPages.length, false), [0]);
+    assert.deepEqual(getFlipbookVisibleIndices(1, flipPages.length, false), [1, 2]);
+    assert.deepEqual(getFlipbookVisibleIndices(2, flipPages.length, false), [1, 2]);
+    assert.deepEqual(getFlipbookVisibleIndices(1, flipPages.length, true), [1]);
+    assert.deepEqual(
+      getFlipbookVisibleIndices(flipPages.length - 1, flipPages.length, false),
+      [flipPages.length - 1],
+    );
+
+    const spreadNarration = getFlipbookSpreadNarrationText(book, flipPages, 1, false);
+    assert.ok(spreadNarration.includes('Pembuka Cerita'));
+    assert.ok(spreadNarration.length > 20);
+  }
+});
+
 
 
