@@ -26,6 +26,7 @@ import {
   DEFAULT_READER_LEVELS,
   parseBulkBooksCsv,
 } from '../utils/almahyra';
+import { ResilientImage } from './ResilientImage';
 
 interface BookCollectionManagerProps {
   db: AlmahyraDatabase;
@@ -765,8 +766,9 @@ export function BookCollectionManager({
                 Sampul Buku
               </span>
               <div className="flex items-center gap-2">
-                <img
+                <ResilientImage
                   src={coverUrl}
+                  fallbackSrc={DEFAULT_BOOK_COVER_URL}
                   alt="Pratinjau sampul"
                   className="h-10 w-10 rounded-lg object-cover border border-[#DCE4DF]"
                 />
@@ -974,8 +976,9 @@ export function BookCollectionManager({
                       <td className="py-3 pr-3">
                         <div className="flex items-center gap-2.5">
                           {b.coverUrl && (
-                            <img
+                            <ResilientImage
                               src={b.coverUrl}
+                              fallbackSrc={DEFAULT_BOOK_COVER_URL}
                               alt={b.judul}
                               className="h-10 w-10 rounded-lg object-cover border border-[#E2E8E5] shrink-0"
                             />

@@ -3,32 +3,32 @@ import { DEFAULT_CATEGORIES, DEFAULT_READER_LEVELS } from '../utils/almahyra';
 
 export const DEFAULT_LOGO_URL =
   '/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png';
-export const DEFAULT_HERO_IMAGE_URL = '/src/assets/images/hero_reading_terrace_1794800502182.jpg';
-export const DEFAULT_ZONE_IMAGE_URL = '/src/assets/images/zone_adventure_craft_1794800503519.jpg';
-export const DEFAULT_BOOK_COVER_URL = '/src/assets/images/book_cover_folktale_1794800503588.jpg';
+export const DEFAULT_HERO_IMAGE_URL = '/images/hero_reading_terrace_1794800502182.jpg';
+export const DEFAULT_ZONE_IMAGE_URL = '/images/zone_adventure_craft_1794800503519.jpg';
+export const DEFAULT_BOOK_COVER_URL = '/images/book_cover_folktale_1794800503588.jpg';
 export const ILLUSTRATION_READING_ADVENTURE_URL =
-  '/src/assets/images/infographic_reading_adventure_1794805036346.jpg';
+  '/images/infographic_reading_adventure_1794805036346.jpg';
 export const ILLUSTRATION_TELAGA_COMMUNITY_URL =
-  '/src/assets/images/illustration_telaga_community_1794805036320.jpg';
+  '/images/illustration_telaga_community_1794805036320.jpg';
 export const ILLUSTRATION_SCIENCE_COVER_URL =
-  '/src/assets/images/illustration_science_explore_1794805037083.jpg';
+  '/images/illustration_science_explore_1794805037083.jpg';
 export const ILLUSTRATION_ECO_GARDEN_COVER_URL =
-  '/src/assets/images/illustration_eco_garden_1794805037060.jpg';
+  '/images/illustration_eco_garden_1794805037060.jpg';
 export const ILLUSTRATION_STORY_STAGE_COVER_URL =
-  '/src/assets/images/illustration_story_stage_1794805036949.jpg';
+  '/images/illustration_story_stage_1794805036949.jpg';
 
 export const DEFAULT_DB: AlmahyraDatabase = {
   config: {
-    appName: 'ALMAHYRA App',
+    appName: 'Rumah Baca Almahyra',
     tagline: 'A Living Learning Adventure · Baca, Berkarya, Bertualang, Raih Prestasi!',
     slogan: 'Dari Rumah Kecil, Lahir Penjelajah Dunia',
     location: 'Kediaman Ananda Almahyra, Dusun Grontol, Desa Tlogosari, Kabupaten Pasuruan',
     coordinator: 'Mohammad Alfin Ardiansyah, S.Pd.',
     logoUrl: DEFAULT_LOGO_URL,
-    primaryColor: '#136B36',
-    secondaryColor: '#1F8A44',
-    accentColor: '#D98200',
-    heroTitle: 'Rumah Baca Keluarga & Petualangan Literasi Anak Desa',
+    primaryColor: '#047857',
+    secondaryColor: '#059669',
+    accentColor: '#D97706',
+    heroTitle: 'Rumah Baca Almahyra',
     heroSubtitle:
       'Ruang belajar komunitas yang hangat dan inklusif di Dusun Grontol. Anak-anak membaca, bercerita, bereksperimen sains sederhana, merawat bumi, dan mengumpulkan capaian E-Paspor Baca.',
     heroCtaLabel: 'Jelajahi Katalog & Jadwal',
@@ -321,7 +321,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       judul: 'Bintang Kertas dari Negeri Angin',
       penulis: 'Maya Kusuma',
       kategori: 'Dongeng Dunia',
-      jenjangPembaca: 'SD Awal',
+      jenjangPembaca: 'TK',
       estimasiMenit: 5,
       zona: 'Zona Imajinasi',
       status: 'Tersedia',
@@ -331,7 +331,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
         'Dongeng dunia tentang seorang anak tukang lipat kertas yang menerbangkan pesan persahabatan melintasi lembah pegunungan.',
       coverUrl: DEFAULT_ZONE_IMAGE_URL,
       aktif: true,
-      pilihanAlmahyra: false,
+      pilihanAlmahyra: true,
       dibacaCount: 48,
       tanggalTerbit: '2026-11-08',
       lisensi: 'Terjemahan Adaptasi Non-Komersial Almahyra',
@@ -437,7 +437,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       judul: 'Dari Biji Menjadi Pohon Harapan',
       penulis: 'Komunitas Kebun Tlogosari',
       kategori: 'Lingkungan dan Alam',
-      jenjangPembaca: 'Semua Usia',
+      jenjangPembaca: 'TK',
       estimasiMenit: 5,
       zona: 'Zona Sahabat Bumi',
       status: 'Tersedia',
@@ -447,7 +447,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
         'Panduan praktis berkebun keluarga: mengenal kecambah, menyiram secukupnya di pagi hari, dan merawat kebun sayur polibag.',
       coverUrl: ILLUSTRATION_ECO_GARDEN_COVER_URL,
       aktif: true,
-      pilihanAlmahyra: false,
+      pilihanAlmahyra: true,
       dibacaCount: 56,
       tanggalTerbit: '2026-11-02',
       lisensi: 'Panduan Komunitas Desa Tlogosari',
@@ -844,7 +844,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Koleksi BUDI Kemendikdasmen: kisah Nila mengenal keunikan tradisi barter di Pasar Wulandoni, Lembata, serta cara kerja nilai tukar barang.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+        '/images/budi/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/qEpZ7ZOjY9ClBV9AOwLvuZuG7u6ZIRx03Rz51Gv6.pdf',
       pdfNamaFile: 'BUDI_Hari_Sabtu_di_Pasar_Wulandoni.pdf',
@@ -907,7 +907,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Komik digital BUDI Kemendikdasmen yang mengisahkan perjalanan Baro Klinthing menuju Gunung Telomoyo dan nilai budi pekerti di balik legenda Rawapening.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/y5RiUZruVLzzZRfGCrzf1kx0k4tmTjDa6lvlXeC1.png',
+        '/images/budi/y5RiUZruVLzzZRfGCrzf1kx0k4tmTjDa6lvlXeC1.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/MrboDoOMoUSOnBHMxGYikQ4WRV6OLlohj44bMT6m.pdf',
       pdfNamaFile: 'BUDI_Komik_Di_Balik_Kisah_Rawapening.pdf',
@@ -965,7 +965,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Komik edukasi BUDI Kemendikdasmen tentang Bolang dan tiga sahabatnya yang menyusun jurnal kegiatan seru menjaga kelestarian alam.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/7dp2iurOuYT1sUm7gWAmpCFCQqTTRC2dlDVd2LVQ.png',
+        '/images/budi/7dp2iurOuYT1sUm7gWAmpCFCQqTTRC2dlDVd2LVQ.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/BlMRIPENItfwIJUfUPlA3WZGVACMI3MRubZAHKwd.pdf',
       pdfNamaFile: 'BUDI_Komik_Bolang_Sahabat_Alam.pdf',
@@ -1027,7 +1027,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Bacaan sains anak dari BUDI Kemendikdasmen tentang Rubi yang penasaran mengapa ciri fisik dan bakatnya berbeda dari Kak Safira, lalu mengenal rahasia DNA.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/xupKr8t2mU1Di2nLfb98oODArLKcxM1yYXcyAeaT.png',
+        '/images/budi/xupKr8t2mU1Di2nLfb98oODArLKcxM1yYXcyAeaT.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Isi_DNA%20Mengapa%20Kita%20Berbeda_1787287468.pdf',
       pdfNamaFile: 'BUDI_DNA_Mengapa_Kita_Berbeda.pdf',
@@ -1090,7 +1090,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Kisah satwa Indonesia dari BUDI Kemendikdasmen tentang Rino si burung rangkong badak yang belajar membangun sarang pohon aman demi menjaga keluarganya.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/x5qjBzhVA3jzuaGvqwoWf5vMFdmjHlZuQPcOKDNL.png',
+        '/images/budi/x5qjBzhVA3jzuaGvqwoWf5vMFdmjHlZuQPcOKDNL.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/edit-Sarah%20Fauzia_Kakak%20Rangkong%20Badak_C%20(1)_1787287619.pdf',
       pdfNamaFile: 'BUDI_Kakak_Rangkong_Badak.pdf',
@@ -1152,7 +1152,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Koleksi seni budaya BUDI Kemendikdasmen: Kinar dan adiknya Didi belajar mencintai kawih atau tembang tradisional Sunda bersama Pak Arif.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/op13VCxGXLFjr4GSlkNxwy2OjJ0Qum8Hr1PXep9q.png',
+        '/images/budi/op13VCxGXLFjr4GSlkNxwy2OjJ0Qum8Hr1PXep9q.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Isi-Kawih%20Kinarsih%20(1)_1787289046.pdf',
       pdfNamaFile: 'BUDI_Kawih_Kinarsih.pdf',
@@ -1214,7 +1214,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Bacaan budaya lokal BUDI Kemendikdasmen tentang Adi dan Lani mewawancarai budayawan Pak Sabri mengenai makna dan filosofi kerajinan Rencong Aceh.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/tPAw74gjvXQBdSORewmeQJa55GAmpM2RRVtmKSvV.png',
+        '/images/budi/tPAw74gjvXQBdSORewmeQJa55GAmpM2RRVtmKSvV.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Esra_Firmansyah_Yuk%20Mengenal%20Rencong%20Aceh_Lokalitas%20sebagai%20Identitas_Jenjang%20C%20(1)_1787286621.pdf',
       pdfNamaFile: 'BUDI_Yuk_Mengenal_Rencong_Aceh.pdf',
@@ -1273,7 +1273,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Kisah tokoh pahlawan pendidikan BUDI Kemendikdasmen: perjuangan gigih Enden Uwi (Raden Dewi Sartika) di Bandung mendirikan sekolah bagi anak-anak perempuan.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/j046A8I4nsK4kqUwISmw7Zu15qkXhpE3jj9NQwMB.png',
+        '/images/budi/j046A8I4nsK4kqUwISmw7Zu15qkXhpE3jj9NQwMB.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Isi_Sekolah%20Enden%20Uwi%20(1)%20Revisi_1786688473.pdf',
       pdfNamaFile: 'BUDI_Sekolah_Enden_Uwi.pdf',
@@ -1336,7 +1336,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Komik sejarah BUDI Kemendikdasmen tentang keteguhan tekad Mahapatih Gajah Mada di era Kerajaan Majapahit dalam menjaga persatuan Nusantara.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/yB9EE38dcINTw6oKL7KRcGfcbMfC3e6tXZkiiS5r.png',
+        '/images/budi/yB9EE38dcINTw6oKL7KRcGfcbMfC3e6tXZkiiS5r.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/K2ZRYbUDA8sZuJtJpDdof2if5iu5T574FrBJz34y.pdf',
       pdfNamaFile: 'BUDI_Komik_Mahapatih_Gajah_Mada.pdf',
@@ -1394,7 +1394,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Cerita bergambar anak usia dini dari BUDI Kemendikdasmen tentang Mimi, kucing peliharaan Si Putih, dan sahabat barunya Si Loreng belajar kejujuran.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/x1b9q9CmWEVRpIMsUyFZ1Q5m6odND7oXKFhd5AAB.jpg',
+        '/images/budi/x1b9q9CmWEVRpIMsUyFZ1Q5m6odND7oXKFhd5AAB.jpg',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/book/8wCJ74PVDyATZQqm4kcu9AyzvbIBJjMc1FVikXEb.pdf',
       pdfNamaFile: 'BUDI_Mimi_dan_Si_Loreng.pdf',
@@ -1452,7 +1452,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Kisah inspiratif dari BUDI Kemendikdasmen tentang Loma yang bangkit setelah gagal audisi tari, lalu menemukan jati dirinya melalui seni Randai Minangkabau.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/XVSDdwzabTwxOWSWV3rVcToya4kc0fvhKByApRuN.png',
+        '/images/budi/XVSDdwzabTwxOWSWV3rVcToya4kc0fvhKByApRuN.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Isi_Loma%20Pendekar%20Randai_1787289608.pdf',
       pdfNamaFile: 'BUDI_Loma_dan_Pendekar_Randai.pdf',
@@ -1511,7 +1511,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Dongeng fantasi penuh imajinasi dari BUDI Kemendikdasmen tentang Malaga si peramu di Pulau Nateore yang mematahkan prasangka demi menyelamatkan warga.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/adQqSiP873SznBziNF5oNOpKuD6Tv0WwWTqnzD5y.png',
+        '/images/budi/adQqSiP873SznBziNF5oNOpKuD6Tv0WwWTqnzD5y.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/Esra_KOMIK_Si%20Peramu%20(1)_1787286770.pdf',
       pdfNamaFile: 'BUDI_Sang_Peramu_dari_Pulau_Nateore.pdf',
@@ -1574,7 +1574,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       deskripsi:
         'Bacaan eksploratif BUDI Kemendikdasmen yang mengajak anak bertualang mengenal koleksi artefak, prasasti, keramik kuno, dan sejarah di Museum Nasional.',
       coverUrl:
-        'https://budi.kemendikdasmen.go.id/storage/image/CBT0TDuXY9ogbjg89kDhAb7grSNX7LB8F2ZQ0PhU.png',
+        '/images/budi/CBT0TDuXY9ogbjg89kDhAb7grSNX7LB8F2ZQ0PhU.png',
       pdfUrl:
         'https://budi.kemendikdasmen.go.id/storage/content/hn6OAHxIjX7Ko4itJS2iGYoSSBOpNmwdeT0xyQFI.pdf',
       pdfNamaFile: 'BUDI_Petualangan_di_Museum_Nasional.pdf',

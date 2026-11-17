@@ -1,5 +1,8 @@
-import { BookOpen, Clock, Heart, Sparkles, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BookOpen, Clock, Heart, Sparkles, Square, Star, Volume2 } from 'lucide-react';
 import type { Book, LandingConfig, ReadingProgress } from '../types/almahyra';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
+import { ResilientImage } from './ResilientImage';
 
 interface BookCardProps {
   book: Book;
@@ -22,35 +25,50 @@ export function BookCard({
   const hasBookmark = Boolean(progress && progress.lastPage > 0);
   const readingMinutes = book.estimasiMenit ?? 5;
   const readerLevel = book.jenjangPembaca ?? 'Semua Usia';
+  const [speakingSummary, setSpeakingSummary] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (speakingSummary && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [speakingSummary]);
+
+  const handleToggleReadSummary = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (speakingSummary) {
+      window.speechSynthesis.cancel();
+      setSpeakingSummary(false);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(
+      `${book.judul}. Ditulis oleh ${book.penulis}. ${book.deskripsi}`,
+    );
+    utter.lang = 'id-ID';
+    utter.rate = 0.94;
+    utter.onend = () => setSpeakingSummary(false);
+    utter.onerror = () => setSpeakingSummary(false);
+    setSpeakingSummary(true);
+    window.speechSynthesis.speak(utter);
+  };
+
+  const hasCustomUploadCover = Boolean(book.coverUrl?.startsWith('data:image/'));
 
   return (
     <article className="book-3d-card flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-4 transition-colors hover:border-[#BFD0C7]">
       <div>
         <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-[#EEF3F0] bg-[#F2F6F4]">
-          {book.coverUrl ? (
-            <img
+          {hasCustomUploadCover && book.coverUrl ? (
+            <ResilientImage
               src={book.coverUrl}
               alt={`Sampul ${book.judul}`}
-              referrerPolicy="no-referrer"
               className="h-full w-full object-cover"
+              renderFallback={() => <CustomBookCoverSvg book={book} />}
             />
           ) : (
-            <div
-              className="flex h-full w-full flex-col justify-between p-4 text-white"
-              style={{
-                background: `linear-gradient(145deg, ${config.primaryColor} 0%, ${config.secondaryColor} 100%)`,
-              }}
-            >
-              <span className="font-mono-tabular text-[11px] text-white/80">
-                {book.kodeBuku}
-              </span>
-              <div className="space-y-1">
-                <BookOpen className="h-5 w-5 text-white/85" aria-hidden="true" />
-                <p className="font-display text-sm font-bold leading-snug line-clamp-2">
-                  {book.judul}
-                </p>
-              </div>
-            </div>
+            <CustomBookCoverSvg book={book} />
           )}
 
           {book.pilihanAlmahyra && (
@@ -90,6 +108,16 @@ export function BookCard({
               <Clock className="h-3 w-3" aria-hidden="true" />
               {readingMinutes} mnt
             </span>
+            <span aria-hidden="true">·</span>
+            <span
+              className={
+                book.status === 'Tersedia'
+                  ? 'font-semibold text-emerald-700 dark:text-emerald-400'
+                  : 'font-semibold text-amber-700 dark:text-amber-300'
+              }
+            >
+              {book.status}
+            </span>
           </div>
 
           <h3 className="font-display text-base font-bold leading-snug text-[#111C17] line-clamp-2">
@@ -115,22 +143,45 @@ export function BookCard({
           </p>
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => onRead(book)}
             style={{ backgroundColor: config.primaryColor }}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-95"
+            className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
           >
-            <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-            {hasBookmark ? 'Lanjut Baca' : 'Baca Sekarang'}
+            <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{hasBookmark ? 'Lanjut Baca' : 'Baca Sekarang'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleToggleReadSummary}
+            aria-pressed={speakingSummary}
+            aria-label={
+              speakingSummary
+                ? `Hentikan suara ringkasan ${book.judul}`
+                : `Dengarkan ringkasan ${book.judul}`
+            }
+            title="Dengar Ringkasan (Read-Aloud)"
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+              speakingSummary
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+            }`}
+          >
+            {speakingSummary ? (
+              <Square className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : (
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
           </button>
 
           <button
             type="button"
             onClick={() => onToggleFavorite(book)}
             aria-pressed={isFav}
-            className={`inline-flex items-center gap-1 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+            className={`inline-flex h-9 items-center gap-1 rounded-xl border px-2.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
               isFav
                 ? 'border-rose-300 bg-rose-50 text-rose-700'
                 : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'

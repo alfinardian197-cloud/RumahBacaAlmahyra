@@ -1,14 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  ArrowRight,
-  Award,
-  BookOpen,
-  Clock,
-  Flame,
-  Sparkles,
-  Star,
-  Target,
-} from 'lucide-react';
+import { BookOpen, ArrowRight, Award, Clock, Flame, Sparkles, Star, Target } from 'lucide-react';
 import type {
   AlmahyraDatabase,
   Book,
@@ -16,6 +7,7 @@ import type {
 } from '../types/almahyra';
 import { computeBookShelves } from '../utils/almahyra';
 import { BookCard } from './BookCard';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 
 interface BerandaShowcaseProps {
   db: AlmahyraDatabase;
@@ -159,7 +151,11 @@ export function BerandaShowcase({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={`grid grid-cols-1 gap-5 sm:grid-cols-2 ${
+            currentShelfBooks.length % 3 === 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
+          }`}
+        >
           {currentShelfBooks.map((book) => (
             <BookCard
               key={book.id}
@@ -197,14 +193,9 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                {b.coverUrl && (
-                  <img
-                    src={b.coverUrl}
-                    alt={b.judul}
-                    referrerPolicy="no-referrer"
-                    className="h-14 w-14 rounded-lg object-cover shrink-0"
-                  />
-                )}
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
+                  <CustomBookCoverSvg book={b} />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
                     {b.jenjangPembaca ?? 'SD Awal'} · {b.estimasiMenit ?? 5} mnt
@@ -249,14 +240,9 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                {b.coverUrl && (
-                  <img
-                    src={b.coverUrl}
-                    alt={b.judul}
-                    referrerPolicy="no-referrer"
-                    className="h-14 w-14 rounded-lg object-cover shrink-0"
-                  />
-                )}
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
+                  <CustomBookCoverSvg book={b} />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
                     {b.jenjangPembaca ?? 'SD Awal'} · {b.estimasiMenit ?? 4} mnt
@@ -301,14 +287,9 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                {b.coverUrl && (
-                  <img
-                    src={b.coverUrl}
-                    alt={b.judul}
-                    referrerPolicy="no-referrer"
-                    className="h-14 w-14 rounded-lg object-cover shrink-0"
-                  />
-                )}
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
+                  <CustomBookCoverSvg book={b} />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold flex items-center gap-1" style={{ color: 'var(--brand-accent-ink)' }}>
                     <Flame className="h-3 w-3" />

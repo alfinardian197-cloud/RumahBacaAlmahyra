@@ -48,6 +48,7 @@ import {
   MemberAgeDistributionChart,
 } from './AlmahyraInfographics';
 import { BookCollectionManager } from './BookCollectionManager';
+import { ResilientImage } from './ResilientImage';
 import { Card3DPassport } from './Card3DPassport';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -1476,10 +1477,11 @@ export function AdminPortal({
             {/* Logo Upload & Auto Color Palette */}
             <div className="border-y border-[#EEF3F0] py-5 space-y-4">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <img
+                <ResilientImage
                   src={draftConfig.logoUrl}
+                  fallbackSrc={DEFAULT_LOGO_URL}
                   alt="Pratinjau Icon Logo"
-                  referrerPolicy="no-referrer"
+                  loading="eager"
                   className="h-16 w-16 rounded-2xl border border-[#DCE4DF] bg-white object-cover shrink-0"
                 />
                 <div className="flex-1 space-y-2">

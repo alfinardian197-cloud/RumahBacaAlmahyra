@@ -1,38 +1,55 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowRight,
+  Award,
+  BookOpen,
   Calendar,
+  CheckCircle2,
   Clock,
+  Filter,
   Heart,
   MapPin,
+  RotateCcw,
   Search,
   Sparkles,
   Users,
 } from 'lucide-react';
 import {
+  DEFAULT_HERO_IMAGE_URL,
   ILLUSTRATION_READING_ADVENTURE_URL,
   ILLUSTRATION_TELAGA_COMMUNITY_URL,
 } from '../data/defaultDb';
-import type { AlmahyraDatabase, Book, ReadingProgress } from '../types/almahyra';
+import type { AlmahyraDatabase, Book, Member, ReadingProgress } from '../types/almahyra';
 import {
+  computeBookShelves,
   computeLibraryStats,
   DEFAULT_CATEGORIES,
   DEFAULT_READER_LEVELS,
   filterBooksAdvanced,
+  type LocalDigitalPassportState,
 } from '../utils/almahyra';
 import {
   CollectionZoneInfographic,
   LevelProgressionInfographic,
   PassportFlowInfographic,
 } from './AlmahyraInfographics';
+import { AdventureJourneySection } from './AdventureJourneySection';
 import { BerandaShowcase } from './BerandaShowcase';
 import { BookCard } from './BookCard';
+import { BorrowDonationPanel } from './BorrowDonationPanel';
 import { Card3DPassport } from './Card3DPassport';
+import { LeaderboardAndStoryStudio } from './LeaderboardAndStoryStudio';
+import { PassportAndQuizHub } from './PassportAndQuizHub';
+import { ResilientImage } from './ResilientImage';
+import type { PublicRoleMode } from './TopBar';
 
 interface PublicLandingProps {
   db: AlmahyraDatabase;
   viewerKey: string;
   activePage: 'page1' | 'page2';
+  audienceMode: PublicRoleMode;
+  localPassport: LocalDigitalPassportState;
+  onUpdateLocalPassport: (next: LocalDigitalPassportState) => void;
   onChangePage: (page: 'page1' | 'page2') => void;
   onOpenLogin: () => void;
   onReadBook: (book: Book) => void;
@@ -139,10 +156,15 @@ const INNOVATIONS = [
   },
 ];
 
+const WORKSPACE_LEVEL_CHIPS = ['Semua', 'PAUD', 'TK', 'SD Awal', 'SD Lanjut'] as const;
+
 export function PublicLanding({
   db,
   viewerKey,
   activePage,
+  audienceMode,
+  localPassport,
+  onUpdateLocalPassport,
   onChangePage,
   onOpenLogin,
   onReadBook,
@@ -156,6 +178,17 @@ export function PublicLanding({
   const [selectedLevel, setSelectedLevel] = useState('Semua');
   const [quick5MinOnly, setQuick5MinOnly] = useState(false);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [availableOnly, setAvailableOnly] = useState(false);
+  const [showAllBooksInline, setShowAllBooksInline] = useState(false);
+  const [journeyStep, setJourneyStep] = useState(1);
+
+  const handleStartAdventure = () => {
+    setJourneyStep(1);
+    const el = document.getElementById('rak-pilihan-workspace');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const progressMap = useMemo(() => {
     const map = new Map<string, ReadingProgress>();
@@ -199,23 +232,334 @@ export function PublicLanding({
         maxMinutes: quick5MinOnly ? 5 : undefined,
         favoriteBookIds,
         onlyFavorites: favoritesOnly,
+        onlyAvailable: availableOnly,
         onlyActive: true,
       }),
-    [books, searchQuery, selectedCategory, selectedLevel, quick5MinOnly, favoriteBookIds, favoritesOnly],
+    [
+      books,
+      searchQuery,
+      selectedCategory,
+      selectedLevel,
+      quick5MinOnly,
+      favoriteBookIds,
+      favoritesOnly,
+      availableOnly,
+    ],
   );
 
-  const featuredMember = members[0] ?? {
-    id: 'preview',
-    nomorInduk: 'ALMA-001',
-    nama: 'Nadia Putri Azzahra',
-    jenjangUsia: 'SD',
-    orangTua: 'Ibu Siti Aminah',
-    poin: 34,
-    lencana: ['Pemburu Cerita', 'Pencerita Cilik'],
-    status: 'Aktif',
-    bergabungSejak: '2026-08-12',
-    password: '123',
+  const shelves = useMemo(() => computeBookShelves(books, 'SD'), [books]);
+
+  const hasActiveFilter =
+    Boolean(searchQuery.trim()) ||
+    selectedCategory !== 'Semua' ||
+    selectedLevel !== 'Semua' ||
+    quick5MinOnly ||
+    favoritesOnly ||
+    availableOnly ||
+    showAllBooksInline;
+
+  const displayedWorkspaceBooks = hasActiveFilter ? filteredBooks : shelves.pilihanAlmahyra;
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('Semua');
+    setSelectedLevel('Semua');
+    setQuick5MinOnly(false);
+    setFavoritesOnly(false);
+    setAvailableOnly(false);
+    setShowAllBooksInline(false);
   };
+
+  const featuredMember: Member = useMemo(() => {
+    if (localPassport.childName.trim() || localPassport.points > 0) {
+      return {
+        id: 'local-guest',
+        nomorInduk: 'ALMA-PETUALANG',
+        nama: localPassport.childName.trim() || 'Sahabat Cilik Almahyra',
+        jenjangUsia: 'SD',
+        orangTua: 'Keluarga Dusun Grontol',
+        poin: localPassport.points,
+        lencana: localPassport.badges,
+        status: 'Aktif',
+        bergabungSejak: new Date().toISOString().slice(0, 10),
+        password: '',
+      };
+    }
+    return (
+      members[0] ?? {
+        id: 'preview',
+        nomorInduk: 'ALMA-001',
+        nama: 'Nadia Putri Azzahra',
+        jenjangUsia: 'SD',
+        orangTua: 'Ibu Siti Aminah',
+        poin: 34,
+        lencana: ['Pemburu Cerita', 'Pencerita Cilik'],
+        status: 'Aktif',
+        bergabungSejak: '2026-08-12',
+        password: '123',
+      }
+    );
+  }, [localPassport, members]);
+
+  const renderCatalogSection = () => (
+    <section
+      id="rak-pilihan-workspace"
+      aria-label="Rak Buku Pilihan dan Katalog Filter"
+      className="scroll-mt-20 space-y-6"
+    >
+      <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p
+              className="text-xs font-semibold tracking-wide"
+              style={{ color: 'var(--brand-accent-ink)' }}
+            >
+              Ilustrasi Sampul Kustom Bebas Error · Katalog Interaktif
+            </p>
+            <h2 className="font-display text-2xl font-bold tracking-tight text-[#111C17]">
+              {hasActiveFilter
+                ? `Hasil Pencarian & Filter Katalog (${filteredBooks.length} Buku)`
+                : 'Rak Buku Pilihan Rumah Baca Almahyra (6 Judul Utama)'}
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {hasActiveFilter && (
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                Reset Filter
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowAllBooksInline((v) => !v)}
+              style={{
+                backgroundColor: showAllBooksInline ? '#B45309' : config.primaryColor,
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white hover:opacity-95 whitespace-nowrap"
+            >
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+              {showAllBooksInline
+                ? 'Tampilkan 6 Buku Pilihan'
+                : `Jelajahi Semua (${stats.totalTitles} Buku)`}
+            </button>
+          </div>
+        </div>
+
+        {/* Filter Toolbar: Real-time Search + Quick Jenjang Buttons */}
+        <div className="space-y-3 border-t border-[#EEF3F0] pt-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full lg:max-w-md">
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7D74]"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari judul buku, penulis, atau kata kunci..."
+                aria-label="Cari buku di katalog"
+                className="w-full rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] py-2.5 pl-10 pr-4 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#047857] focus:outline-none"
+              />
+            </div>
+
+            {/* Level Filter Chips: Semua, PAUD, TK, SD Awal, SD Lanjut */}
+            <div
+              role="group"
+              aria-label="Filter jenjang pembaca"
+              className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#EEF3F0] p-1"
+            >
+              <span className="inline-flex items-center gap-1 px-2 text-xs font-semibold text-[#4A5D54]">
+                <Filter className="h-3 w-3" aria-hidden="true" />
+                Jenjang:
+              </span>
+              {WORKSPACE_LEVEL_CHIPS.map((lvl) => {
+                const active = selectedLevel === lvl;
+                return (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setSelectedLevel(lvl)}
+                    aria-pressed={active}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                      active
+                        ? 'text-white shadow-xs'
+                        : 'text-[#4A5D54] hover:text-[#111C17]'
+                    }`}
+                    style={active ? { backgroundColor: config.primaryColor } : undefined}
+                  >
+                    {lvl}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Secondary Quick Filters + 10+ Category Selector */}
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              aria-label="Filter kategori koleksi"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  Kategori: {cat}
+                </option>
+              ))}
+            </select>
+
+            <select
+              aria-label="Semua jenjang pembaca"
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+              className="rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-3 py-2 text-xs font-semibold text-[#111C17]"
+            >
+              {readerLevels.map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  Jenjang Lengkap: {lvl}
+                </option>
+              ))}
+            </select>
+
+            <button
+              type="button"
+              onClick={() => setAvailableOnly((v) => !v)}
+              aria-pressed={availableOnly}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                availableOnly
+                  ? 'text-white border-transparent'
+                  : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+              }`}
+              style={availableOnly ? { backgroundColor: config.primaryColor } : undefined}
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+              Tersedia di Rak
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setQuick5MinOnly((v) => !v)}
+              aria-pressed={quick5MinOnly}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                quick5MinOnly
+                  ? 'text-white border-transparent'
+                  : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+              }`}
+              style={quick5MinOnly ? { backgroundColor: config.primaryColor } : undefined}
+            >
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              Bacaan &lt;= 5 Menit
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFavoritesOnly((v) => !v)}
+              aria-pressed={favoritesOnly}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                favoritesOnly
+                  ? 'border-rose-300 bg-rose-50 text-rose-700'
+                  : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
+              }`}
+            >
+              <Heart className={`h-3.5 w-3.5 ${favoritesOnly ? 'fill-current' : ''}`} />
+              Favorit ({favoriteBookIds.size})
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Book Grid (3-column balanced for 6 Pilihan books, responsive 1-3 cols) */}
+      {displayedWorkspaceBooks.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-[#CBD6D0] bg-white p-10 text-center space-y-3">
+          <p className="font-display text-base font-semibold text-[#111C17]">
+            Buku tidak ditemukan untuk filter ini
+          </p>
+          <p className="text-sm text-[#4A5D54]">
+            Coba ubah kata kunci pencarian, jenjang pembaca, atau klik Reset Filter untuk kembali melihat semua buku.
+          </p>
+          <button
+            type="button"
+            onClick={handleResetFilters}
+            style={{ backgroundColor: config.primaryColor }}
+            className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white hover:opacity-95"
+          >
+            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+            Tampilkan 6 Buku Pilihan
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {displayedWorkspaceBooks.map((book) => (
+            <BookCard
+              key={book.id}
+              book={book}
+              config={config}
+              progress={progressMap.get(book.id)}
+              onRead={onReadBook}
+              onToggleFavorite={onToggleFavorite}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+
+  const renderScheduleSection = () =>
+    config.showScheduleSection ? (
+      <section id="jadwal-grontol" className="scroll-mt-20 space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p
+              className="text-xs font-semibold"
+              style={{ color: 'var(--brand-accent-ink)' }}
+            >
+              Dusun Grontol · Desa Tlogosari
+            </p>
+            <h2 className="font-display text-2xl font-bold text-[#111C17]">
+              Jadwal Kegiatan Literasi Mingguan
+            </h2>
+            <p className="mt-1 text-sm text-[#4A5D54]">
+              Ritme tematik Senin–Minggu yang ramah anak bersama pendamping di Teras Rumah Baca Almahyra.
+            </p>
+          </div>
+          <Calendar className="h-6 w-6 text-[#4A5D54] shrink-0" aria-hidden="true" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {schedules.map((sch) => (
+            <div
+              key={sch.id}
+              className="rounded-2xl border border-[#E2E8E5] bg-white p-5"
+            >
+              <div className="flex items-center justify-between gap-2 text-xs text-[#4A5D54]">
+                <span className="font-semibold text-[#111C17]">
+                  {sch.hari} · {sch.waktu}
+                </span>
+                <span className="font-mono-tabular">
+                  {sch.pesertaTerdaftar}/{sch.kuota} anak
+                </span>
+              </div>
+              <h3 className="mt-2 font-display text-lg font-bold text-[#111C17]">
+                {sch.program}
+              </h3>
+              <p className="mt-1 text-sm text-[#4A5D54] leading-relaxed">
+                {sch.aktivitas}
+              </p>
+              <p className="mt-3 text-xs font-medium" style={{ color: 'var(--brand-primary-ink)' }}>
+                {sch.zona}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : null;
 
   return (
     <main className="min-h-[calc(100vh-4rem)]">
@@ -229,177 +573,305 @@ export function PublicLanding({
         </div>
       )}
 
-      {activePage === 'page1' ? (
-        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8 lg:py-9 space-y-12">
-          {/* PAGE 1: HERO SPLIT + 3D SPATIAL SHOWCASE */}
-          <section className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-            <div className="flex flex-col justify-center lg:col-span-7 space-y-6">
-              <div className="space-y-3.5">
-                <p
-                  className="text-xs font-semibold tracking-wide"
-                  style={{ color: 'var(--brand-accent-ink)' }}
-                >
-                  {config.tagline} · {config.slogan}
-                </p>
-                <h1
-                  className="font-display font-extrabold tracking-tight text-[#111C17] leading-[1.1]"
-                  style={{
-                    fontSize: 'clamp(2.15rem, 3.8vw, 3.35rem)',
-                    textWrap: 'balance',
-                  }}
-                >
-                  {config.heroTitle}
-                </h1>
-                <p className="max-w-2xl text-base leading-relaxed text-[#4A5D54]">
-                  {config.heroSubtitle}
-                </p>
-              </div>
-
-              <dl className="grid grid-cols-3 gap-4 border-y border-[#E2E8E5] py-3.5 text-xs">
-                <div>
-                  <dt className="text-[#4A5D54]">Metode</dt>
-                  <dd className="mt-0.5 font-semibold text-[#111C17]">Kerangka TELAGA</dd>
-                </div>
-                <div>
-                  <dt className="text-[#4A5D54]">Apresiasi</dt>
-                  <dd className="mt-0.5 font-semibold text-[#111C17]">E-Paspor 4 Jenjang</dd>
-                </div>
-                <div>
-                  <dt className="text-[#4A5D54]">Koleksi Digital</dt>
-                  <dd className="mt-0.5 font-semibold text-[#111C17]">
-                    {categories.length - 1} Kategori Bacaan
-                  </dd>
-                </div>
-              </dl>
-
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => onChangePage('page2')}
-                    style={{ backgroundColor: config.primaryColor }}
-                    className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap shrink-0"
+      {audienceMode === 'petualang' ? (
+        activePage === 'page1' ? (
+          /* MODE PETUALANG — HALAMAN 1: HERO SMART-WORKSPACE + 6 BUKU PILIHAN + FILTER + BERANDA + JOURNEY */
+          <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8 lg:py-9 space-y-12">
+            {/* HERO WORKSPACE */}
+            <section className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
+              <div className="flex flex-col justify-center lg:col-span-7 space-y-5">
+                <div className="space-y-3">
+                  <p
+                    className="text-xs font-semibold tracking-wide"
+                    style={{ color: 'var(--brand-accent-ink)' }}
                   >
-                    {config.heroCtaLabel}
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onOpenLogin}
-                    className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-white px-5 py-3 text-sm font-semibold text-[#111C17] transition-colors hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
+                    Mode Petualang Anak · {config.tagline} · {config.slogan}
+                  </p>
+                  <h1
+                    className="font-display font-extrabold tracking-tight text-[#111C17] leading-[1.1]"
+                    style={{
+                      fontSize: 'clamp(2.15rem, 3.8vw, 3.35rem)',
+                      textWrap: 'balance',
+                    }}
                   >
-                    Buka E-Paspor Anggota
-                  </button>
+                    {config.heroTitle}
+                  </h1>
+                  <p className="max-w-2xl text-base leading-relaxed text-[#4A5D54]">
+                    {config.heroSubtitle}
+                  </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#4A5D54]">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-                    {config.location}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span>Koordinator: {config.coordinator}</span>
-                </div>
-              </div>
-            </div>
+                <dl className="grid grid-cols-3 gap-4 border-y border-[#E2E8E5] py-3.5 text-xs">
+                  <div>
+                    <dt className="text-[#4A5D54]">Koleksi Pilihan</dt>
+                    <dd className="mt-0.5 font-semibold text-[#111C17]">
+                      6 Sampul SVG Cerah
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[#4A5D54]">Paspor & Kuis</dt>
+                    <dd className="mt-0.5 font-semibold text-[#111C17]">
+                      {localPassport.stamps.length} Stempel · {localPassport.points} Poin
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[#4A5D54]">Baca Suara</dt>
+                    <dd className="mt-0.5 font-semibold text-[#111C17]">
+                      Read-Aloud Indonesia
+                    </dd>
+                  </div>
+                </dl>
 
-            {/* Right Column: 3D Spatial Layered Visual + Interactive 3D E-Paspor */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              <div className="card-3d-tilt relative overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
-                <div className="relative aspect-16/9 w-full overflow-hidden rounded-xl bg-[#E7EEEA]">
-                  <img
-                    src={config.heroImageUrl}
-                    alt="Suasana membaca di Teras Rumah Baca Almahyra"
-                    referrerPolicy="no-referrer"
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                  <div className="absolute bottom-3 left-3.5 right-3.5 text-white">
-                    <p className="text-xs font-medium text-white/85">
-                      Teras Almahyra · Dusun Grontol
-                    </p>
-                    <p className="font-display text-sm font-bold">
-                      Membaca, Bercerita, Bereksperimen & Merawat Bumi
-                    </p>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleStartAdventure}
+                      style={{ backgroundColor: config.primaryColor }}
+                      className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap shrink-0"
+                    >
+                      Jelajahi 6 Buku Pilihan
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onChangePage('page2')}
+                      style={{ backgroundColor: '#D97706' }}
+                      className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap shrink-0"
+                    >
+                      <Award className="h-4 w-4" aria-hidden="true" />
+                      Paspor Baca & Mini Kuis
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onOpenLogin}
+                      className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-white px-4 py-3 text-sm font-semibold text-[#111C17] transition-colors hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
+                    >
+                      Masuk Portal Anggota
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#4A5D54]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                      {config.location}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>Koordinator: {config.coordinator}</span>
                   </div>
                 </div>
               </div>
 
-              <Card3DPassport member={featuredMember} config={config} compact />
+              {/* Right Column: Hero Photo + Interactive 3D E-Paspor */}
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                <div className="card-3d-tilt relative overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
+                  <div className="relative aspect-16/9 w-full overflow-hidden rounded-xl bg-[#E7EEEA]">
+                    <ResilientImage
+                      src={config.heroImageUrl}
+                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                      alt="Suasana membaca di Teras Rumah Baca Almahyra"
+                      loading="eager"
+                      fetchPriority="high"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                    <div className="absolute bottom-3 left-3.5 right-3.5 text-white">
+                      <p className="text-xs font-medium text-white/85">
+                        Teras Almahyra · Dusun Grontol
+                      </p>
+                      <p className="font-display text-sm font-bold">
+                        Membaca, Bercerita, Bereksperimen & Merawat Bumi
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Card3DPassport member={featuredMember} config={config} compact />
+              </div>
+            </section>
+
+            {/* 4-COLUMN KPI STRIP */}
+            <section
+              aria-label="Ringkasan statistik perpustakaan"
+              className="grid grid-cols-2 gap-4 rounded-2xl border border-[#E2E8E5] bg-white p-6 lg:grid-cols-4"
+            >
+              <div className="space-y-1 border-r border-[#EEF3F0] pr-4 last:border-r-0">
+                <p className="text-xs font-medium text-[#4A5D54]">Koleksi Digital & Cetak</p>
+                <p
+                  className="font-display text-3xl font-bold tabular-nums"
+                  style={{ color: 'var(--brand-primary-ink)' }}
+                >
+                  {stats.totalTitles}
+                </p>
+                <p className="text-xs text-[#4A5D54]">
+                  {stats.totalBooks} eksemplar di {categories.length - 1} kategori
+                </p>
+              </div>
+              <div className="space-y-1 lg:border-r lg:border-[#EEF3F0] lg:pr-4">
+                <p className="text-xs font-medium text-[#4A5D54]">Anggota Aktif</p>
+                <p
+                  className="font-display text-3xl font-bold tabular-nums"
+                  style={{ color: 'var(--brand-primary-ink)' }}
+                >
+                  {stats.activeMembers}
+                </p>
+                <p className="text-xs text-[#4A5D54]">PAUD, TK, SD & SMP Grontol</p>
+              </div>
+              <div className="space-y-1 border-r border-[#EEF3F0] pr-4 lg:border-r">
+                <p className="text-xs font-medium text-[#4A5D54]">Misi Tervalidasi</p>
+                <p
+                  className="font-display text-3xl font-bold tabular-nums"
+                  style={{ color: 'var(--brand-accent-ink)' }}
+                >
+                  {stats.verifiedMissions}
+                </p>
+                <p className="text-xs text-[#4A5D54]">
+                  {stats.totalPointsAwarded} poin literasi tercatat
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-[#4A5D54]">Paspor Perangkat Ini</p>
+                <p className="font-display text-lg font-bold text-[#111C17] truncate">
+                  {localPassport.stamps.length} Stempel · {localPassport.points} Poin
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onChangePage('page2')}
+                  className="text-xs font-semibold hover:underline"
+                  style={{ color: 'var(--brand-primary-ink)' }}
+                >
+                  Buka Paspor & Kuis 5 Soal →
+                </button>
+              </div>
+            </section>
+
+            {/* PRIMARY FEATURED 6 BOOKS + LIVE JENJANG FILTER & REAL-TIME SEARCH */}
+            {renderCatalogSection()}
+
+            {/* 7-STEP ADVENTURE JOURNEY + REAL SAHABAT PHOTOS */}
+            <AdventureJourneySection
+              db={db}
+              viewerKey={viewerKey}
+              activeStep={journeyStep}
+              onChangeStep={setJourneyStep}
+              onReadBook={onReadBook}
+              onOpenCatalog={() => setShowAllBooksInline(true)}
+              onOpenLogin={onOpenLogin}
+              onJumpToTelaga={() => onChangePage('page2')}
+            />
+
+            {/* TOP 5 SAHABAT BACA & GENERATOR DONGENG KELUARGA */}
+            <LeaderboardAndStoryStudio db={db} onOpenLogin={onOpenLogin} />
+
+            {/* BERANDA SHOWCASE (7 RAK DIGITAL + MISI MINGGUAN) */}
+            <BerandaShowcase
+              db={db}
+              viewerKey={viewerKey}
+              onReadBook={onReadBook}
+              onToggleFavorite={onToggleFavorite}
+              onOpenCatalog={() => {
+                setShowAllBooksInline(true);
+                const el = document.getElementById('rak-pilihan-workspace');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+            />
+
+            {/* INFOGRAFIS ALUR & TANGGA JENJANG E-PASPOR */}
+            <PassportFlowInfographic config={config} />
+
+            {config.showLevelsSection && (
+              <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h2 className="font-display text-xl font-bold text-[#111C17]">
+                      Infografis Jenjang Capaian & Apresiasi E-Paspor Baca
+                    </h2>
+                    <p className="mt-1 text-sm text-[#4A5D54]">
+                      Poin diberikan setiap selesai membaca buku, mengerjakan kuis tebak cerita, atau verifikasi pendamping.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onChangePage('page2')}
+                    style={{ backgroundColor: config.primaryColor }}
+                    className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
+                  >
+                    Buka Paspor Baca & Kuis
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                </div>
+
+                <LevelProgressionInfographic config={config} />
+              </section>
+            )}
+          </div>
+        ) : (
+          /* MODE PETUALANG — HALAMAN 2: PASPOR BACA DIGITAL & MINI KUIS TEBAK CERITA (5 SOAL) */
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-10">
+            <PassportAndQuizHub
+              db={db}
+              passport={localPassport}
+              onUpdatePassport={onUpdateLocalPassport}
+              onOpenCatalog={() => onChangePage('page1')}
+              onOpenLogin={onOpenLogin}
+            />
+          </div>
+        )
+      ) : activePage === 'page1' ? (
+        /* MODE SAHABAT TELAGA — HALAMAN 1: PROGRAM TELAGA + JADWAL DUSUN GRONTOL + FORM WHATSAPP CEPAT */
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-12">
+          <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 sm:p-8">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-2xl space-y-2.5">
+                <p
+                  className="text-xs font-semibold tracking-wide"
+                  style={{ color: 'var(--brand-accent-ink)' }}
+                >
+                  Mode Sahabat TELAGA · Donatur, Orang Tua & Informasi Kegiatan
+                </p>
+                <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight text-[#111C17]">
+                  Kolaborasi Literasi Dusun Grontol, Desa Tlogosari
+                </h1>
+                <p className="text-sm sm:text-base leading-relaxed text-[#4A5D54]">
+                  Temukan kerangka kerja TELAGA, jadwal kegiatan literasi mingguan anak-anak Dusun Grontol, serta akses cepat formulir pinjam buku fisik dan donasi Gerakan Satu Rumah Satu Buku ke WhatsApp pengurus.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <a
+                  href="#formulir-pinjam-donasi"
+                  style={{ backgroundColor: '#B45309' }}
+                  className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap"
+                >
+                  Kirim Pinjam / Donasi WA
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => onChangePage('page2')}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-5 py-3 text-sm font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap"
+                >
+                  Cek Katalog Ketersediaan
+                </button>
+              </div>
             </div>
           </section>
 
-          {/* 4-COLUMN KPI STRIP BELOW HERO SPLIT */}
-          <section
-            aria-label="Ringkasan statistik perpustakaan"
-            className="grid grid-cols-2 gap-4 rounded-2xl border border-[#E2E8E5] bg-white p-6 lg:grid-cols-4"
-          >
-            <div className="space-y-1 border-r border-[#EEF3F0] pr-4 last:border-r-0">
-              <p className="text-xs font-medium text-[#4A5D54]">Koleksi Digital & Cetak</p>
-              <p
-                className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: 'var(--brand-primary-ink)' }}
-              >
-                {stats.totalTitles}
-              </p>
-              <p className="text-xs text-[#4A5D54]">
-                {stats.totalBooks} eksemplar di {categories.length - 1} kategori
-              </p>
-            </div>
-            <div className="space-y-1 lg:border-r lg:border-[#EEF3F0] lg:pr-4">
-              <p className="text-xs font-medium text-[#4A5D54]">Anggota Aktif</p>
-              <p
-                className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: 'var(--brand-primary-ink)' }}
-              >
-                {stats.activeMembers}
-              </p>
-              <p className="text-xs text-[#4A5D54]">PAUD, SD & SMP Dusun Grontol</p>
-            </div>
-            <div className="space-y-1 border-r border-[#EEF3F0] pr-4 lg:border-r">
-              <p className="text-xs font-medium text-[#4A5D54]">Misi Tervalidasi</p>
-              <p
-                className="font-display text-3xl font-bold tabular-nums"
-                style={{ color: 'var(--brand-accent-ink)' }}
-              >
-                {stats.verifiedMissions}
-              </p>
-              <p className="text-xs text-[#4A5D54]">
-                {stats.totalPointsAwarded} poin literasi tercatat
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-[#4A5D54]">Basis Data</p>
-              <p className="font-display text-lg font-bold text-[#111C17] truncate">
-                {config.spreadsheetId ? 'Spreadsheet Terhubung' : 'Siap Sinkron Sheet'}
-              </p>
-              <p className="font-mono-tabular text-xs text-[#4A5D54] truncate">
-                {config.spreadsheetId
-                  ? `ID: ${config.spreadsheetId.slice(0, 14)}...`
-                  : 'Mode Database Terpadu'}
-              </p>
-            </div>
-          </section>
+          {/* AKSI CEPAT WHATSAPP PINJAM BUKU FISIK / DONASI BUKU */}
+          <BorrowDonationPanel db={db} defaultTab="donate" />
 
-          {/* SECTION A: BERANDA RAK BUKU DIGITAL & MISI MINGGUAN (8 BAGIAN) */}
-          <BerandaShowcase
-            db={db}
-            viewerKey={viewerKey}
-            onReadBook={onReadBook}
-            onToggleFavorite={onToggleFavorite}
-            onOpenCatalog={() => onChangePage('page2')}
-          />
+          {/* JADWAL KEGIATAN LITERASI MINGGUAN DI DUSUN GRONTOL */}
+          {renderScheduleSection()}
 
-          {/* SECTION: KERANGKA PENGELOLAAN TELAGA + ILLUSTRATION */}
+          {/* INFORMASI PROGRAM TELAGA (6 PILAR + ILUSTRASI) */}
           {config.showTelagaSection && (
-            <section className="space-y-8">
+            <section id="bagian-telaga" className="scroll-mt-20 space-y-8">
               <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
                 <div className="lg:col-span-7 space-y-2">
                   <p
                     className="text-xs font-semibold tracking-wide"
                     style={{ color: 'var(--brand-accent-ink)' }}
                   >
-                    Fondasi Operasional
+                    Fondasi Operasional Program TELAGA
                   </p>
                   <h2 className="font-display text-2xl font-bold tracking-tight text-[#111C17] sm:text-3xl">
                     {config.page1IntroTitle}
@@ -411,10 +883,10 @@ export function PublicLanding({
                 <div className="lg:col-span-5">
                   <div className="card-3d-tilt overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
                     <div className="aspect-4/3 w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
-                      <img
+                      <ResilientImage
                         src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
+                        fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                         alt="Ilustrasi komunitas Rumah Baca Almahyra: dongeng teras, kotak buku keliling, dan berkebun bersama"
-                        referrerPolicy="no-referrer"
                         className="h-full w-full object-cover"
                       />
                     </div>
@@ -453,7 +925,7 @@ export function PublicLanding({
             </section>
           )}
 
-          {/* SECTION: 6 ZONA READING ADVENTURE + PANORAMIC ILLUSTRATION */}
+          {/* 6 ZONA PETUALANGAN BELAJAR */}
           {config.showZonesSection && (
             <section className="space-y-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -474,23 +946,19 @@ export function PublicLanding({
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
-                <div className="relative aspect-16/9 max-h-[420px] w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
-                  <img
+                <div className="relative aspect-16/9 max-h-[380px] w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
+                  <ResilientImage
                     src={ILLUSTRATION_READING_ADVENTURE_URL}
+                    fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                     alt="Peta ilustrasi enam zona petualangan belajar Rumah Baca Almahyra"
-                    referrerPolicy="no-referrer"
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-1 text-white sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <p className="text-xs font-medium text-white/85">
-                        Peta Visual Ekosistem Belajar
-                      </p>
-                      <p className="font-display text-lg font-bold">
-                        Imajinasi · Pengetahuan · Kreativitas · Eksplorasi · Sahabat Bumi · Panggung Cerita
-                      </p>
-                    </div>
+                  <div className="absolute bottom-4 left-4 right-4 text-white">
+                    <p className="text-xs font-medium text-white/85">Peta Visual Ekosistem Belajar</p>
+                    <p className="font-display text-lg font-bold">
+                      Imajinasi · Pengetahuan · Kreativitas · Eksplorasi · Sahabat Bumi · Panggung Cerita
+                    </p>
                   </div>
                 </div>
               </div>
@@ -518,225 +986,7 @@ export function PublicLanding({
             </section>
           )}
 
-          {/* SECTION: INFOGRAFIS ALUR E-PASPOR BACA */}
-          <PassportFlowInfographic config={config} />
-
-          {/* SECTION: SISTEM POIN & JENJANG (INFOGRAFIS TANGGA PETUALANGAN) */}
-          {config.showLevelsSection && (
-            <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 sm:p-8 space-y-6">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="font-display text-xl font-bold text-[#111C17]">
-                    Infografis Jenjang Capaian & Apresiasi E-Paspor Baca
-                  </h2>
-                  <p className="mt-1 text-sm text-[#4A5D54]">
-                    Poin diberikan setelah aktivitas diverifikasi pendamping secara lisan, tulisan, karya, atau praktik.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => onChangePage('page2')}
-                  style={{ backgroundColor: config.primaryColor }}
-                  className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
-                >
-                  Lanjut ke Halaman 2: Katalog & Jadwal
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
-              </div>
-
-              <LevelProgressionInfographic config={config} />
-            </section>
-          )}
-        </div>
-      ) : (
-        /* PAGE 2: KATALOG DIGITAL 10+ KATEGORI, JADWAL MINGGUAN & INOVASI */
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12 space-y-14">
-          <div className="flex flex-col gap-4 border-b border-[#E2E8E5] pb-8 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl space-y-2">
-              <p
-                className="text-xs font-semibold"
-                style={{ color: 'var(--brand-accent-ink)' }}
-              >
-                Halaman 2 dari 2 · Layanan Publik {config.appName}
-              </p>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-[#111C17]">
-                {config.page2Title}
-              </h1>
-              <p className="text-sm leading-relaxed text-[#4A5D54] sm:text-base">
-                {config.page2Subtitle}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => onChangePage('page1')}
-              className="self-start rounded-xl border border-[#DCE4DF] bg-white px-4 py-2.5 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
-            >
-              Kembali ke Halaman 1: Profil & Rak Pilihan
-            </button>
-          </div>
-
-          {/* LIVE COLLECTION & SCHEDULE INFOGRAPHICS */}
-          <CollectionZoneInfographic
-            books={books}
-            schedules={schedules}
-            config={config}
-          />
-
-          {/* KATALOG DIGITAL (10+ KATEGORI, JENJANG PEMBACA, BACA SEKARANG & FAVORIT) */}
-          {config.showCatalogSection && (
-            <section className="space-y-6">
-              <div className="rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="relative w-full lg:max-w-md">
-                    <Search
-                      className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7D74]"
-                      aria-hidden="true"
-                    />
-                    <input
-                      type="search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Cari judul buku, penulis, sinopsis, atau kode..."
-                      aria-label="Cari buku di katalog"
-                      className="w-full rounded-xl border border-[#DCE4DF] bg-white py-2.5 pl-10 pr-4 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#136B36] focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <select
-                      aria-label="Filter jenjang pembaca"
-                      value={selectedLevel}
-                      onChange={(e) => setSelectedLevel(e.target.value)}
-                      className="rounded-xl border border-[#DCE4DF] bg-white px-3 py-2 text-xs font-semibold text-[#111C17]"
-                    >
-                      {readerLevels.map((lvl) => (
-                        <option key={lvl} value={lvl}>
-                          Jenjang: {lvl}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      type="button"
-                      onClick={() => setQuick5MinOnly((v) => !v)}
-                      aria-pressed={quick5MinOnly}
-                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
-                        quick5MinOnly
-                          ? 'text-white border-transparent'
-                          : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
-                      }`}
-                      style={quick5MinOnly ? { backgroundColor: config.primaryColor } : undefined}
-                    >
-                      <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                      Bacaan &lt;= 5 Menit
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setFavoritesOnly((v) => !v)}
-                      aria-pressed={favoritesOnly}
-                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
-                        favoritesOnly
-                          ? 'border-rose-300 bg-rose-50 text-rose-700'
-                          : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
-                      }`}
-                    >
-                      <Heart className={`h-3.5 w-3.5 ${favoritesOnly ? 'fill-current' : ''}`} />
-                      Favorit ({favoriteBookIds.size})
-                    </button>
-                  </div>
-                </div>
-
-                {/* Category Selector Grid */}
-                <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#EEF3F0] p-1.5">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
-                        selectedCategory === cat
-                          ? 'bg-white text-[#111C17] shadow-xs'
-                          : 'text-[#4A5D54] hover:text-[#111C17]'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {filteredBooks.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-[#CBD6D0] bg-white p-10 text-center space-y-2">
-                  <p className="font-display text-base font-semibold text-[#111C17]">
-                    Buku tidak ditemukan
-                  </p>
-                  <p className="text-sm text-[#4A5D54]">
-                    Coba ubah kata kunci pencarian, kategori, atau nonaktifkan filter tambahan.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                  {filteredBooks.map((book) => (
-                    <BookCard
-                      key={book.id}
-                      book={book}
-                      config={config}
-                      progress={progressMap.get(book.id)}
-                      onRead={onReadBook}
-                      onToggleFavorite={onToggleFavorite}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* JADWAL MINGGUAN */}
-          {config.showScheduleSection && (
-            <section className="space-y-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                    Jadwal Kegiatan Mingguan
-                  </h2>
-                  <p className="mt-1 text-sm text-[#4A5D54]">
-                    Ritme tematik Senin–Minggu di Teras Rumah Baca Almahyra.
-                  </p>
-                </div>
-                <Calendar className="h-6 w-6 text-[#4A5D54]" aria-hidden="true" />
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {schedules.map((sch) => (
-                  <div
-                    key={sch.id}
-                    className="rounded-2xl border border-[#E2E8E5] bg-white p-5"
-                  >
-                    <div className="flex items-center justify-between gap-2 text-xs text-[#4A5D54]">
-                      <span className="font-semibold text-[#111C17]">
-                        {sch.hari} · {sch.waktu}
-                      </span>
-                      <span className="font-mono-tabular">
-                        {sch.pesertaTerdaftar}/{sch.kuota} anak
-                      </span>
-                    </div>
-                    <h3 className="mt-2 font-display text-lg font-bold text-[#111C17]">
-                      {sch.program}
-                    </h3>
-                    <p className="mt-1 text-sm text-[#4A5D54] leading-relaxed">
-                      {sch.aktivitas}
-                    </p>
-                    <p className="mt-3 text-xs font-medium" style={{ color: 'var(--brand-primary-ink)' }}>
-                      {sch.zona}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* 5 INOVASI PENDUKUNG */}
+          {/* 5 INOVASI PENDUKUNG KOMUNITAS */}
           {config.showInnovationsSection && (
             <section className="rounded-2xl border border-[#E2E8E5] bg-white p-6 sm:p-8 space-y-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -755,7 +1005,7 @@ export function PublicLanding({
                   className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-semibold text-white hover:opacity-95 whitespace-nowrap shrink-0"
                 >
                   <Users className="h-4 w-4" aria-hidden="true" />
-                  Masuk Portal Anggota / Pengelola
+                  Masuk Portal Pengelola
                 </button>
               </div>
 
@@ -777,6 +1027,43 @@ export function PublicLanding({
             </section>
           )}
         </div>
+      ) : (
+        /* MODE SAHABAT TELAGA — HALAMAN 2: KATALOG KETERSEDIAAN BUKU FISIK & FORM PINJAM/DONASI */
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-12">
+          <div className="flex flex-col gap-4 border-b border-[#E2E8E5] pb-6 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl space-y-2">
+              <p
+                className="text-xs font-semibold"
+                style={{ color: 'var(--brand-accent-ink)' }}
+              >
+                Sahabat TELAGA · Katalog & Layanan Pinjaman
+              </p>
+              <h1 className="font-display text-3xl font-bold tracking-tight text-[#111C17]">
+                {config.page2Title}
+              </h1>
+              <p className="text-sm leading-relaxed text-[#4A5D54] sm:text-base">
+                {config.page2Subtitle}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onChangePage('page1')}
+              className="self-start rounded-xl border border-[#DCE4DF] bg-white px-4 py-2.5 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
+            >
+              Kembali ke Program TELAGA & Jadwal
+            </button>
+          </div>
+
+          <CollectionZoneInfographic
+            books={books}
+            schedules={schedules}
+            config={config}
+          />
+
+          {renderCatalogSection()}
+
+          <BorrowDonationPanel db={db} defaultTab="borrow" />
+        </div>
       )}
 
       {/* Quiet Footer */}
@@ -794,14 +1081,14 @@ export function PublicLanding({
               onClick={() => onChangePage('page1')}
               className="hover:text-[#111C17] underline-offset-2 hover:underline"
             >
-              Halaman 1: Profil & Beranda
+              {audienceMode === 'petualang' ? 'Rak & Petualangan' : 'Program TELAGA'}
             </button>
             <button
               type="button"
               onClick={() => onChangePage('page2')}
               className="hover:text-[#111C17] underline-offset-2 hover:underline"
             >
-              Halaman 2: Katalog & Jadwal
+              {audienceMode === 'petualang' ? 'Paspor & Kuis' : 'Katalog & Pinjaman'}
             </button>
             <span>{config.coordinator}</span>
           </div>

@@ -4,24 +4,41 @@ import { BookReaderModal } from './components/BookReaderModal';
 import { LoginModal } from './components/LoginModal';
 import { MemberPortal } from './components/MemberPortal';
 import { PublicLanding } from './components/PublicLanding';
-import { TopBar, type NavTabItem } from './components/TopBar';
+import { SplashScreen } from './components/SplashScreen';
+import { TopBar, type NavTabItem, type PublicRoleMode } from './components/TopBar';
 import { DEFAULT_DB } from './data/defaultDb';
 import { initGoogleAuth } from './services/googleAuth';
 import type { AlmahyraDatabase, AuthSession, Book, ThemeMode } from './types/almahyra';
 import {
+  claimBookStampInLocalPassport,
   getBookReadablePages,
   hydrateDatabaseWithDefaults,
+  loadLocalPassportState,
   recordBookReadingAction,
   resolveThemeMode,
+  saveLocalPassportState,
   toggleThemeMode,
+  type LocalDigitalPassportState,
 } from './utils/almahyra';
 
 const SESSION_STORAGE_KEY = 'almahyra_user_session_v1';
 const THEME_STORAGE_KEY = 'almahyra_theme_v1';
+const SPLASH_SEEN_KEY = 'almahyra_splash_seen_v1';
 
 export default function App() {
   const [db, setDb] = useState<AlmahyraDatabase>(DEFAULT_DB);
   const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      const noSplashParam =
+        typeof window !== 'undefined' &&
+        new URLSearchParams(window.location.search).has('nosplash');
+      if (noSplashParam) return false;
+      return !sessionStorage.getItem(SPLASH_SEEN_KEY);
+    } catch {
+      return false;
+    }
+  });
   const [theme, setTheme] = useState<ThemeMode>(() => {
     try {
       return resolveThemeMode(localStorage.getItem(THEME_STORAGE_KEY));
@@ -37,6 +54,10 @@ export default function App() {
       return null;
     }
   });
+  const [audienceMode, setAudienceMode] = useState<PublicRoleMode>('petualang');
+  const [localPassport, setLocalPassport] = useState<LocalDigitalPassportState>(() =>
+    loadLocalPassportState(),
+  );
   const [loginOpen, setLoginOpen] = useState(false);
   const [readingBookId, setReadingBookId] = useState<string | null>(null);
 
@@ -44,6 +65,37 @@ export default function App() {
   const [publicPage, setPublicPage] = useState<'page1' | 'page2'>('page1');
   const [memberPage, setMemberPage] = useState<'passport' | 'catalog' | 'schedule'>('passport');
   const [adminPage, setAdminPage] = useState<'data' | 'reports' | 'appearance'>('data');
+
+  const handleDismissSplash = useCallback(() => {
+    setShowSplash(false);
+    try {
+      sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
+    } catch {
+      // Ignore storage errors
+    }
+  }, []);
+
+  const handleUpdateLocalPassport = useCallback((next: LocalDigitalPassportState) => {
+    setLocalPassport(next);
+    saveLocalPassportState(next);
+  }, []);
+
+  const handleQuickClaimStamp = useCallback((book: Book) => {
+    let resultInfo = { alreadyClaimed: false };
+    setLocalPassport((prev) => {
+      const res = claimBookStampInLocalPassport(prev, book);
+      resultInfo = { alreadyClaimed: res.alreadyClaimed };
+      saveLocalPassportState(res.nextState);
+      return res.nextState;
+    });
+    return resultInfo;
+  }, []);
+
+  const handleChangePublicRoleMode = useCallback((mode: PublicRoleMode) => {
+    setAudienceMode(mode);
+    setPublicPage('page1');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     const unsub = initGoogleAuth();
@@ -92,9 +144,9 @@ export default function App() {
   // Apply theme colors dynamically from icon logo / config
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty('--brand-primary', db.config.primaryColor || '#136B36');
-    root.style.setProperty('--brand-secondary', db.config.secondaryColor || '#1F8A44');
-    root.style.setProperty('--brand-accent', db.config.accentColor || '#D98200');
+    root.style.setProperty('--brand-primary', db.config.primaryColor || '#047857');
+    root.style.setProperty('--brand-secondary', db.config.secondaryColor || '#059669');
+    root.style.setProperty('--brand-accent', db.config.accentColor || '#D97706');
   }, [db.config.primaryColor, db.config.secondaryColor, db.config.accentColor]);
 
   const handleUpdateDb = useCallback(async (nextDb: AlmahyraDatabase) => {
@@ -215,9 +267,15 @@ export default function App() {
 
   const navTabs: NavTabItem[] = useMemo(() => {
     if (!session) {
+      if (audienceMode === 'petualang') {
+        return [
+          { id: 'page1', label: 'Rak & Katalog' },
+          { id: 'page2', label: 'Paspor & Kuis' },
+        ];
+      }
       return [
-        { id: 'page1', label: 'Beranda & TELAGA' },
-        { id: 'page2', label: 'Katalog & Jadwal' },
+        { id: 'page1', label: 'Program TELAGA' },
+        { id: 'page2', label: 'Katalog & Pinjaman' },
       ];
     }
     if (session.role === 'anggota') {
@@ -232,7 +290,7 @@ export default function App() {
       { id: 'reports', label: 'Kegiatan & Laporan' },
       { id: 'appearance', label: 'Tampilan & Spreadsheet' },
     ];
-  }, [session]);
+  }, [audienceMode, session]);
 
   const activeTab = !session
     ? publicPage
@@ -253,6 +311,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8FAF9] text-[#111C17]">
+      {showSplash && (
+        <SplashScreen
+          config={db.config}
+          ready={!loading}
+          onDismiss={handleDismissSplash}
+        />
+      )}
+
       {!readingBook && (
         <TopBar
           config={db.config}
@@ -260,6 +326,8 @@ export default function App() {
           tabs={navTabs}
           activeTab={activeTab}
           theme={theme}
+          publicRoleMode={audienceMode}
+          onChangePublicRoleMode={handleChangePublicRoleMode}
           onSelectTheme={handleSetTheme}
           onToggleTheme={handleToggleTheme}
           onSelectTab={handleSelectTab}
@@ -278,6 +346,9 @@ export default function App() {
           db={db}
           viewerKey={viewerKey}
           activePage={publicPage}
+          audienceMode={audienceMode}
+          localPassport={localPassport}
+          onUpdateLocalPassport={handleUpdateLocalPassport}
           onChangePage={handleSelectTab}
           onOpenLogin={() => setLoginOpen(true)}
           onReadBook={(book) => setReadingBookId(book.id)}
@@ -309,6 +380,7 @@ export default function App() {
         onClose={() => setReadingBookId(null)}
         onSwitchBook={(book) => setReadingBookId(book.id)}
         onOpenLogin={() => setLoginOpen(true)}
+        onQuickClaimStamp={handleQuickClaimStamp}
         onRecordReading={handleRecordReading}
       />
 

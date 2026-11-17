@@ -27,6 +27,7 @@ export const DEFAULT_CATEGORIES = [
 
 export const DEFAULT_READER_LEVELS = [
   'PAUD',
+  'TK',
   'SD Awal',
   'SD Lanjut',
   'SMP',
@@ -250,6 +251,7 @@ export function filterBooksAdvanced(
     readerLevel?: string;
     maxMinutes?: number;
     onlyActive?: boolean;
+    onlyAvailable?: boolean;
     favoriteBookIds?: Set<string>;
     onlyFavorites?: boolean;
   },
@@ -261,6 +263,7 @@ export function filterBooksAdvanced(
 
   return books.filter((b) => {
     if (onlyActive && b.aktif === false) return false;
+    if (opts.onlyAvailable && b.status !== 'Tersedia') return false;
     if (category !== 'Semua' && b.kategori !== category) return false;
     if (
       readerLevel !== 'Semua' &&
@@ -287,7 +290,7 @@ export function filterBooksAdvanced(
 
 export function computeBookShelves(books: Book[], preferredLevel?: string) {
   const active = books.filter(isBookActive);
-  const pilihanAlmahyra = active.filter((b) => b.pilihanAlmahyra).slice(0, 4);
+  const pilihanAlmahyra = active.filter((b) => b.pilihanAlmahyra).slice(0, 6);
   const terbaru = [...active]
     .sort((a, b) => (b.tanggalTerbit ?? '').localeCompare(a.tanggalTerbit ?? ''))
     .slice(0, 4);
@@ -731,6 +734,26 @@ export function parseBulkBooksCsv(
     .filter((b): b is Book => b !== null);
 }
 
+export function normalizeAssetUrl(url: string | undefined): string | undefined {
+  if (!url) return url;
+  const trimmed = url.trim();
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith('/src/assets/images/')) {
+    return `/images/${trimmed.slice('/src/assets/images/'.length)}`;
+  }
+  if (trimmed.startsWith('/public/images/')) {
+    return `/images/${trimmed.slice('/public/images/'.length)}`;
+  }
+  if (trimmed.startsWith('/public/assets/')) {
+    return `/assets/${trimmed.slice('/public/assets/'.length)}`;
+  }
+  const budiPrefix = 'https://budi.kemendikdasmen.go.id/storage/image/';
+  if (trimmed.startsWith(budiPrefix)) {
+    return `/images/budi/${trimmed.slice(budiPrefix.length)}`;
+  }
+  return trimmed;
+}
+
 export function hydrateDatabaseWithDefaults(
   incoming: Partial<AlmahyraDatabase>,
   fallback: AlmahyraDatabase,
@@ -753,7 +776,7 @@ export function hydrateDatabaseWithDefaults(
       tanggalTerbit: b.tanggalTerbit ?? def?.tanggalTerbit ?? '2026-11-01',
       isiBacaan: b.isiBacaan && b.isiBacaan.length > 0 ? b.isiBacaan : def?.isiBacaan,
       kuis: b.kuis && b.kuis.length > 0 ? b.kuis : def?.kuis,
-      coverUrl: b.coverUrl || def?.coverUrl,
+      coverUrl: normalizeAssetUrl(b.coverUrl) || normalizeAssetUrl(def?.coverUrl),
     };
   });
 
@@ -771,8 +794,16 @@ export function hydrateDatabaseWithDefaults(
   };
 
   const rawConfig = { ...fallback.config, ...(incoming.config ?? {}) };
-  if (rawConfig.heroTitle?.startsWith('Taman Baca Keluarga')) {
-    rawConfig.heroTitle = 'Rumah Baca Keluarga & Petualangan Literasi Anak Desa';
+  rawConfig.logoUrl = normalizeAssetUrl(rawConfig.logoUrl) || fallback.config.logoUrl;
+  rawConfig.heroImageUrl = normalizeAssetUrl(rawConfig.heroImageUrl) || fallback.config.heroImageUrl;
+  if (!rawConfig.appName || rawConfig.appName === 'ALMAHYRA App') {
+    rawConfig.appName = 'Rumah Baca Almahyra';
+  }
+  if (
+    rawConfig.heroTitle?.startsWith('Taman Baca Keluarga') ||
+    rawConfig.heroTitle === 'Rumah Baca Keluarga & Petualangan Literasi Anak Desa'
+  ) {
+    rawConfig.heroTitle = 'Rumah Baca Almahyra';
   }
 
   const migratedMembers = (
@@ -830,7 +861,9 @@ export function hydrateDatabaseWithDefaults(
         ? incoming.categories
         : [...(fallback.categories ?? DEFAULT_CATEGORIES)],
     readerLevels:
-      incoming.readerLevels && incoming.readerLevels.length > 0
+      incoming.readerLevels &&
+      incoming.readerLevels.length >= 6 &&
+      incoming.readerLevels.includes('TK')
         ? incoming.readerLevels
         : [...(fallback.readerLevels ?? DEFAULT_READER_LEVELS)],
     readingProgress: migratedProgress,
@@ -948,3 +981,589 @@ export function exportRecordsToCsv<T extends object>(
     )
     .join('\n');
 }
+
+export interface SahabatPhotoCard {
+  id: string;
+  src: string;
+  name: string;
+  greeting: string;
+  caption: string;
+}
+
+export const SAHABAT_GALLERY_PHOTOS: SahabatPhotoCard[] = [
+  {
+    id: 'sahabat-1',
+    src: '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14_7257879f.jpeg',
+    name: 'Sapaan Hangat Sahabat Cilik',
+    greeting: 'Hai teman! Yuk masuk ke Pintu Masuk Rumah Baca Almahyra.',
+    caption: 'Salam ceria pembuka petualangan membaca bersama keluarga.',
+  },
+  {
+    id: 'sahabat-2',
+    src: '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__2__1caa94d4.jpeg',
+    name: 'Senyum Ceria Teras Baca',
+    greeting: 'Halo! Banyak buku bergambar dan cerita seru menantimu di sini.',
+    caption: 'Semangat membaca bersama di Teras Rumah Baca Almahyra.',
+  },
+  {
+    id: 'sahabat-3',
+    src: '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__1__65c278f8.jpeg',
+    name: 'Sahabat Almahyra Dusun Grontol',
+    greeting: 'Ayo ajak temanmu ikut membaca, berkarya, dan raih bintang literasi!',
+    caption: 'Berbagi cerita dan mengundang sahabat untuk petualangan berikutnya.',
+  },
+];
+
+export interface AdventureJourneyStepDef {
+  stepNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  id:
+    | 'pintu-masuk'
+    | 'kenali-dunia'
+    | 'hutan-buku'
+    | 'pintu-cerita'
+    | 'misi-literasi'
+    | 'bintang-literasi'
+    | 'sahabat-almahyra';
+  title: string;
+  shortTitle: string;
+  description: string;
+  actionLabel: string;
+  photoIndex: number;
+}
+
+export const ADVENTURE_JOURNEY_STEPS: AdventureJourneyStepDef[] = [
+  {
+    stepNumber: 1,
+    id: 'pintu-masuk',
+    title: 'Pintu Masuk Almahyra',
+    shortTitle: 'Pintu Masuk',
+    description:
+      'Pengunjung disambut dengan ilustrasi menarik, sapaan hangat sahabat cilik Almahyra, serta ajakan ramah untuk memulai perjalanan literasi.',
+    actionLabel: 'Mulai Petualangan',
+    photoIndex: 0,
+  },
+  {
+    stepNumber: 2,
+    id: 'kenali-dunia',
+    title: 'Kenali Dunia Almahyra',
+    shortTitle: 'Kenali Dunia',
+    description:
+      'Kenali Rumah Baca keluarga Dusun Grontol, 10+ kategori koleksi, jadwal kegiatan mingguan Senin–Minggu, Kerangka TELAGA, dan tujuan literasi anak.',
+    actionLabel: 'Lihat Pilar & Jadwal',
+    photoIndex: 1,
+  },
+  {
+    stepNumber: 3,
+    id: 'hutan-buku',
+    title: 'Jelajahi Hutan Buku',
+    shortTitle: 'Hutan Buku',
+    description:
+      'Pilih bacaan favoritmu berdasarkan 10 kategori, jenjang usia pembaca, waktu baca singkat 5 menit, atau rekomendasi pilihan pendamping.',
+    actionLabel: 'Buka Hutan Buku Lengkap',
+    photoIndex: 0,
+  },
+  {
+    stepNumber: 4,
+    id: 'pintu-cerita',
+    title: 'Buka Pintu Cerita',
+    shortTitle: 'Pintu Cerita',
+    description:
+      'Baca sinopsis cerita, langsung masuk ke mode baca penuh layar lengkap dengan musik pengiring cerita, atau lihat langkah mudah meminjam buku cetak.',
+    actionLabel: 'Baca Sekarang',
+    photoIndex: 1,
+  },
+  {
+    stepNumber: 5,
+    id: 'misi-literasi',
+    title: 'Selesaikan Misi Literasi',
+    shortTitle: 'Misi Literasi',
+    description:
+      'Jawab kuis pemahaman bacaan, ikuti tantangan membaca mingguan, dan tulis ulasan atau jurnal membaca setelah menamatkan cerita.',
+    actionLabel: 'Kerjakan Kuis & Jurnal',
+    photoIndex: 2,
+  },
+  {
+    stepNumber: 6,
+    id: 'bintang-literasi',
+    title: 'Raih Bintang Literasi',
+    shortTitle: 'Bintang Literasi',
+    description:
+      'Kumpulkan poin membaca, stempel digital E-Paspor Baca, lencana prestasi, dan naik jenjang menuju Duta Literasi Almahyra.',
+    actionLabel: 'Buka E-Paspor Saya',
+    photoIndex: 0,
+  },
+  {
+    stepNumber: 7,
+    id: 'sahabat-almahyra',
+    title: 'Jadilah Sahabat Almahyra',
+    shortTitle: 'Sahabat Almahyra',
+    description:
+      'Bagikan pengalaman membacamu, kirim ajakan hangat kepada teman sebaya, dan kembali lagi untuk menaklukkan petualangan cerita berikutnya.',
+    actionLabel: 'Salin Ajakan Teman',
+    photoIndex: 2,
+  },
+];
+
+export function buildSahabatInvitationText(params: {
+  senderName?: string;
+  appName?: string;
+  booksReadCount: number;
+  favoriteBookTitle?: string;
+}): string {
+  const sender = params.senderName?.trim() || 'Sahabat Almahyra';
+  const app = params.appName?.trim() || 'Rumah Baca Almahyra';
+  const bookPart = params.favoriteBookTitle
+    ? ` Aku baru saja membaca "${params.favoriteBookTitle}"`
+    : ' Aku baru saja menjelajahi cerita seru';
+  const progressPart =
+    params.booksReadCount > 0
+      ? ` dan sudah menamatkan ${params.booksReadCount} buku!`
+      : ' bersama keluarga!';
+
+  return `Hai teman! Aku ${sender} dari ${app}.${bookPart}${progressPart} Yuk ikut petualangan membaca, dengarkan musik cerita, jawab kuis seru, dan kumpulkan stempel E-Paspor Baca di Rumah Baca Almahyra!`;
+}
+
+export function computeJourneyStepStatuses(
+  db: AlmahyraDatabase,
+  viewerKey: string,
+): Record<AdventureJourneyStepDef['id'], boolean> {
+  const viewerProgress = (db.readingProgress ?? []).filter((p) => p.viewerKey === viewerKey);
+  const member = db.members.find(
+    (m) => m.nomorInduk.toLowerCase() === viewerKey.toLowerCase(),
+  );
+  const viewerJournals = (db.readingJournals ?? []).filter(
+    (j) => j.nomorInduk.toLowerCase() === viewerKey.toLowerCase(),
+  );
+
+  const hasReadOrBookmarked = viewerProgress.some((p) => p.lastPage > 0 || p.completedCount > 0);
+  const hasCompletedMission =
+    viewerProgress.some((p) => p.completedCount > 0 || p.quizScore !== undefined) ||
+    viewerJournals.length > 0;
+  const hasStarsOrPoints =
+    (member ? member.poin > 0 : false) ||
+    viewerProgress.some((p) => p.completedCount > 0) ||
+    db.passportLogs.some((l) => l.nomorInduk.toLowerCase() === viewerKey.toLowerCase());
+
+  return {
+    'pintu-masuk': true,
+    'kenali-dunia': db.books.length > 0 && db.schedules.length > 0,
+    'hutan-buku': db.books.some((b) => b.aktif !== false),
+    'pintu-cerita': hasReadOrBookmarked,
+    'misi-literasi': hasCompletedMission,
+    'bintang-literasi': hasStarsOrPoints,
+    'sahabat-almahyra': hasCompletedMission || hasStarsOrPoints,
+  };
+}
+
+export const LITERACY_SPLASH_QUOTES: string[] = [
+  'Dari rumah kecil di Dusun Grontol, lahir penjelajah dunia yang gemar membaca.',
+  'Satu halaman cerita setiap hari menumbuhkan rasa ingin tahu sepanjang hayat.',
+  'Membaca, berkarya, bertualang, dan merawat bumi bersama keluarga.',
+  'Setiap buku adalah pintu baru menuju imajinasi, ilmu pengetahuan, dan budi pekerti.',
+];
+
+export interface LeaderboardEntry {
+  rank: number;
+  member: Member;
+  levelInfo: LevelInfo;
+}
+
+export function computeTopReadersLeaderboard(
+  members: Member[],
+  limit = 5,
+): LeaderboardEntry[] {
+  return [...members]
+    .filter((m) => m.status === 'Aktif')
+    .sort((a, b) => {
+      if (b.poin !== a.poin) return b.poin - a.poin;
+      return a.nama.localeCompare(b.nama, 'id');
+    })
+    .slice(0, Math.max(1, limit))
+    .map((member, index) => ({
+      rank: index + 1,
+      member,
+      levelInfo: calculateLevelInfo(member.poin),
+    }));
+}
+
+export function buildBorrowWhatsAppMessage(params: {
+  borrowerName: string;
+  memberCode?: string;
+  bookCode?: string;
+  bookTitle: string;
+  borrowDate?: string;
+  notes?: string;
+}): string {
+  const borrower = params.borrowerName.trim() || 'Warga / Orang Tua';
+  const codeLine = params.memberCode?.trim()
+    ? `Nomor Anggota: ${params.memberCode.trim().toUpperCase()}\n`
+    : '';
+  const bookLabel = params.bookCode
+    ? `${params.bookCode} — ${params.bookTitle}`
+    : params.bookTitle;
+  const dateLine = params.borrowDate?.trim()
+    ? `Rencana Ambil: ${params.borrowDate.trim()}\n`
+    : '';
+  const noteLine = params.notes?.trim() ? `Catatan: ${params.notes.trim()}\n` : '';
+
+  return (
+    `Halo Pengurus Rumah Baca Almahyra,\n\n` +
+    `Saya ingin mengajukan peminjaman buku fisik di Teras Almahyra:\n` +
+    `Nama Peminjam: ${borrower}\n` +
+    codeLine +
+    `Buku Dipilih: ${bookLabel}\n` +
+    dateLine +
+    noteLine +
+    `\nTerima kasih, mohon konfirmasi ketersediaan di rak Dusun Grontol.`
+  );
+}
+
+export function buildDonationWhatsAppMessage(params: {
+  donorName: string;
+  donorOrigin?: string;
+  bookCount: number;
+  bookTopics: string;
+  condition?: string;
+  notes?: string;
+}): string {
+  const donor = params.donorName.trim() || 'Sahabat Donatur';
+  const originLine = params.donorOrigin?.trim()
+    ? `Asal/Komunitas: ${params.donorOrigin.trim()}\n`
+    : '';
+  const condLine = params.condition?.trim() ? `Kondisi: ${params.condition.trim()}\n` : '';
+  const noteLine = params.notes?.trim() ? `Catatan: ${params.notes.trim()}\n` : '';
+
+  return (
+    `Halo Pengurus Rumah Baca Almahyra,\n\n` +
+    `Saya ingin berpartisipasi dalam Gerakan Satu Rumah Satu Buku:\n` +
+    `Nama Donatur: ${donor}\n` +
+    originLine +
+    `Jumlah Buku: ${Math.max(1, params.bookCount)} eksemplar\n` +
+    `Judul / Topik: ${params.bookTopics.trim() || 'Buku cerita anak layak baca'}\n` +
+    condLine +
+    noteLine +
+    `\nMohon informasi jadwal penyerahan atau penjemputan buku. Terima kasih!`
+  );
+}
+
+export function buildWhatsAppShareHref(message: string, phoneDigits = ''): string {
+  const cleanPhone = phoneDigits.replace(/[^0-9]/g, '');
+  const encoded = encodeURIComponent(message);
+  return cleanPhone
+    ? `https://wa.me/${cleanPhone}?text=${encoded}`
+    : `https://wa.me/?text=${encoded}`;
+}
+
+export const STORY_GENERATOR_CHARACTERS = [
+  { id: 'kancil', label: 'Kancil Cerdik', trait: 'selalu mengamati dengan teliti dan ramah' },
+  { id: 'rara', label: 'Rara Penjelajah', trait: 'gemar membawa buku catatan dan lentera kecil' },
+  { id: 'rangkong', label: 'Kakak Rangkong', trait: 'tekun menjaga hutan dan menyayangi keluarganya' },
+  { id: 'bima', label: 'Bima Sahabat Kebun', trait: 'suka menanam bibit dan membantu tetangga' },
+] as const;
+
+export const STORY_GENERATOR_SETTINGS = [
+  { id: 'teras', label: 'Teras Rumah Baca Almahyra', scenery: 'tikar lesehan hangat di bawah lampu senja Dusun Grontol' },
+  { id: 'lereng', label: 'Lereng Gunung Tlogosari', scenery: 'sawah hijau berembun dan suara angin pegunungan' },
+  { id: 'kebun', label: 'Kebun Literasi Desa', scenery: 'bedeng sayur, bunga kupu-kupu, dan rak buku bambu' },
+] as const;
+
+export const STORY_GENERATOR_MORALS = [
+  {
+    id: 'kejujuran',
+    label: 'Kejujuran & Amanah',
+    lesson: 'berani berkata jujur dan menjaga barang pinjaman membuat semua teman percaya kepada kita.',
+    closingQuestion: 'Mengapa berkata jujur dan mengembalikan buku tepat waktu membuat hati terasa tenang?',
+  },
+  {
+    id: 'gotong-royong',
+    label: 'Gotong Royong',
+    lesson: 'pekerjaan berat terasa ringan saat dikerjakan bersama dengan senyum dan saling menghargai.',
+    closingQuestion: 'Hal baik apa yang bisa kamu lakukan bersama teman atau keluargamu besok?',
+  },
+  {
+    id: 'alam',
+    label: 'Cinta Lingkungan',
+    lesson: 'merawat tanaman, memilah sampah, dan menyayangi satwa menjaga bumi tetap lestari.',
+    closingQuestion: 'Tindakan kecil apa yang bisa kita mulai di rumah untuk menjaga lingkungan sekitar?',
+  },
+  {
+    id: 'gemar-baca',
+    label: 'Gemar Bertanya & Membaca',
+    lesson: 'setiap pertanyaan yang kita temukan jawabannya di buku membuka jendela petualangan baru.',
+    closingQuestion: 'Jika kamu menjadi tokoh dalam cerita tadi, pertanyaan apa yang ingin kamu cari di buku berikutnya?',
+  },
+] as const;
+
+export interface GeneratedStoryResult {
+  title: string;
+  characterLabel: string;
+  settingLabel: string;
+  moralLabel: string;
+  paragraphs: string[];
+  discussionQuestions: [string, string, string];
+}
+
+export function generateBedtimeStoryAndPrompts(params: {
+  characterId: string;
+  settingId: string;
+  moralId: string;
+  childName?: string;
+}): GeneratedStoryResult {
+  const character =
+    STORY_GENERATOR_CHARACTERS.find((c) => c.id === params.characterId) ??
+    STORY_GENERATOR_CHARACTERS[0];
+  const setting =
+    STORY_GENERATOR_SETTINGS.find((s) => s.id === params.settingId) ??
+    STORY_GENERATOR_SETTINGS[0];
+  const moral =
+    STORY_GENERATOR_MORALS.find((m) => m.id === params.moralId) ??
+    STORY_GENERATOR_MORALS[0];
+
+  const readerName = params.childName?.trim();
+  const companionText = readerName
+    ? `bersama sahabat kecilnya bernama ${readerName}`
+    : 'bersama teman-teman kecil di desa';
+
+  const title = `Kisah ${character.label} di ${setting.label}`;
+  const paragraphs = [
+    `Sore itu di ${setting.label}, suasana terasa damai dengan ${setting.scenery}. ${character.label}, yang dikenal ${character.trait}, datang ${companionText} untuk mencari ide kegiatan baru.`,
+    `Di tengah perjalanan, mereka menemukan sebuah tantangan kecil yang membutuhkan kesabaran dan ketelitian. Alih-alih tergesa-gesa, ${character.label} mengajak semuanya berdiskusi, membuka buku panduan sederhana, lalu mencoba langkah demi langkah dengan gembira.`,
+    `Menjelang malam, tantangan itu berhasil diselesaikan dengan indah. Dari pengalaman hari itu mereka belajar tentang ${moral.label.toLowerCase()}: bahwa ${moral.lesson}`,
+  ];
+
+  const discussionQuestions: [string, string, string] = [
+    `Siapa tokoh yang paling kamu sukai dalam cerita "${title}", dan sifat baik apa yang ia tunjukkan?`,
+    `Menurutmu, bagaimana perasaan ${character.label} saat berhasil menyelesaikan tantangan bersama?`,
+    moral.closingQuestion,
+  ];
+
+  return {
+    title,
+    characterLabel: character.label,
+    settingLabel: setting.label,
+    moralLabel: moral.label,
+    paragraphs,
+    discussionQuestions,
+  };
+}
+
+export const LOCAL_PASSPORT_STORAGE_KEY = 'almahyra_digital_passport_v1';
+
+export interface LocalPassportStamp {
+  id: string;
+  bookId: string;
+  bookTitle: string;
+  category: string;
+  claimedAt: string;
+  points: number;
+}
+
+export interface LocalDigitalPassportState {
+  childName: string;
+  points: number;
+  stamps: LocalPassportStamp[];
+  badges: string[];
+  bestQuizScore: number;
+  quizAttempts: number;
+}
+
+export interface MiniQuizQuestion {
+  id: string;
+  storyRef: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export const MINI_QUIZ_TEBAK_CERITA: MiniQuizQuestion[] = [
+  {
+    id: 'mq-1',
+    storyRef: 'Pustaka Kaki Gunung & Lentera Senja',
+    question: 'Di mana anak-anak Dusun Grontol menyalakan lentera baca setiap sore?',
+    options: [
+      'Di teras kayu yang hangat bersama keluarga',
+      'Di dalam gudang gelap yang terkunci',
+      'Di tengah jalan raya yang ramai kendaraan',
+      'Di atas atap sekolah sendirian',
+    ],
+    correctIndex: 0,
+    explanation: 'Teras kayu rumah yang hangat menjadi tempat nyaman anak-anak membaca bersama.',
+  },
+  {
+    id: 'mq-2',
+    storyRef: 'Dongeng Kancil & Sahabat Hutan',
+    question: 'Bagaimana Kancil membersihkan batu besar dan ranting yang menyumbat sungai?',
+    options: [
+      'Mengajak Berang-berang, Gajah Kecil, dan Tupai bekerja sama',
+      'Menunggu hujan badai selama tiga bulan',
+      'Meninggalkan sungai lalu pindah ke kota',
+      'Menyuruh Kura-Kura mengangkat batu sendirian',
+    ],
+    correctIndex: 0,
+    explanation: 'Dengan gotong royong bersama teman hutan, sungai kembali mengalir jernih!',
+  },
+  {
+    id: 'mq-3',
+    storyRef: 'Ensiklopedia Sains Dapur & Kebun',
+    question: 'Proses apa yang membuat daun sawi putih berubah warna saat batangnya direndam air berwarna?',
+    options: [
+      'Kapilaritas yang menyerap air naik melalui pembuluh batang',
+      'Sawi meminum udara malam saat lampu padam',
+      'Daun sawi dicat dengan kuas gambar',
+      'Air membeku menjadi es di dalam gelas',
+    ],
+    correctIndex: 0,
+    explanation: 'Pembuluh kapiler tumbuhan mengangkut air dan zat warna hingga ke ujung daun.',
+  },
+  {
+    id: 'mq-4',
+    storyRef: 'Komik Edukasi: Kapten Pilah & Pasukan Kompos',
+    question: 'Tong warna apa yang dipilih Kapten Pilah untuk mengolah kulit buah & daun kering menjadi pupuk?',
+    options: [
+      'Tong hijau untuk kompos organik',
+      'Tong merah khusus baterai bekas',
+      'Kantong plastik hitam lalu dibuang ke sungai',
+      'Kotak kaca yang diletakkan di lemari es',
+    ],
+    correctIndex: 0,
+    explanation: 'Sampah organik di tong hijau bisa diolah menjadi kompos yang menyuburkan kebun!',
+  },
+  {
+    id: 'mq-5',
+    storyRef: 'Bintang Kertas dari Negeri Angin',
+    question: 'Apa pesan utama dari cerita Hana yang menerbangkan bintang dan burung kertas?',
+    options: [
+      'Kreativitas sederhana yang dibagikan dengan tulus bisa menumbuhkan persahabatan',
+      'Kita tidak perlu menyapa tetangga di seberang desa',
+      'Kertas bekas harus langsung dibakar di halaman',
+      'Membaca buku hanya boleh dilakukan saat liburan saja',
+    ],
+    correctIndex: 0,
+    explanation: 'Karya kecil yang tulus mampu menyambung persahabatan dan keceriaan bersama.',
+  },
+];
+
+export function getDefaultLocalPassportState(): LocalDigitalPassportState {
+  return {
+    childName: '',
+    points: 0,
+    stamps: [],
+    badges: [],
+    bestQuizScore: 0,
+    quizAttempts: 0,
+  };
+}
+
+export function loadLocalPassportState(): LocalDigitalPassportState {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return getDefaultLocalPassportState();
+    }
+    const raw = window.localStorage.getItem(LOCAL_PASSPORT_STORAGE_KEY);
+    if (!raw) return getDefaultLocalPassportState();
+    const parsed = JSON.parse(raw) as Partial<LocalDigitalPassportState>;
+    return {
+      childName: typeof parsed.childName === 'string' ? parsed.childName : '',
+      points: typeof parsed.points === 'number' ? parsed.points : 0,
+      stamps: Array.isArray(parsed.stamps) ? parsed.stamps : [],
+      badges: Array.isArray(parsed.badges) ? parsed.badges : [],
+      bestQuizScore: typeof parsed.bestQuizScore === 'number' ? parsed.bestQuizScore : 0,
+      quizAttempts: typeof parsed.quizAttempts === 'number' ? parsed.quizAttempts : 0,
+    };
+  } catch {
+    return getDefaultLocalPassportState();
+  }
+}
+
+export function saveLocalPassportState(state: LocalDigitalPassportState): void {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem(LOCAL_PASSPORT_STORAGE_KEY, JSON.stringify(state));
+    }
+  } catch {
+    // Ignore storage quota errors
+  }
+}
+
+export function deriveBadgesFromLocalPassport(
+  state: LocalDigitalPassportState,
+): string[] {
+  const badges = new Set<string>(state.badges);
+  if (state.stamps.length >= 1) badges.add('Pembaca Pemula');
+  if (state.stamps.length >= 3) badges.add('Petualang Cerita');
+  if (state.stamps.length >= 5) badges.add('Kutu Buku Grontol');
+  if (state.stamps.some((s) => s.category.includes('Lingkungan') || s.category.includes('Komik'))) {
+    badges.add('Sahabat Bumi');
+  }
+  if (state.stamps.some((s) => s.category.includes('Sains'))) {
+    badges.add('Ilmuwan Cilik');
+  }
+  if (state.bestQuizScore >= 60) {
+    badges.add('Bintang Kuis Tebak Cerita');
+  }
+  if (state.bestQuizScore === 100) {
+    badges.add('Juara 100% Tebak Cerita');
+  }
+  return Array.from(badges);
+}
+
+export function claimBookStampInLocalPassport(
+  state: LocalDigitalPassportState,
+  book: Pick<Book, 'id' | 'judul' | 'kategori'>,
+): { nextState: LocalDigitalPassportState; alreadyClaimed: boolean } {
+  const alreadyClaimed = state.stamps.some((s) => s.bookId === book.id);
+  const stampPoints = alreadyClaimed ? 0 : 5;
+  const newStamp: LocalPassportStamp = {
+    id: `ls-${book.id}-${Date.now()}`,
+    bookId: book.id,
+    bookTitle: book.judul,
+    category: book.kategori,
+    claimedAt: new Date().toISOString().slice(0, 10),
+    points: 5,
+  };
+  const nextStamps = alreadyClaimed ? state.stamps : [newStamp, ...state.stamps];
+  const draft: LocalDigitalPassportState = {
+    ...state,
+    points: state.points + stampPoints,
+    stamps: nextStamps,
+  };
+  draft.badges = deriveBadgesFromLocalPassport(draft);
+  return { nextState: draft, alreadyClaimed };
+}
+
+export function evaluateMiniQuiz(
+  questions: MiniQuizQuestion[],
+  selectedAnswers: Record<number, number>,
+): { correctCount: number; total: number; scorePercent: number; passed: boolean } {
+  const total = questions.length;
+  const correctCount = questions.reduce(
+    (sum, q, idx) => sum + (selectedAnswers[idx] === q.correctIndex ? 1 : 0),
+    0,
+  );
+  const scorePercent = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  return {
+    correctCount,
+    total,
+    scorePercent,
+    passed: scorePercent >= 60,
+  };
+}
+
+export function recordQuizAttemptInLocalPassport(
+  state: LocalDigitalPassportState,
+  scorePercent: number,
+): LocalDigitalPassportState {
+  const earnedBonus = scorePercent >= 60 && state.bestQuizScore < 60 ? 5 : 2;
+  const draft: LocalDigitalPassportState = {
+    ...state,
+    points: state.points + earnedBonus,
+    bestQuizScore: Math.max(state.bestQuizScore, scorePercent),
+    quizAttempts: state.quizAttempts + 1,
+  };
+  draft.badges = deriveBadgesFromLocalPassport(draft);
+  return draft;
+}
+
+
+

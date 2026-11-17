@@ -2,33 +2,33 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --brand-primary: #136b36;
-  --brand-secondary: #1f8a44;
-  --brand-accent: #d98200;
-  --brand-primary-ink: var(--brand-primary);
-  --brand-accent-ink: var(--brand-accent);
-  --surface-canvas: #f8faf9;
+  --brand-primary: #047857;
+  --brand-secondary: #059669;
+  --brand-accent: #eab308;
+  --brand-primary-ink: #047857;
+  --brand-accent-ink: #b45309;
+  --surface-canvas: #fbf8f1;
   --surface-card: #ffffff;
-  --surface-subtle: #f2f6f4;
-  --surface-muted: #e7eeea;
-  --border-subtle: #e2e8e5;
-  --border-strong: #dce4df;
-  --ink-primary: #111c17;
-  --ink-secondary: #4a5d54;
+  --surface-subtle: #f4efe2;
+  --surface-muted: #ebe4d3;
+  --border-subtle: #e6decb;
+  --border-strong: #d6ccb4;
+  --ink-primary: #12231b;
+  --ink-secondary: #425a4e;
 }
 
 html.dark {
   color-scheme: dark;
-  --brand-primary-ink: color-mix(in srgb, var(--brand-primary) 42%, #86efac);
-  --brand-accent-ink: color-mix(in srgb, var(--brand-accent) 45%, #fde68a);
-  --surface-canvas: #0a130f;
-  --surface-card: #111f19;
-  --surface-subtle: #172a22;
-  --surface-muted: #1e352b;
-  --border-subtle: #21382e;
-  --border-strong: #2c4a3d;
-  --ink-primary: #edf5f0;
-  --ink-secondary: #a2bab0;
+  --brand-primary-ink: #6ee7b7;
+  --brand-accent-ink: #facc15;
+  --surface-canvas: #07130e;
+  --surface-card: #0e2018;
+  --surface-subtle: #142b21;
+  --surface-muted: #1a372a;
+  --border-subtle: #204233;
+  --border-strong: #2c5744;
+  --ink-primary: #eef7f2;
+  --ink-secondary: #a5c0b4;
 }
 
 @layer base {
@@ -53,8 +53,63 @@ html.dark {
   }
 }
 
-/* Semantic Night Mode Surface, Border & Typography Mapping */
+@keyframes celebrate-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-celebrate-pop {
+  animation: celebrate-pop 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes confetti-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(8deg);
+  }
+}
+
+.animate-confetti-float {
+  animation: confetti-float 2.4s ease-in-out infinite;
+}
+
+/* Semantic Warm Cream, Emerald & Night Mode Surface Mapping */
 @layer utilities {
+  .bg-\[\#F8FAF9\] {
+    background-color: var(--surface-canvas);
+  }
+  .bg-\[\#F2F6F4\],
+  .hover\:bg-\[\#F2F6F4\]:hover {
+    background-color: var(--surface-subtle);
+  }
+  .bg-\[\#EEF3F0\],
+  .bg-\[\#E7EEEA\] {
+    background-color: var(--surface-muted);
+  }
+  .border-\[\#E2E8E5\],
+  .border-\[\#EEF3F0\],
+  .border-\[\#E7EEEA\],
+  .divide-\[\#EEF3F0\] > :not(:last-child) {
+    border-color: var(--border-subtle);
+  }
+  .border-\[\#DCE4DF\],
+  .border-\[\#CBD6D0\],
+  .hover\:border-\[\#BFD0C7\]:hover {
+    border-color: var(--border-strong);
+  }
   html.dark .bg-\[\#F8FAF9\] {
     background-color: var(--surface-canvas);
   }
@@ -62,7 +117,7 @@ html.dark {
     background-color: var(--surface-card);
   }
   html.dark .bg-white\/95:not(.preserve-light) {
-    background-color: rgba(17, 31, 25, 0.94);
+    background-color: rgba(14, 32, 24, 0.94);
   }
   html.dark .bg-\[\#F2F6F4\],
   html.dark .hover\:bg-\[\#F2F6F4\]:hover {

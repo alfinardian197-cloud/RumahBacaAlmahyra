@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Eye, EyeOff, KeyRound, Shield, UserCheck, X } from 'lucide-react';
+import { DEFAULT_LOGO_URL } from '../data/defaultDb';
 import type { AuthSession, LandingConfig } from '../types/almahyra';
+import { ResilientImage } from './ResilientImage';
 
 interface LoginModalProps {
   open: boolean;
@@ -66,10 +68,11 @@ export function LoginModal({
       <div className="w-full max-w-md rounded-2xl border border-[#DCE4DF] bg-white p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img
+            <ResilientImage
               src={config.logoUrl}
+              fallbackSrc={DEFAULT_LOGO_URL}
               alt={config.appName}
-              referrerPolicy="no-referrer"
+              loading="eager"
               className="h-11 w-11 rounded-xl border border-[#DCE4DF] object-cover shrink-0"
             />
             <div>

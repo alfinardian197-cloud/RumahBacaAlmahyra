@@ -151,6 +151,11 @@ async function startServer() {
     }
   });
 
+  // Serve /images, /assets, and legacy /src/assets/images directly in all modes
+  app.use('/images', express.static(path.join(__dirname, 'public', 'images'), { maxAge: '1d' }));
+  app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'), { maxAge: '1d' }));
+  app.use('/src/assets/images', express.static(path.join(__dirname, 'public', 'images'), { maxAge: '1d' }));
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -158,8 +163,8 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    app.use('/src/assets/images', express.static(path.join(__dirname, 'src', 'assets', 'images')));
-    app.use(express.static(path.join(__dirname, 'dist')));
+    app.use(express.static(path.join(__dirname, 'dist'), { maxAge: '1d' }));
+    app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d' }));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });

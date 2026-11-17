@@ -1,8 +1,10 @@
 import { useState, type PointerEvent } from 'react';
 import { Award, RotateCw, ShieldCheck } from 'lucide-react';
+import { DEFAULT_LOGO_URL } from '../data/defaultDb';
 import type { LandingConfig, Member } from '../types/almahyra';
 import { calculateLevelInfo } from '../utils/almahyra';
 import { QrCodeMatrix } from './QrCodeMatrix';
+import { ResilientImage } from './ResilientImage';
 
 interface Card3DPassportProps {
   member: Member;
@@ -58,10 +60,11 @@ export function Card3DPassport({
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="preserve-light h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white shadow-xs">
-                  <img
+                  <ResilientImage
                     src={config.logoUrl}
+                    fallbackSrc={DEFAULT_LOGO_URL}
                     alt={config.appName}
-                    referrerPolicy="no-referrer"
+                    loading="eager"
                     className="h-full w-full object-cover"
                   />
                 </div>

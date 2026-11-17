@@ -1,23 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  ADVENTURE_JOURNEY_STEPS,
   authenticateUser,
+  buildBorrowWhatsAppMessage,
+  buildDonationWhatsAppMessage,
+  buildSahabatInvitationText,
+  buildWhatsAppShareHref,
   calculateLevelInfo,
+  claimBookStampInLocalPassport,
   computeBookShelves,
   computeCompanionDashboard,
+  computeJourneyStepStatuses,
   computeLibraryStats,
+  computeTopReadersLeaderboard,
   DEFAULT_CATEGORIES,
+  DEFAULT_READER_LEVELS,
+  evaluateMiniQuiz,
   extractSpreadsheetId,
   filterBooks,
   filterBooksAdvanced,
+  generateBedtimeStoryAndPrompts,
   generateDeterministicQrMatrix,
   getBookQuizQuestions,
   getBookReadablePages,
+  getDefaultLocalPassportState,
   hydrateDatabaseWithDefaults,
+  MINI_QUIZ_TEBAK_CERITA,
+  normalizeAssetUrl,
   parseBulkBooksCsv,
   recordBookReadingAction,
+  recordQuizAttemptInLocalPassport,
   recordsToSheetRows,
   resolveThemeMode,
+  SAHABAT_GALLERY_PHOTOS,
   sheetRowsToRecords,
   toggleThemeMode,
 } from './almahyra';
@@ -335,13 +351,18 @@ test('getStorySoundtrackProfile matches instruments to story categories and hydr
 
   const migrated = hydrateDatabaseWithDefaults(
     {
-      config: { ...DEFAULT_DB.config, heroTitle: 'Taman Baca Keluarga & Petualangan Literasi Anak Desa' },
+      config: {
+        ...DEFAULT_DB.config,
+        appName: 'ALMAHYRA App',
+        heroTitle: 'Taman Baca Keluarga & Petualangan Literasi Anak Desa',
+      },
       members: [{ ...DEFAULT_DB.members[0], nomorInduk: 'ALM-001' }],
     },
     DEFAULT_DB,
   );
   assert.equal(migrated.members[0].nomorInduk, 'ALMA-001');
-  assert.ok(migrated.config.heroTitle.startsWith('Rumah Baca Keluarga'));
+  assert.equal(migrated.config.appName, 'Rumah Baca Almahyra');
+  assert.equal(migrated.config.heroTitle, 'Rumah Baca Almahyra');
 });
 
 test('getBookReadablePages splits overly long chapters across multiple pages cleanly', () => {
@@ -374,3 +395,175 @@ test('getBookReadablePages splits overly long chapters across multiple pages cle
   assert.ok(rejoined.includes('Kalimat keempat'));
 });
 
+test('normalizeAssetUrl and hydrateDatabaseWithDefaults migrate legacy asset paths to /images/', () => {
+  assert.equal(
+    normalizeAssetUrl('/src/assets/images/book_cover_folktale_1794800503588.jpg'),
+    '/images/book_cover_folktale_1794800503588.jpg',
+  );
+  assert.equal(
+    normalizeAssetUrl(
+      'https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+    ),
+    '/images/budi/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+  );
+  assert.equal(
+    normalizeAssetUrl('https://example.com/custom-cover.jpg'),
+    'https://example.com/custom-cover.jpg',
+  );
+
+  const migrated = hydrateDatabaseWithDefaults(
+    {
+      config: {
+        ...DEFAULT_DB.config,
+        heroImageUrl: '/src/assets/images/hero_reading_terrace_1794800502182.jpg',
+      },
+      books: [
+        {
+          ...DEFAULT_DB.books[0],
+          coverUrl: '/src/assets/images/book_cover_folktale_1794800503588.jpg',
+        },
+        {
+          ...DEFAULT_DB.books[12],
+          coverUrl:
+            'https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+        },
+      ],
+    },
+    DEFAULT_DB,
+  );
+  assert.equal(migrated.config.heroImageUrl, '/images/hero_reading_terrace_1794800502182.jpg');
+  assert.equal(migrated.books[0].coverUrl, '/images/book_cover_folktale_1794800503588.jpg');
+  assert.equal(
+    migrated.books[1].coverUrl,
+    '/images/budi/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png',
+  );
+});
+
+test('Petualangan Almahyra defines all 7 journey steps, 3 real photos, and builds invitation copy', () => {
+  assert.equal(ADVENTURE_JOURNEY_STEPS.length, 7);
+  assert.deepEqual(
+    ADVENTURE_JOURNEY_STEPS.map((s) => s.title),
+    [
+      'Pintu Masuk Almahyra',
+      'Kenali Dunia Almahyra',
+      'Jelajahi Hutan Buku',
+      'Buka Pintu Cerita',
+      'Selesaikan Misi Literasi',
+      'Raih Bintang Literasi',
+      'Jadilah Sahabat Almahyra',
+    ],
+  );
+  assert.equal(SAHABAT_GALLERY_PHOTOS.length, 3);
+  assert.ok(SAHABAT_GALLERY_PHOTOS.every((p) => p.src.startsWith('/assets/aistudio/')));
+
+  const invite = buildSahabatInvitationText({
+    senderName: 'Nadia',
+    appName: 'ALMAHYRA App',
+    booksReadCount: 3,
+    favoriteBookTitle: 'Pustaka Kaki Gunung & Lentera Senja',
+  });
+  assert.ok(invite.includes('Nadia'));
+  assert.ok(invite.includes('3 buku'));
+  assert.ok(invite.includes('Pustaka Kaki Gunung & Lentera Senja'));
+
+  const statuses = computeJourneyStepStatuses(DEFAULT_DB, 'ALMA-001');
+  assert.equal(statuses['pintu-masuk'], true);
+  assert.equal(statuses['kenali-dunia'], true);
+  assert.equal(statuses['hutan-buku'], true);
+  assert.equal(statuses['bintang-literasi'], true);
+});
+
+test('filterBooksAdvanced onlyAvailable, computeTopReadersLeaderboard, WhatsApp builders, and bedtime story generator', () => {
+  const sampleBooks: Book[] = [
+    { ...DEFAULT_DB.books[0], id: 'avail-1', status: 'Tersedia', aktif: true },
+    { ...DEFAULT_DB.books[1], id: 'loan-1', status: 'Dipinjam', aktif: true },
+  ];
+  const onlyAvail = filterBooksAdvanced(sampleBooks, { onlyAvailable: true });
+  assert.equal(onlyAvail.length, 1);
+  assert.equal(onlyAvail[0].id, 'avail-1');
+
+  const leaderboard = computeTopReadersLeaderboard(DEFAULT_DB.members, 5);
+  assert.ok(leaderboard.length >= 1 && leaderboard.length <= 5);
+  for (let i = 0; i < leaderboard.length; i++) {
+    assert.equal(leaderboard[i].rank, i + 1);
+    assert.equal(leaderboard[i].member.status, 'Aktif');
+    if (i > 0) {
+      assert.ok(leaderboard[i - 1].member.poin >= leaderboard[i].member.poin);
+    }
+  }
+
+  const borrowMsg = buildBorrowWhatsAppMessage({
+    borrowerName: 'Ibu Sari',
+    memberCode: 'alma-002',
+    bookCode: 'BK-01',
+    bookTitle: 'Pustaka Kaki Gunung',
+    borrowDate: '2026-11-20',
+  });
+  assert.ok(borrowMsg.includes('Ibu Sari'));
+  assert.ok(borrowMsg.includes('ALMA-002'));
+  assert.ok(borrowMsg.includes('BK-01 — Pustaka Kaki Gunung'));
+
+  const donateMsg = buildDonationWhatsAppMessage({
+    donorName: 'Keluarga Pak Budi',
+    donorOrigin: 'Tlogosari',
+    bookCount: 5,
+    bookTopics: 'Buku Cerita Nusantara',
+  });
+  assert.ok(donateMsg.includes('Keluarga Pak Budi'));
+  assert.ok(donateMsg.includes('5 eksemplar'));
+
+  const waHref = buildWhatsAppShareHref(borrowMsg, '+62 812-3456-7890');
+  assert.ok(waHref.startsWith('https://wa.me/6281234567890?text='));
+  assert.ok(buildWhatsAppShareHref(donateMsg).startsWith('https://wa.me/?text='));
+
+  const story = generateBedtimeStoryAndPrompts({
+    characterId: 'kancil',
+    settingId: 'teras',
+    moralId: 'kejujuran',
+    childName: 'Nadia',
+  });
+  assert.ok(story.title.includes('Kancil Cerdik'));
+  assert.equal(story.paragraphs.length, 3);
+  assert.ok(story.paragraphs[0].includes('Nadia'));
+  assert.equal(story.discussionQuestions.length, 3);
+});
+
+test('6 featured pilihanAlmahyra books, TK reader level, local digital passport stamps, and 5-question Mini Quiz work reliably', () => {
+  assert.ok((DEFAULT_READER_LEVELS as readonly string[]).includes('TK'));
+  const shelves = computeBookShelves(DEFAULT_DB.books, 'SD');
+  assert.equal(shelves.pilihanAlmahyra.length, 6);
+
+  const tkFiltered = filterBooksAdvanced(DEFAULT_DB.books, { readerLevel: 'TK' });
+  assert.ok(tkFiltered.length >= 2);
+  assert.ok(tkFiltered.some((b) => b.judul === 'Bintang Kertas dari Negeri Angin'));
+
+  const initialPassport = getDefaultLocalPassportState();
+  const targetBook = shelves.pilihanAlmahyra[0];
+  const claim1 = claimBookStampInLocalPassport(initialPassport, targetBook);
+  assert.equal(claim1.alreadyClaimed, false);
+  assert.equal(claim1.nextState.points, 5);
+  assert.equal(claim1.nextState.stamps.length, 1);
+  assert.ok(claim1.nextState.badges.includes('Pembaca Pemula'));
+
+  const claimDup = claimBookStampInLocalPassport(claim1.nextState, targetBook);
+  assert.equal(claimDup.alreadyClaimed, true);
+  assert.equal(claimDup.nextState.points, 5);
+  assert.equal(claimDup.nextState.stamps.length, 1);
+
+  assert.equal(MINI_QUIZ_TEBAK_CERITA.length, 5);
+  const allCorrect: Record<number, number> = {};
+  MINI_QUIZ_TEBAK_CERITA.forEach((q, idx) => {
+    allCorrect[idx] = q.correctIndex;
+  });
+  const quizEval = evaluateMiniQuiz(MINI_QUIZ_TEBAK_CERITA, allCorrect);
+  assert.equal(quizEval.correctCount, 5);
+  assert.equal(quizEval.scorePercent, 100);
+  assert.equal(quizEval.passed, true);
+
+  const afterQuiz = recordQuizAttemptInLocalPassport(claim1.nextState, quizEval.scorePercent);
+  assert.equal(afterQuiz.bestQuizScore, 100);
+  assert.equal(afterQuiz.quizAttempts, 1);
+  assert.equal(afterQuiz.points, 10);
+  assert.ok(afterQuiz.badges.includes('Bintang Kuis Tebak Cerita'));
+  assert.ok(afterQuiz.badges.includes('Juara 100% Tebak Cerita'));
+});

@@ -19,6 +19,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
+import { DEFAULT_BOOK_COVER_URL } from '../data/defaultDb';
 import type {
   AlmahyraDatabase,
   AuthSession,
@@ -34,6 +35,8 @@ import {
   getStorySoundtrackProfile,
   storyAudioEngine,
 } from '../utils/storyAudioEngine';
+import { CustomBookCoverSvg } from './CustomBookCoverSvg';
+import { ResilientImage } from './ResilientImage';
 
 interface BookReaderModalProps {
   book: Book | null;
@@ -43,6 +46,7 @@ interface BookReaderModalProps {
   onClose: () => void;
   onSwitchBook: (book: Book) => void;
   onOpenLogin: () => void;
+  onQuickClaimStamp?: (book: Book) => { alreadyClaimed: boolean };
   onRecordReading: (params: {
     bookId: string;
     lastPage: number;
@@ -66,6 +70,7 @@ export function BookReaderModal({
   onClose,
   onSwitchBook,
   onOpenLogin,
+  onQuickClaimStamp,
   onRecordReading,
 }: BookReaderModalProps) {
   const pages = useMemo(() => (book ? getBookReadablePages(book) : []), [book]);
@@ -95,6 +100,7 @@ export function BookReaderModal({
   const [journalNote, setJournalNote] = useState('');
   const [starRating, setStarRating] = useState(5);
   const [completedNotice, setCompletedNotice] = useState('');
+  const [quickClaimNotice, setQuickClaimNotice] = useState('');
   const [saving, setSaving] = useState(false);
 
   const stopSpeech = useCallback(() => {
@@ -125,6 +131,7 @@ export function BookReaderModal({
     setJournalNote('');
     setStarRating(5);
     setCompletedNotice('');
+    setQuickClaimNotice('');
     setSpeechMessage('');
     stopSpeech();
     if (isMusicPlaying && soundtrack) {
@@ -245,10 +252,41 @@ export function BookReaderModal({
     setSpeechMessage('');
   };
 
+  const handleQuickClaimButton = async () => {
+    setSaving(true);
+    try {
+      const localRes = onQuickClaimStamp
+        ? onQuickClaimStamp(book)
+        : { alreadyClaimed: false };
+      await onRecordReading({
+        bookId: book.id,
+        lastPage: pages.length - 1,
+        totalPages: pages.length,
+        completed: true,
+        quizScore: quizSubmitted ? quizPercent : undefined,
+        journalNote:
+          journalNote.trim() ||
+          `Selesai membaca "${book.judul}" (${book.kategori}) dengan gembira.`,
+        starRating,
+        awardPoints: 5,
+      });
+      setQuickClaimNotice(
+        localRes.alreadyClaimed
+          ? `Stempel buku "${book.judul}" sudah tersimpan di Paspor Baca Digitalmu!`
+          : `Hore! Stempel "${book.judul}" (+5 poin) berhasil diklaim dan tersimpan di Paspor Baca Digital!`,
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleCompleteReading = async (e: FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
+      if (onQuickClaimStamp) {
+        onQuickClaimStamp(book);
+      }
       await onRecordReading({
         bookId: book.id,
         lastPage: pages.length - 1,
@@ -264,7 +302,7 @@ export function BookReaderModal({
       setCompletedNotice(
         session?.role === 'anggota'
           ? `Selamat ${session.displayName}! Stempel E-Paspor Baca (+5 poin) & Jurnal Membaca berhasil dicatat.`
-          : 'Bacaan ditandai selesai & penanda tersimpan! Masuk dengan Nomor Induk Anggota untuk mengumpulkan +5 poin dan stempel E-Paspor.',
+          : 'Stempel & catatan baca tersimpan ke Paspor Baca Digital! Buka tab Paspor & Kuis untuk melihat koleksimu.',
       );
     } finally {
       setSaving(false);
@@ -491,21 +529,22 @@ export function BookReaderModal({
                 <button
                   type="button"
                   onClick={handleToggleSpeech}
-                  className="inline-flex items-center gap-1 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-2.5 py-1 text-[11px] font-semibold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
+                  aria-pressed={isSpeaking}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4CCB8] bg-[#F3EFE4] px-3 py-1 text-[11px] font-bold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1E3329] dark:text-[#ECF3EE]"
                 >
                   {isSpeaking ? (
                     <>
-                      <VolumeX className="h-3 w-3 text-amber-600" aria-hidden="true" />
-                      Hentikan Narasi
+                      <VolumeX className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
+                      Hentikan Suara
                     </>
                   ) : (
                     <>
                       <Volume2
-                        className="h-3 w-3"
+                        className="h-3.5 w-3.5"
                         style={{ color: 'var(--brand-primary-ink)' }}
                         aria-hidden="true"
                       />
-                      Audio Narasi
+                      Bacakan Cerita
                     </>
                   )}
                 </button>
@@ -538,6 +577,16 @@ export function BookReaderModal({
               </p>
             )}
 
+            {quickClaimNotice && (
+              <div
+                role="status"
+                className="animate-celebrate-pop flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-950/50 dark:text-emerald-200"
+              >
+                <Award className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+                <span>{quickClaimNotice}</span>
+              </div>
+            )}
+
             {/* Mobile compact font-scale toggle */}
             <div className="flex items-center justify-between gap-2 md:hidden">
               <span className="text-[11px] font-semibold text-[#546358] dark:text-[#A4B9AE]">
@@ -557,7 +606,7 @@ export function BookReaderModal({
                     onClick={() => setFontScale(sz.id)}
                     className={`rounded-md px-2 py-0.5 font-bold ${
                       fontScale === sz.id
-                        ? 'bg-[#136B36] text-white'
+                        ? 'bg-[#047857] text-white'
                         : 'text-[#546358] dark:text-[#A4B9AE]'
                     }`}
                   >
@@ -570,28 +619,34 @@ export function BookReaderModal({
             {/* Single-Screen Spread: Title + Illustration + Story Text Together */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-center md:gap-8 lg:gap-10">
               {/* Illustration Pane */}
-              {book.coverUrl && (
-                <div className="md:col-span-5 space-y-2">
-                  <div className="overflow-hidden rounded-2xl border border-[#DFD7C4] bg-[#F3EFE4] shadow-md dark:border-[#243B30] dark:bg-[#13221B]">
-                    <img
-                      src={book.coverUrl}
-                      alt={`Ilustrasi ${book.judul}`}
-                      referrerPolicy="no-referrer"
-                      className="h-[23dvh] max-h-[210px] w-full object-cover md:h-auto md:max-h-[50dvh] md:aspect-4/3"
-                    />
-                  </div>
-                  <div className="hidden md:flex items-center justify-between rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-3.5 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
-                    <span className="inline-flex items-center gap-1.5 font-medium">
-                      <BookmarkCheck
-                        className="h-3.5 w-3.5 shrink-0"
-                        style={{ color: 'var(--brand-primary-ink)' }}
+              <div className="md:col-span-5 space-y-2">
+                <div className="overflow-hidden rounded-2xl border border-[#DFD7C4] bg-[#F3EFE4] shadow-md dark:border-[#243B30] dark:bg-[#13221B]">
+                  <div className="h-[23dvh] max-h-[210px] w-full md:h-auto md:max-h-[50dvh] md:aspect-4/3">
+                    {book.coverUrl?.startsWith('data:image/') ? (
+                      <ResilientImage
+                        src={book.coverUrl}
+                        fallbackSrc={DEFAULT_BOOK_COVER_URL}
+                        alt={`Ilustrasi ${book.judul}`}
+                        loading="eager"
+                        className="h-full w-full object-cover"
+                        renderFallback={() => <CustomBookCoverSvg book={book} />}
                       />
-                      Penanda halaman tersimpan
-                    </span>
-                    <span className="truncate font-medium">Penulis: {book.penulis}</span>
+                    ) : (
+                      <CustomBookCoverSvg book={book} />
+                    )}
                   </div>
                 </div>
-              )}
+                <div className="hidden md:flex items-center justify-between rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-3.5 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
+                  <span className="inline-flex items-center gap-1.5 font-medium">
+                    <BookmarkCheck
+                      className="h-3.5 w-3.5 shrink-0"
+                      style={{ color: 'var(--brand-primary-ink)' }}
+                    />
+                    Penanda halaman tersimpan
+                  </span>
+                  <span className="truncate font-medium">Penulis: {book.penulis}</span>
+                </div>
+              </div>
 
               {/* Title + Story Text Pane */}
               <article
@@ -919,14 +974,9 @@ export function BookReaderModal({
                       onClick={() => onSwitchBook(rec)}
                       className="flex items-center gap-3 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-3 text-left transition-colors hover:border-[#BFD0C7] dark:border-[#243B30] dark:bg-[#122019]"
                     >
-                      {rec.coverUrl && (
-                        <img
-                          src={rec.coverUrl}
-                          alt={rec.judul}
-                          referrerPolicy="no-referrer"
-                          className="h-14 w-16 rounded-lg object-cover shrink-0"
-                        />
-                      )}
+                      <div className="h-14 w-16 overflow-hidden rounded-lg shrink-0">
+                        <CustomBookCoverSvg book={rec} />
+                      </div>
                       <div className="min-w-0">
                         <p
                           className="text-[11px] font-semibold"
@@ -990,29 +1040,42 @@ export function BookReaderModal({
               </div>
             </div>
 
-            {pageIdx < pages.length - 1 ? (
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={() => handleTurnPage(pageIdx + 1)}
-                style={{ backgroundColor: db.config.primaryColor }}
-                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95"
-              >
-                <span className="hidden sm:inline">Halaman Berikutnya</span>
-                <span className="sm:hidden">Berikutnya</span>
-                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setActiveTab('quiz')}
+                disabled={saving}
+                onClick={handleQuickClaimButton}
                 style={{ backgroundColor: db.config.accentColor }}
-                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95"
+                className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold text-white hover:opacity-95 disabled:opacity-60 whitespace-nowrap"
               >
-                <span className="hidden sm:inline">Lanjut ke Kuis & E-Paspor</span>
-                <span className="sm:hidden">Kuis & Paspor</span>
-                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <Award className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>Selesai Baca &amp; Klaim Stempel</span>
               </button>
-            )}
+
+              {pageIdx < pages.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={() => handleTurnPage(pageIdx + 1)}
+                  style={{ backgroundColor: db.config.primaryColor }}
+                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap"
+                >
+                  <span className="hidden sm:inline">Halaman Berikutnya</span>
+                  <span className="sm:hidden">Berikutnya</span>
+                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('quiz')}
+                  style={{ backgroundColor: db.config.primaryColor }}
+                  className="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl px-3.5 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white hover:opacity-95 whitespace-nowrap"
+                >
+                  <span className="hidden sm:inline">Buka Kuis Cerita</span>
+                  <span className="sm:hidden">Kuis Cerita</span>
+                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                </button>
+              )}
+            </div>
           </div>
         </footer>
       )}
