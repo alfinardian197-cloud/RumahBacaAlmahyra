@@ -4,19 +4,18 @@ import { BATCH_1_BOOKS } from './batch1Catalog';
 
 export const DEFAULT_LOGO_URL =
   '/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png';
-export const DEFAULT_HERO_IMAGE_URL = '/images/hero_reading_terrace_1794800502182.jpg';
-export const DEFAULT_ZONE_IMAGE_URL = '/images/zone_adventure_craft_1794800503519.jpg';
-export const DEFAULT_BOOK_COVER_URL = '/images/book_cover_folktale_1794800503588.jpg';
+export const DEFAULT_HERO_IMAGE_URL =
+  '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__1__65c278f8.jpeg';
+export const DEFAULT_ZONE_IMAGE_URL =
+  '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__2__1caa94d4.jpeg';
+export const DEFAULT_BOOK_COVER_URL = '/images/covers/bk-01-lentera-gunung.jpg';
 export const ILLUSTRATION_READING_ADVENTURE_URL =
-  '/images/infographic_reading_adventure_1794805036346.jpg';
+  '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14_7257879f.jpeg';
 export const ILLUSTRATION_TELAGA_COMMUNITY_URL =
-  '/images/illustration_telaga_community_1794805036320.jpg';
-export const ILLUSTRATION_SCIENCE_COVER_URL =
-  '/images/illustration_science_explore_1794805037083.jpg';
-export const ILLUSTRATION_ECO_GARDEN_COVER_URL =
-  '/images/illustration_eco_garden_1794805037060.jpg';
-export const ILLUSTRATION_STORY_STAGE_COVER_URL =
-  '/images/illustration_story_stage_1794805036949.jpg';
+  '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__2__1caa94d4.jpeg';
+export const ILLUSTRATION_SCIENCE_COVER_URL = '/images/covers/bk-03-sains-dapur.jpg';
+export const ILLUSTRATION_ECO_GARDEN_COVER_URL = '/images/covers/bk-05-kapten-pilah.jpg';
+export const ILLUSTRATION_STORY_STAGE_COVER_URL = '/images/covers/bk-08-pelita-baca.jpg';
 
 export const COVER_LENTERA_GUNUNG_URL = '/images/covers/bk-01-lentera-gunung.jpg';
 export const COVER_KANCIL_HUTAN_URL = '/images/covers/bk-02-kancil-hutan.jpg';

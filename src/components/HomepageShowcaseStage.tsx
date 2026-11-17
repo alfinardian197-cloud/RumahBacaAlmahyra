@@ -52,13 +52,13 @@ export function HomepageShowcaseStage({
           {
             id: 'fallback-2',
             judul: 'Komik Kebun Hijau',
-            imageUrl: '/images/book_cover_comic_1794800547189.jpg',
+            imageUrl: '/images/covers/bk-05-kapten-pilah.jpg',
             namaSamaran: 'Tim Komik',
           },
           {
             id: 'fallback-3',
             judul: 'Eksperimen Sains Dapur',
-            imageUrl: '/images/book_cover_science_1794800525915.jpg',
+            imageUrl: '/images/covers/bk-03-sains-dapur.jpg',
             namaSamaran: 'Klub Sains',
           },
         ].slice(0, 3);

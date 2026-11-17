@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  ArrowLeft,
   ArrowRight,
   Award,
   BookOpen,
@@ -62,17 +63,17 @@ import { HomepageShowcaseStage } from './HomepageShowcaseStage';
 import { LeaderboardAndStoryStudio } from './LeaderboardAndStoryStudio';
 import { PassportAndQuizHub } from './PassportAndQuizHub';
 import { ResilientImage } from './ResilientImage';
-import type { PublicRoleMode } from './TopBar';
+import type { PublicPageId, PublicRoleMode } from './TopBar';
 
 interface PublicLandingProps {
   db: AlmahyraDatabase;
   session: AuthSession | null;
   viewerKey: string;
-  activePage: 'page1' | 'page2';
+  activePage: PublicPageId;
   audienceMode: PublicRoleMode;
   localPassport: LocalDigitalPassportState;
   onUpdateLocalPassport: (next: LocalDigitalPassportState) => void;
-  onChangePage: (page: 'page1' | 'page2') => void;
+  onChangePage: (page: PublicPageId, anchorId?: string) => void;
   onOpenLogin: () => void;
   onReadBook: (book: Book) => void;
   onToggleFavorite: (book: Book) => void;
@@ -205,6 +206,11 @@ export function PublicLanding({
   const { config, books, schedules, members } = db;
   const stats = useMemo(() => computeLibraryStats(db), [db]);
 
+  const resolvedHeroPhoto =
+    config.heroImageUrl && !config.heroImageUrl.includes('hero_reading_terrace_')
+      ? config.heroImageUrl
+      : DEFAULT_HERO_IMAGE_URL;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedLevel, setSelectedLevel] = useState('Semua');
@@ -218,22 +224,6 @@ export function PublicLanding({
   const [journeyStep, setJourneyStep] = useState(1);
   const [heroSlide, setHeroSlide] = useState(0);
   const [certModalOpen, setCertModalOpen] = useState(false);
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const handleStartAdventure = () => {
-    setJourneyStep(1);
-    scrollToSection('petualangan-zona');
-  };
-
-  const handleExploreBooks = () => {
-    scrollToSection('rak-pilihan-workspace');
-  };
 
   const progressMap = useMemo(() => {
     const map = new Map<string, ReadingProgress>();
@@ -373,6 +363,28 @@ export function PublicLanding({
   const dailyFeaturedBook = shelves.pilihanAlmahyra[0] ?? books[0];
   const dailyMissionDone = localPassport.stamps.length > 0;
 
+  const renderPageHeader = (eyebrow: string, title: string, subtitle: string) => (
+    <div className="flex flex-col gap-4 border-b border-[#E2E8E5] pb-5 md:flex-row md:items-end md:justify-between">
+      <div className="max-w-2xl space-y-1.5">
+        <p className="text-xs font-bold tracking-wide text-[#087C3B] dark:text-[#6EE7B7]">
+          {eyebrow}
+        </p>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111C17]">
+          {title}
+        </h1>
+        <p className="text-sm leading-relaxed text-[#4A5D54]">{subtitle}</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => onChangePage('beranda')}
+        className="inline-flex items-center gap-1.5 self-start rounded-xl border border-[#DCE4DF] bg-white px-4 py-2 text-xs font-bold text-[#111C17] hover:bg-[#FFF2D6] whitespace-nowrap shrink-0"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+        Kembali ke Beranda
+      </button>
+    </div>
+  );
+
   const renderCatalogSection = () => (
     <section
       id="rak-pilihan-workspace"
@@ -422,7 +434,7 @@ export function PublicLanding({
           </div>
         </div>
 
-        {/* Filter Toolbar: Real-time Search + Quick Jenjang Buttons */}
+        {/* Filter Toolbar */}
         <div className="space-y-3 border-t border-[#EEF3F0] pt-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-md">
@@ -440,7 +452,6 @@ export function PublicLanding({
               />
             </div>
 
-            {/* Level Filter Chips: Semua, PAUD, TK, SD Awal, SD Lanjut */}
             <div
               role="group"
               aria-label="Filter jenjang pembaca"
@@ -471,7 +482,6 @@ export function PublicLanding({
             </div>
           </div>
 
-          {/* Secondary Quick Filters + Category, Zona, & Sumber Katalog Selectors */}
           <div className="flex flex-wrap items-center gap-2">
             <select
               aria-label="Filter kategori koleksi"
@@ -694,710 +704,752 @@ export function PublicLanding({
           </div>
         )}
 
-        {audienceMode === 'petualang' ? (
-          activePage === 'page1' ? (
-            /* ALMAHYRA APP HOMEPAGE + 14-SECTION ECOSYSTEM */
-            <div>
-              {/* SECTION 2: ILLUSTRATED SKY-TO-MEADOW HERO CAROUSEL STAGE */}
-              <section
-                id="beranda-hero"
-                aria-label="Beranda Dunia Literasi Almahyra"
-                className="relative overflow-hidden border-b-4 border-[#5AB82E] bg-gradient-to-b from-[#1CA5F2] via-[#74D7FF] to-[#5FBE2C] dark:from-[#0C3554] dark:via-[#0F4C5C] dark:to-[#0A4F2B]"
+        {/* PAGE 1 (HOMEPAGE MURNI — PERSIS SEPERTI CONTOH) */}
+        {audienceMode === 'petualang' && activePage === 'beranda' && (
+          <div>
+            {/* ILLUSTRATED SKY-TO-MEADOW HERO CAROUSEL */}
+            <section
+              id="beranda-hero"
+              aria-label="Beranda Dunia Literasi Almahyra"
+              className="relative overflow-hidden border-b-4 border-[#5AB82E] bg-gradient-to-b from-[#1CA5F2] via-[#74D7FF] to-[#5FBE2C] dark:from-[#0C3554] dark:via-[#0F4C5C] dark:to-[#0A4F2B]"
+            >
+              {/* Storybook Clouds & Rolling Green Meadow Backdrop SVG */}
+              <svg
+                viewBox="0 0 1440 360"
+                preserveAspectRatio="none"
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                aria-hidden="true"
               >
-                {/* Storybook Clouds & Rolling Green Meadow Backdrop SVG */}
-                <svg
-                  viewBox="0 0 1440 360"
-                  preserveAspectRatio="none"
-                  className="pointer-events-none absolute inset-0 h-full w-full"
-                  aria-hidden="true"
-                >
-                  <ellipse cx="140" cy="68" rx="115" ry="34" fill="#FFFFFF" fillOpacity="0.28" />
-                  <ellipse cx="220" cy="54" rx="75" ry="28" fill="#FFFFFF" fillOpacity="0.28" />
-                  <ellipse cx="1280" cy="62" rx="130" ry="36" fill="#FFFFFF" fillOpacity="0.25" />
-                  <ellipse cx="760" cy="48" rx="95" ry="26" fill="#FFFFFF" fillOpacity="0.2" />
-                  <path
-                    d="M0 285 Q 240 230 520 275 T 1060 260 T 1440 280 L 1440 360 L 0 360 Z"
-                    fill="#3FA128"
-                    fillOpacity="0.45"
-                  />
-                  <path
-                    d="M0 315 Q 360 270 760 305 T 1440 295 L 1440 360 L 0 360 Z"
-                    fill="#087C3B"
-                    fillOpacity="0.35"
-                  />
-                </svg>
-
-                {/* Carousel Prev/Next Controls */}
-                <button
-                  type="button"
-                  onClick={() => setHeroSlide((prev) => (prev + 2) % 3)}
-                  aria-label="Slide beranda sebelumnya"
-                  className="absolute left-2 sm:left-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#087C3B] shadow-md transition-transform hover:scale-105"
-                >
-                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setHeroSlide((prev) => (prev + 1) % 3)}
-                  aria-label="Slide beranda berikutnya"
-                  className="absolute right-2 sm:right-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#087C3B] shadow-md transition-transform hover:scale-105"
-                >
-                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                </button>
-
-                <div className="relative z-10 mx-auto max-w-7xl px-10 pt-6 pb-10 sm:px-14 sm:pt-7 sm:pb-12 lg:px-16">
-                  {heroSlide === 0 && (
-                    <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
-                      {/* Left Hero Copy & Ribbon */}
-                      <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
-                        <h1
-                          className="font-display font-extrabold tracking-tight text-white leading-[1.04]"
-                          style={{
-                            fontSize: 'clamp(2.15rem, 4.1vw, 3.6rem)',
-                            textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
-                            textWrap: 'balance',
-                          }}
-                        >
-                          {config.heroTitle &&
-                          config.heroTitle !== 'Selamat Datang di Dunia Literasi Almahyra!'
-                            ? config.heroTitle
-                            : 'Halo, Sahabat Petualang!'}
-                        </h1>
-
-                        <div className="inline-block rounded-2xl border-2 border-[#FFF4B8] bg-gradient-to-r from-[#FFD633] via-[#FFC51B] to-[#F5A614] px-5 py-2 shadow-md">
-                          <p className="font-display text-sm sm:text-base font-extrabold text-[#10281B]">
-                            {config.tagline.includes('Baca, Berkarya')
-                              ? 'Baca, Berkarya, Bertualang, Raih Prestasi!'
-                              : config.tagline}
-                          </p>
-                        </div>
-
-                        <p className="mx-auto lg:mx-0 max-w-lg text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2] leading-snug">
-                          Mari jelajahi dunia literasi yang menyenangkan bersama {config.appName}!
-                        </p>
-
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
-                          <button
-                            type="button"
-                            onClick={handleStartAdventure}
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap"
-                          >
-                            <Sparkles className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
-                            Mulai Petualangan
-                            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleExploreBooks}
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-6 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap"
-                          >
-                            <BookOpen className="h-4 w-4" aria-hidden="true" />
-                            Jelajahi Buku
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Right Mascot + Cozy Rumah Baca Cottage Stage */}
-                      <div className="lg:col-span-6 flex items-center justify-center gap-4">
-                        <div className="relative flex items-end gap-3 sm:gap-5">
-                          {/* Mascot Emblem */}
-                          <motion.div
-                            animate={{ y: [0, -5, 0] }}
-                            transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
-                            className="relative"
-                          >
-                            <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl">
-                              <ResilientImage
-                                src={DEFAULT_LOGO_URL}
-                                fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                                alt="Maskot Resmi Rumah Baca Almahyra"
-                                loading="eager"
-                                fetchPriority="high"
-                                className="h-44 w-44 sm:h-52 sm:w-52 object-cover"
-                              />
-                            </div>
-                            <motion.div
-                              animate={{ rotate: [-5, 5, -5], y: [0, -3, 0] }}
-                              transition={{ duration: 2.8, repeat: Infinity }}
-                              className="absolute -right-3 -top-3 flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-white bg-[#FFC51B] text-[#10281B] shadow-md"
-                            >
-                              <Star className="h-6 w-6 fill-current" aria-hidden="true" />
-                            </motion.div>
-                          </motion.div>
-
-                          {/* Cozy Rumah Baca Almahyra Cottage Photo Card */}
-                          <div className="hidden sm:flex flex-col justify-between rounded-2xl border-2 border-white/80 bg-white/95 p-2.5 shadow-xl w-52 preserve-light">
-                            <div className="aspect-4/3 w-full overflow-hidden rounded-xl bg-[#E7EEEA]">
-                              <ResilientImage
-                                src={config.heroImageUrl}
-                                fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                                alt="Teras Rumah Baca Almahyra Dusun Grontol"
-                                loading="eager"
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div className="mt-2 flex items-center justify-between gap-2">
-                              <div className="min-w-0">
-                                <p className="font-display text-xs font-extrabold text-[#10281B] truncate">
-                                  {config.appName}
-                                </p>
-                                <p className="text-[10px] font-semibold text-[#3E5B4C] truncate">
-                                  Dusun Grontol · {stats.totalTitles}+ Buku
-                                </p>
-                              </div>
-                              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FFF3C4] text-[#B45309]">
-                                <Trophy className="h-4 w-4" aria-hidden="true" />
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {heroSlide === 1 && (
-                    <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
-                      <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
-                        <h1
-                          className="font-display font-extrabold tracking-tight text-white leading-[1.06]"
-                          style={{
-                            fontSize: 'clamp(2rem, 3.8vw, 3.3rem)',
-                            textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
-                            textWrap: 'balance',
-                          }}
-                        >
-                          {config.heroTitle}
-                        </h1>
-                        <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2]">
-                          {config.heroSubtitle}
-                        </p>
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                          <button
-                            type="button"
-                            onClick={() => onChangePage('page2')}
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md"
-                          >
-                            <Award className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
-                            Buka E-Paspor &amp; Kuis
-                          </button>
-                          {dailyFeaturedBook && (
-                            <button
-                              type="button"
-                              onClick={() => onReadBook(dailyFeaturedBook)}
-                              className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-5 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md"
-                            >
-                              <BookOpen className="h-4 w-4" aria-hidden="true" />
-                              Baca Cepat: {dailyFeaturedBook.judul}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                      <div className="lg:col-span-5 flex justify-center">
-                        <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
-                          <div className="aspect-16/10 w-full overflow-hidden">
-                            <ResilientImage
-                              src={config.heroImageUrl}
-                              fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                              alt="Suasana Teras Rumah Baca Almahyra"
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {heroSlide === 2 && (
-                    <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
-                      <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
-                        <h1
-                          className="font-display font-extrabold tracking-tight text-white leading-[1.06]"
-                          style={{
-                            fontSize: 'clamp(2rem, 3.8vw, 3.3rem)',
-                            textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
-                            textWrap: 'balance',
-                          }}
-                        >
-                          Program TELAGA &amp; Aksi Nyata!
-                        </h1>
-                        <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2]">
-                          Kolaborasi warga Dusun Grontol menghadirkan pojok dongeng, pinjam buku cetak, donasi Satu Rumah Satu Buku, dan galeri karya anak.
-                        </p>
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                          <button
-                            type="button"
-                            onClick={() => scrollToSection('bagian-telaga')}
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md"
-                          >
-                            Kenali Program TELAGA
-                            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => scrollToSection('galeri-karya')}
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-5 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md"
-                          >
-                            Lihat Galeri Karya Anak
-                          </button>
-                        </div>
-                      </div>
-                      <div className="lg:col-span-5 flex justify-center">
-                        <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
-                          <div className="aspect-16/10 w-full overflow-hidden">
-                            <ResilientImage
-                              src="/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__1__65c278f8.jpeg"
-                              fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                              alt="Kegiatan literasi anak-anak Dusun Grontol"
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Slide Pagination Dots */}
-                  <div className="mt-5 flex items-center justify-center gap-2" role="tablist" aria-label="Pilih slide beranda">
-                    {[0, 1, 2].map((idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        role="tab"
-                        aria-selected={heroSlide === idx}
-                        aria-label={`Slide ${idx + 1}`}
-                        onClick={() => setHeroSlide(idx)}
-                        className={`h-2.5 rounded-full transition-all ${
-                          heroSlide === idx
-                            ? 'w-7 bg-[#087C3B] ring-2 ring-white'
-                            : 'w-2.5 bg-white/80 hover:bg-white'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              {/* SECTION 3 & 4: FOUR PASTEL PILLARS + 3-CARD BENTO SHOWCASE */}
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-5 space-y-5">
-                <FourPillarsSection
-                  onExploreRead={handleExploreBooks}
-                  onExploreCreate={() => scrollToSection('galeri-karya')}
-                  onExploreAdventure={handleStartAdventure}
-                  onExploreAchievement={() => scrollToSection('prestasi-paspor')}
+                <ellipse cx="140" cy="68" rx="115" ry="34" fill="#FFFFFF" fillOpacity="0.28" />
+                <ellipse cx="220" cy="54" rx="75" ry="28" fill="#FFFFFF" fillOpacity="0.28" />
+                <ellipse cx="1280" cy="62" rx="130" ry="36" fill="#FFFFFF" fillOpacity="0.25" />
+                <ellipse cx="760" cy="48" rx="95" ry="26" fill="#FFFFFF" fillOpacity="0.2" />
+                <path
+                  d="M0 285 Q 240 230 520 275 T 1060 260 T 1440 280 L 1440 360 L 0 360 Z"
+                  fill="#3FA128"
+                  fillOpacity="0.45"
                 />
-
-                <HomepageShowcaseStage
-                  books={books}
-                  creations={db.creations ?? []}
-                  featuredBook={dailyFeaturedBook}
-                  dailyMissionDone={dailyMissionDone}
-                  onReadBook={onReadBook}
-                  onOpenAllBooks={() => {
-                    setShowAllBooksInline(true);
-                    handleExploreBooks();
-                  }}
-                  onOpenPassportQuiz={() => onChangePage('page2')}
-                  onOpenGallery={() => scrollToSection('galeri-karya')}
+                <path
+                  d="M0 315 Q 360 270 760 305 T 1440 295 L 1440 360 L 0 360 Z"
+                  fill="#087C3B"
+                  fillOpacity="0.35"
                 />
-              </div>
+              </svg>
 
-              <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-14">
-                {/* SECTION 4: MENGENAL RUMAH BACA ALMAHYRA + 3D E-PASPOR + KPI STRIP */}
-                <section
-                  id="tentang-kami"
-                  aria-label="Mengenal Rumah Baca Almahyra"
-                  className="scroll-mt-20 space-y-6"
-                >
+              {/* Carousel Prev/Next Controls */}
+              <button
+                type="button"
+                onClick={() => setHeroSlide((prev) => (prev + 2) % 3)}
+                aria-label="Slide beranda sebelumnya"
+                className="absolute left-2 sm:left-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#087C3B] shadow-md transition-transform hover:scale-105"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeroSlide((prev) => (prev + 1) % 3)}
+                aria-label="Slide beranda berikutnya"
+                className="absolute right-2 sm:right-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/90 text-[#087C3B] shadow-md transition-transform hover:scale-105"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <div className="relative z-10 mx-auto max-w-7xl px-10 pt-6 pb-11 sm:px-14 sm:pt-7 sm:pb-12 lg:px-16">
+                {heroSlide === 0 && (
                   <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
-                    <div className="lg:col-span-7 rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 space-y-5">
-                      <div className="space-y-1.5">
-                        <p className="text-xs font-bold text-[#087C3B] dark:text-[#6EE7B7]">
-                          Tentang Rumah Baca Almahyra · {config.slogan}
-                        </p>
-                        <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                          {config.heroTitle}
-                        </h2>
-                        <p className="text-sm leading-relaxed text-[#4A5D54]">
-                          Berpusat di {config.location} bersama koordinator{' '}
-                          <strong className="text-[#111C17]">{config.coordinator}</strong>, {config.heroSubtitle}
+                    {/* Left Hero Copy & Ribbon */}
+                    <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
+                      <h1
+                        className="font-display font-extrabold tracking-tight text-white leading-[1.04]"
+                        style={{
+                          fontSize: 'clamp(2.15rem, 4.1vw, 3.6rem)',
+                          textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
+                          textWrap: 'balance',
+                        }}
+                      >
+                        {config.heroTitle &&
+                        config.heroTitle !== 'Selamat Datang di Dunia Literasi Almahyra!'
+                          ? config.heroTitle
+                          : 'Halo, Sahabat Petualang!'}
+                      </h1>
+
+                      <div className="inline-block rounded-2xl border-2 border-[#FFF4B8] bg-gradient-to-r from-[#FFD633] via-[#FFC51B] to-[#F5A614] px-5 py-2 shadow-md">
+                        <p className="font-display text-sm sm:text-base font-extrabold text-[#10281B]">
+                          {config.tagline.includes('Baca, Berkarya')
+                            ? 'Baca, Berkarya, Bertualang, Raih Prestasi!'
+                            : config.tagline}
                         </p>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3">
+                      <p className="mx-auto lg:mx-0 max-w-lg text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2] leading-snug">
+                        Mari jelajahi dunia literasi yang menyenangkan bersama {config.appName}!
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
                         <button
                           type="button"
-                          onClick={onOpenLogin}
-                          className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-[#FFF8E8] px-4 py-2.5 text-xs font-bold text-[#111C17] hover:bg-[#FFF2D6] dark:hover:bg-[#1A372A] whitespace-nowrap"
+                          onClick={() => onChangePage('petualangan')}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap"
                         >
-                          <Users className="h-4 w-4 text-[#087C3B]" aria-hidden="true" />
-                          Masuk Portal Anggota / Pengelola
+                          <Sparkles className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
+                          Mulai Petualangan
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
-                          onClick={() => onChangePage('page2')}
-                          className="inline-flex items-center gap-2 rounded-xl bg-[#FFC51B] px-4 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap"
+                          onClick={() => onChangePage('jelajahi-buku')}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-6 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap"
                         >
-                          <Award className="h-4 w-4" aria-hidden="true" />
-                          E-Paspor &amp; Kuis ({localPassport.points} Poin)
+                          <BookOpen className="h-4 w-4" aria-hidden="true" />
+                          Jelajahi Buku
                         </button>
                       </div>
-
-                      {/* 4-COLUMN KPI STRIP */}
-                      <div className="grid grid-cols-2 gap-4 border-t border-[#EEF3F0] pt-4 sm:grid-cols-4">
-                        <div>
-                          <p className="text-xs font-semibold text-[#4A5D54]">Judul Aktif</p>
-                          <p className="font-display text-2xl font-bold tabular-nums text-[#087C3B] dark:text-[#6EE7B7]">
-                            {stats.totalTitles}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-[#4A5D54]">Eksemplar</p>
-                          <p className="font-display text-2xl font-bold tabular-nums text-[#111C17]">
-                            {stats.totalBooks}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-[#4A5D54]">Anggota Aktif</p>
-                          <p className="font-display text-2xl font-bold tabular-nums text-[#087C3B] dark:text-[#6EE7B7]">
-                            {stats.activeMembers}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-[#4A5D54]">Misi Selesai</p>
-                          <p className="font-display text-2xl font-bold tabular-nums text-[#F58220]">
-                            {stats.verifiedMissions}
-                          </p>
-                        </div>
-                      </div>
                     </div>
 
-                    <div className="lg:col-span-5">
-                      <Card3DPassport member={featuredMember} config={config} compact />
-                    </div>
-                  </div>
-                </section>
+                    {/* Right Mascot + Illustrated Rumah Baca Almahyra Cottage Scene (Zero Empty Card!) */}
+                    <div className="lg:col-span-6 flex items-center justify-center">
+                      <div className="relative flex items-end justify-center gap-3 sm:gap-5">
+                        {/* Decorative Floating Storybook */}
+                        <motion.div
+                          animate={{ y: [-4, 4, -4], rotate: [-6, -2, -6] }}
+                          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                          aria-hidden="true"
+                          className="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-white bg-[#E6F7FE]/95 text-[#08A9EF] shadow-lg self-start mt-3"
+                        >
+                          <BookOpen className="h-6 w-6" />
+                        </motion.div>
 
-              {/* Wrapper already opened above cleanly; continue directly to Section 5 */}
-
-              {/* SECTION 5: JELAJAHI DUNIA BUKU (KATALOG + FILTER + 7 RAK BERANDA) */}
-              {renderCatalogSection()}
-
-              <BerandaShowcase
-                db={db}
-                viewerKey={viewerKey}
-                onReadBook={onReadBook}
-                onToggleFavorite={onToggleFavorite}
-                onOpenCatalog={() => {
-                  setShowAllBooksInline(true);
-                  scrollToSection('rak-pilihan-workspace');
-                }}
-              />
-
-              {/* SECTION 6: MISI LITERASI HARI INI */}
-              <section
-                id="misi-hari-ini"
-                aria-label="Misi Literasi Hari Ini"
-                className="scroll-mt-20 overflow-hidden rounded-3xl border-2 border-[#087C3B]/25 bg-white shadow-sm"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2 bg-[#087C3B] px-6 py-3.5 text-white">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-[#FFC51B]" aria-hidden="true" />
-                    <h2 className="font-display text-lg font-bold">Misi Literasi Hari Ini</h2>
-                  </div>
-                  <span className="rounded-lg bg-[#FFC51B] px-3 py-1 font-mono-tabular text-xs font-extrabold text-[#10281B]">
-                    +10 Poin &amp; Stempel Harian
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 items-center gap-6 p-6 lg:grid-cols-12">
-                  <div className="lg:col-span-8 space-y-3">
-                    <h3 className="font-display text-xl font-bold text-[#111C17]">
-                      Baca satu cerita favoritmu &amp; selesaikan kuis atau aksi nyatanya!
-                    </h3>
-                    <p className="text-sm text-[#4A5D54] leading-relaxed">
-                      Pilih salah satu buku bergambar, aktifkan fitur Bacakan Cerita bila suka, lalu klaim stempel baca dan tantangan{' '}
-                      <strong className="text-[#111C17]">Pahlawan Alam Grontol</strong> di akhir halaman.
-                    </p>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs font-bold text-[#4A5D54]">
-                        <span>Progres Misi Hari Ini (Perangkat Ini)</span>
-                        <span className="font-mono-tabular text-[#087C3B] dark:text-[#6EE7B7]">
-                          {dailyMissionDone ? '1 / 1 Selesai!' : '0 / 1 Siap Dikerjakan'}
-                        </span>
-                      </div>
-                      <div className="h-3 w-full overflow-hidden rounded-full bg-[#EEF3F0]">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{
-                            width: dailyMissionDone ? '100%' : '25%',
-                            background: 'linear-gradient(90deg, #087C3B 0%, #7ED321 70%, #FFC51B 100%)',
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-4 flex flex-col gap-2.5">
-                    {dailyFeaturedBook && (
-                      <button
-                        type="button"
-                        onClick={() => onReadBook(dailyFeaturedBook)}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#087C3B] px-5 py-3 text-sm font-bold text-white hover:opacity-95"
-                      >
-                        <BookOpen className="h-4 w-4" aria-hidden="true" />
-                        Kerjakan Misi: Baca Cerita
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => onChangePage('page2')}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFC51B] px-5 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95"
-                    >
-                      <Award className="h-4 w-4" aria-hidden="true" />
-                      Mainkan Mini Kuis Tebak Cerita
-                    </button>
-                  </div>
-                </div>
-              </section>
-
-              {/* SECTION 7: PETA PETUALANGAN ALMAHYRA (6 ZONA + 7 LANGKAH) */}
-              <AdventureZonesMapSection
-                db={db}
-                onReadBook={onReadBook}
-                onFilterByZone={(zoneName) => {
-                  setSelectedZona(zoneName);
-                  setVisibleBookCount(24);
-                  scrollToSection('rak-pilihan-workspace');
-                }}
-              />
-
-              <AdventureJourneySection
-                db={db}
-                viewerKey={viewerKey}
-                activeStep={journeyStep}
-                onChangeStep={setJourneyStep}
-                onReadBook={onReadBook}
-                onOpenCatalog={() => {
-                  setShowAllBooksInline(true);
-                  scrollToSection('rak-pilihan-workspace');
-                }}
-                onOpenLogin={onOpenLogin}
-                onJumpToTelaga={() => onChangePage('page2')}
-              />
-
-              {/* SECTION 8: GALERI KARYA ANAK */}
-              <CreationGallerySection
-                db={db}
-                session={session}
-                onSubmitCreation={onSubmitCreation}
-              />
-
-              {/* SECTION 9: KEGIATAN & AGENDA */}
-              {renderScheduleSection()}
-
-              {/* SECTION 10: TELAGA COMMUNITY & LAYANAN PINJAM / DONASI */}
-              {config.showTelagaSection && (
-                <section id="bagian-telaga" className="scroll-mt-20 space-y-6">
-                  <div className="grid grid-cols-1 items-center gap-8 rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 lg:grid-cols-12">
-                    <div className="lg:col-span-7 space-y-2.5">
-                      <p className="text-xs font-bold tracking-wide text-[#F58220]">
-                        Program Komunitas TELAGA &amp; Gotong Royong Desa
-                      </p>
-                      <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                        {config.page1IntroTitle}
-                      </h2>
-                      <p className="text-sm leading-relaxed text-[#4A5D54]">
-                        {config.page1IntroBody}
-                      </p>
-                    </div>
-                    <div className="lg:col-span-5">
-                      <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-[#EEF3F0]">
-                        <ResilientImage
-                          src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
-                          fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                          alt="Ilustrasi Komunitas TELAGA Rumah Baca Almahyra"
-                          className="aspect-4/3 w-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {TELAGA_PILLARS.map((pillar) => (
-                      <article
-                        key={pillar.code}
-                        className="rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-2.5"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono-tabular text-xs font-semibold text-[#4A5D54]">
-                            {pillar.code}. Pilar {pillar.letter}
-                          </span>
-                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#087C3B] font-display text-sm font-bold text-white">
-                            {pillar.letter}
-                          </span>
-                        </div>
-                        <h3 className="font-display text-base font-bold text-[#111C17]">
-                          {pillar.title}
-                        </h3>
-                        <p className="text-xs leading-relaxed text-[#4A5D54]">{pillar.desc}</p>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              <BorrowDonationPanel db={db} defaultTab="borrow" />
-
-              {/* SECTION 11: DUNIA KELUARGA & TOP 5 PEMBACA + GENERATOR DONGENG */}
-              <FamilyLiteracySection
-                db={db}
-                onOpenLogin={onOpenLogin}
-                onReadBook={onReadBook}
-              />
-
-              <LeaderboardAndStoryStudio db={db} onOpenLogin={onOpenLogin} />
-
-              {/* SECTION 12: TESTIMONI SAHABAT & ORANG TUA */}
-              {(db.testimonials?.length ?? 0) > 0 && (
-                <section aria-label="Testimoni Orang Tua, Relawan, dan Anak" className="space-y-5">
-                  <div>
-                    <p className="text-xs font-bold tracking-wide text-[#087C3B] dark:text-[#6EE7B7] flex items-center gap-1.5">
-                      <MessageSquareQuote className="h-4 w-4" aria-hidden="true" />
-                      Suara Hangat Warga &amp; Keluarga Dusun Grontol
-                    </p>
-                    <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                      Cerita Mereka Bersama Rumah Baca Almahyra
-                    </h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                    {(db.testimonials ?? []).map((t) => (
-                      <article
-                        key={t.id}
-                        className="flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4"
-                      >
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-1" aria-label={`Rating ${t.rating} dari 5`}>
-                            {Array.from({ length: Math.min(5, Math.max(1, t.rating)) }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className="h-4 w-4 fill-[#FFC51B] text-[#B45309]"
-                                aria-hidden="true"
-                              />
-                            ))}
+                        {/* Official 3D Mascot Emblem */}
+                        <motion.div
+                          animate={{ y: [0, -5, 0] }}
+                          transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+                          className="relative"
+                        >
+                          <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl">
+                            <ResilientImage
+                              src={DEFAULT_LOGO_URL}
+                              fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                              alt="Maskot Resmi Rumah Baca Almahyra"
+                              loading="eager"
+                              fetchPriority="high"
+                              className="h-44 w-44 sm:h-56 sm:w-56 object-cover"
+                            />
                           </div>
-                          <p className="text-sm leading-relaxed text-[#4A5D54]">
-                            &ldquo;{t.kutipan}&rdquo;
-                          </p>
+                          <motion.div
+                            animate={{ rotate: [-5, 5, -5], y: [0, -3, 0] }}
+                            transition={{ duration: 2.8, repeat: Infinity }}
+                            className="absolute -right-3 -top-3 flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-white bg-[#FFC51B] text-[#10281B] shadow-md"
+                          >
+                            <Star className="h-6 w-6 fill-current" aria-hidden="true" />
+                          </motion.div>
+                        </motion.div>
+
+                        {/* Illustrated Rumah Baca Almahyra Wooden Cottage Vector */}
+                        <div className="hidden sm:flex flex-col items-center pb-1" aria-hidden="true">
+                          <svg
+                            viewBox="0 0 180 155"
+                            className="h-36 w-44 drop-shadow-xl"
+                          >
+                            {/* Trees behind cottage */}
+                            <circle cx="28" cy="78" r="24" fill="#2E8B22" />
+                            <circle cx="152" cy="82" r="22" fill="#2E8B22" />
+                            <rect x="24" y="96" width="8" height="38" rx="3" fill="#6D4C2F" />
+                            <rect x="148" y="98" width="8" height="36" rx="3" fill="#6D4C2F" />
+                            {/* Cottage wall & warm timber base */}
+                            <rect x="34" y="64" width="112" height="72" rx="8" fill="#FFFDF6" stroke="#D9C598" strokeWidth="3" />
+                            {/* Pitched Wooden Roof */}
+                            <path d="M20 70 L90 22 L160 70 Z" fill="#C97E2C" stroke="#8F5114" strokeWidth="3" strokeLinejoin="round" />
+                            <path d="M36 66 L90 30 L144 66" fill="none" stroke="#F8D285" strokeWidth="3" strokeLinecap="round" />
+                            {/* Wooden Signboard */}
+                            <rect x="52" y="48" width="76" height="24" rx="5" fill="#FDE6A6" stroke="#9D611D" strokeWidth="2" />
+                            <text x="90" y="59" textAnchor="middle" fontSize="8" fontWeight="800" fill="#4A2A08">
+                              Rumah Baca
+                            </text>
+                            <text x="90" y="68" textAnchor="middle" fontSize="8" fontWeight="800" fill="#087C3B">
+                              Almahyra
+                            </text>
+                            {/* Double Teal/Green Doors & Sunny Windows */}
+                            <rect x="74" y="92" width="32" height="44" rx="4" fill="#0E8A47" stroke="#075A32" strokeWidth="2.5" />
+                            <line x1="90" y1="92" x2="90" y2="136" stroke="#075A32" strokeWidth="2" />
+                            <rect x="44" y="90" width="22" height="22" rx="4" fill="#7DD3FC" stroke="#8F5114" strokeWidth="2" />
+                            <rect x="114" y="90" width="22" height="22" rx="4" fill="#7DD3FC" stroke="#8F5114" strokeWidth="2" />
+                            {/* Golden Trophy Beside Porch */}
+                            <path d="M138 118 H154 L151 130 H141 Z" fill="#FFC51B" stroke="#B45309" strokeWidth="1.5" />
+                            <rect x="144" y="130" width="4" height="5" fill="#B45309" />
+                            <rect x="140" y="135" width="12" height="3" rx="1" fill="#92400E" />
+                          </svg>
                         </div>
-
-                        <div className="border-t border-[#EEF3F0] pt-3">
-                          <p className="font-display text-sm font-bold text-[#111C17]">{t.nama}</p>
-                          <p className="text-xs text-[#4A5D54]">
-                            {t.peran} · {t.komunitas}
-                          </p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* SECTION 13: PRESTASI, SERTIFIKAT & CTA BERGABUNG */}
-              <section id="prestasi-paspor" className="scroll-mt-20 space-y-6">
-                <PassportFlowInfographic config={config} />
-
-                {config.showLevelsSection && (
-                  <div className="rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 space-y-6">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-xs font-bold text-[#B45309]">
-                          Pilar Raih Prestasi · Apresiasi Tanpa Tekanan
-                        </p>
-                        <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                          Jenjang Capaian, E-Paspor Baca &amp; Sertifikat Digital
-                        </h2>
-                        <p className="mt-1 text-sm text-[#4A5D54]">
-                          Setiap buku, kuis, dan aksi nyata dihargai dengan bintang literasi, lencana, dan piagam digital keluarga.
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => setCertModalOpen(true)}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-[#FFC51B] px-4 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap"
-                        >
-                          <Award className="h-4 w-4" aria-hidden="true" />
-                          Pratinjau Sertifikat Digital
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onChangePage('page2')}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-[#087C3B] px-4 py-2.5 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap"
-                        >
-                          Buka E-Paspor &amp; Kuis
-                          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                        </button>
                       </div>
                     </div>
-
-                    <LevelProgressionInfographic config={config} />
                   </div>
                 )}
 
-                {/* Warm Join Family Banner */}
-                <div className="rounded-3xl border-2 border-[#FFC51B] bg-gradient-to-r from-[#087C3B] via-[#087C3B] to-[#075A32] p-6 sm:p-8 text-white preserve-light">
-                  <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                    <div className="max-w-2xl space-y-2">
-                      <p className="text-xs font-extrabold uppercase tracking-wider text-[#FFC51B]">
-                        Gerakan Literasi Keluarga &amp; Sahabat Anak
-                      </p>
-                      <h2 className="font-display text-2xl sm:text-3xl font-extrabold">
-                        Ayo Bergabung Menjadi Keluarga Almahyra!
-                      </h2>
-                      <p className="text-sm text-white/90 leading-relaxed">
-                        Masuk menggunakan Nomor Induk Anggota (mis. <strong>ALMA-001</strong>) untuk membuka Dasbor Anak, Dasbor Orang Tua, jurnal bersama, dan unduh sertifikat literasi.
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-3 shrink-0">
-                      <button
-                        type="button"
-                        onClick={onOpenLogin}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#FFC51B] px-5 py-3 text-sm font-extrabold text-[#10281B] shadow-md hover:opacity-95"
-                      >
-                        Masuk Sekarang
-                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCertModalOpen(false);
-                          onChangePage('page2');
+                {heroSlide === 1 && (
+                  <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+                    <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
+                      <h1
+                        className="font-display font-extrabold tracking-tight text-white leading-[1.06]"
+                        style={{
+                          fontSize: 'clamp(2rem, 3.8vw, 3.3rem)',
+                          textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
+                          textWrap: 'balance',
                         }}
-                        className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
                       >
-                        Mainkan Kuis Tamu
-                      </button>
+                        {config.heroTitle}
+                      </h1>
+                      <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2]">
+                        {config.heroSubtitle}
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                        <button
+                          type="button"
+                          onClick={() => onChangePage('prestasi')}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md"
+                        >
+                          <Award className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
+                          Buka E-Paspor &amp; Kuis
+                        </button>
+                        {dailyFeaturedBook && (
+                          <button
+                            type="button"
+                            onClick={() => onReadBook(dailyFeaturedBook)}
+                            className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-5 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md"
+                          >
+                            <BookOpen className="h-4 w-4" aria-hidden="true" />
+                            Baca Cepat: {dailyFeaturedBook.judul}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="lg:col-span-5 flex justify-center">
+                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
+                        <div className="aspect-16/10 w-full overflow-hidden">
+                          <ResilientImage
+                            src={resolvedHeroPhoto}
+                            fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                            alt="Suasana Teras Rumah Baca Almahyra"
+                            className="h-full w-full object-cover object-top"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {heroSlide === 2 && (
+                  <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+                    <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
+                      <h1
+                        className="font-display font-extrabold tracking-tight text-white leading-[1.06]"
+                        style={{
+                          fontSize: 'clamp(2rem, 3.8vw, 3.3rem)',
+                          textShadow: '0 4px 0 #075A32, 0 10px 22px rgba(7,90,50,0.28)',
+                          textWrap: 'balance',
+                        }}
+                      >
+                        Program TELAGA &amp; Aksi Nyata!
+                      </h1>
+                      <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2]">
+                        Kolaborasi warga Dusun Grontol menghadirkan pojok dongeng, pinjam buku cetak, donasi Satu Rumah Satu Buku, dan galeri karya anak.
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                        <button
+                          type="button"
+                          onClick={() => onChangePage('keluarga', 'bagian-telaga')}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-white/70 bg-gradient-to-b from-[#0E9C4D] to-[#075A32] px-6 py-2.5 text-sm font-extrabold text-white shadow-md"
+                        >
+                          Kenali Program TELAGA
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onChangePage('galeri-karya')}
+                          className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-5 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md"
+                        >
+                          Lihat Galeri Karya Anak
+                        </button>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-5 flex justify-center">
+                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
+                        <div className="aspect-16/10 w-full overflow-hidden">
+                          <ResilientImage
+                            src="/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__2__1caa94d4.jpeg"
+                            fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                            alt="Kegiatan literasi anak-anak Dusun Grontol"
+                            className="h-full w-full object-cover object-top"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Slide Pagination Dots */}
+                <div className="mt-5 flex items-center justify-center gap-2" role="tablist" aria-label="Pilih slide beranda">
+                  {[0, 1, 2].map((idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      role="tab"
+                      aria-selected={heroSlide === idx}
+                      aria-label={`Slide ${idx + 1}`}
+                      onClick={() => setHeroSlide(idx)}
+                      className={`h-2.5 rounded-full transition-all ${
+                        heroSlide === idx
+                          ? 'w-7 bg-[#087C3B] ring-2 ring-white'
+                          : 'w-2.5 bg-white/80 hover:bg-white'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* FOUR PASTEL PILLARS + 3-CARD BENTO SHOWCASE (CLEAN HOMEPAGE ONLY) */}
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-5 pb-4 space-y-5">
+              <FourPillarsSection
+                onExploreRead={() => onChangePage('jelajahi-buku')}
+                onExploreCreate={() => onChangePage('galeri-karya')}
+                onExploreAdventure={() => onChangePage('petualangan')}
+                onExploreAchievement={() => onChangePage('prestasi')}
+              />
+
+              <HomepageShowcaseStage
+                books={books}
+                creations={db.creations ?? []}
+                featuredBook={dailyFeaturedBook}
+                dailyMissionDone={dailyMissionDone}
+                onReadBook={onReadBook}
+                onOpenAllBooks={() => {
+                  setShowAllBooksInline(true);
+                  onChangePage('jelajahi-buku');
+                }}
+                onOpenPassportQuiz={() => onChangePage('prestasi')}
+                onOpenGallery={() => onChangePage('galeri-karya')}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* PAGE 2: JELAJAHI BUKU (KATALOG LENGKAP 252+ BUKU & RAK KURASI) */}
+        {audienceMode === 'petualang' && activePage === 'jelajahi-buku' && (
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+            {renderPageHeader(
+              'Pilar Baca · Katalog Digital & Cetak Almahyra',
+              'Jelajahi Dunia Buku Rumah Baca Almahyra',
+              `Temukan ${stats.totalTitles} judul buku bergambar, cerita Nusantara, sains, dan komik edukasi lengkap dengan pembaca Flipbook Interaktif.`,
+            )}
+
+            {renderCatalogSection()}
+
+            <BerandaShowcase
+              db={db}
+              viewerKey={viewerKey}
+              onReadBook={onReadBook}
+              onToggleFavorite={onToggleFavorite}
+              onOpenCatalog={() => {
+                setShowAllBooksInline(true);
+                document.getElementById('rak-pilihan-workspace')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            />
+
+            <CollectionZoneInfographic
+              books={books}
+              schedules={schedules}
+              config={config}
+            />
+          </div>
+        )}
+
+        {/* PAGE 3: PETUALANGAN (6 ZONA, 7 LANGKAH, MISI LITERASI) */}
+        {audienceMode === 'petualang' && activePage === 'petualangan' && (
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+            {renderPageHeader(
+              'Pilar Bertualang · 6 Zona & 7 Langkah Almahyra',
+              'Peta Petualangan & Misi Literasi Almahyra',
+              'Pilih zona kesukaanmu, ikuti 7 langkah petualangan membaca, dan selesaikan misi hari ini untuk meraih bintang literasi.',
+            )}
+
+            {/* Misi Literasi Hari Ini Card */}
+            <section
+              id="misi-hari-ini"
+              aria-label="Misi Literasi Hari Ini"
+              className="overflow-hidden rounded-3xl border-2 border-[#087C3B]/25 bg-white shadow-sm"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-[#087C3B] px-6 py-3.5 text-white">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-[#FFC51B]" aria-hidden="true" />
+                  <h2 className="font-display text-lg font-bold">Misi Literasi Hari Ini</h2>
+                </div>
+                <span className="rounded-lg bg-[#FFC51B] px-3 py-1 font-mono-tabular text-xs font-extrabold text-[#10281B]">
+                  +10 Poin &amp; Stempel Harian
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 items-center gap-6 p-6 lg:grid-cols-12">
+                <div className="lg:col-span-8 space-y-3">
+                  <h3 className="font-display text-xl font-bold text-[#111C17]">
+                    Baca satu cerita favoritmu &amp; selesaikan kuis atau aksi nyatanya!
+                  </h3>
+                  <p className="text-sm text-[#4A5D54] leading-relaxed">
+                    Pilih salah satu buku bergambar, aktifkan fitur Bacakan Cerita bila suka, lalu klaim stempel baca dan tantangan{' '}
+                    <strong className="text-[#111C17]">Pahlawan Alam Grontol</strong> di tab Misi &amp; Paspor.
+                  </p>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#4A5D54]">
+                      <span>Progres Misi Hari Ini (Perangkat Ini)</span>
+                      <span className="font-mono-tabular text-[#087C3B] dark:text-[#6EE7B7]">
+                        {dailyMissionDone ? '1 / 1 Selesai!' : '0 / 1 Siap Dikerjakan'}
+                      </span>
+                    </div>
+                    <div className="h-3 w-full overflow-hidden rounded-full bg-[#EEF3F0]">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: dailyMissionDone ? '100%' : '25%',
+                          background: 'linear-gradient(90deg, #087C3B 0%, #7ED321 70%, #FFC51B 100%)',
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
+
+                <div className="lg:col-span-4 flex flex-col gap-2.5">
+                  {dailyFeaturedBook && (
+                    <button
+                      type="button"
+                      onClick={() => onReadBook(dailyFeaturedBook)}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#087C3B] px-5 py-3 text-sm font-bold text-white hover:opacity-95"
+                    >
+                      <BookOpen className="h-4 w-4" aria-hidden="true" />
+                      Kerjakan Misi: Baca Cerita
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => onChangePage('prestasi')}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFC51B] px-5 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95"
+                  >
+                    <Award className="h-4 w-4" aria-hidden="true" />
+                    Mainkan Mini Kuis Tebak Cerita
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <AdventureZonesMapSection
+              db={db}
+              onReadBook={onReadBook}
+              onFilterByZone={(zoneName) => {
+                setSelectedZona(zoneName);
+                setVisibleBookCount(24);
+                onChangePage('jelajahi-buku');
+              }}
+            />
+
+            <AdventureJourneySection
+              db={db}
+              viewerKey={viewerKey}
+              activeStep={journeyStep}
+              onChangeStep={setJourneyStep}
+              onReadBook={onReadBook}
+              onOpenCatalog={() => {
+                setShowAllBooksInline(true);
+                onChangePage('jelajahi-buku');
+              }}
+              onOpenLogin={onOpenLogin}
+              onJumpToTelaga={() => onChangePage('keluarga', 'bagian-telaga')}
+            />
+          </div>
+        )}
+
+        {/* PAGE 4: GALERI KARYA (GALERI ANAK + PAPAN PERINGKAT & STUDIO DONGENG) */}
+        {audienceMode === 'petualang' && activePage === 'galeri-karya' && (
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+            {renderPageHeader(
+              'Pilar Berkarya · Kreativitas Sahabat Almahyra',
+              'Galeri Karya Anak & Studio Cerita Keluarga',
+              'Apresiasi gambar, puisi, komik, dan resensi buku sahabat Almahyra serta buat dongeng keluarga bersama.',
+            )}
+
+            <CreationGallerySection
+              db={db}
+              session={session}
+              onSubmitCreation={onSubmitCreation}
+            />
+
+            <LeaderboardAndStoryStudio db={db} onOpenLogin={onOpenLogin} />
+          </div>
+        )}
+
+        {/* PAGE 5: DUNIA KELUARGA (TENTANG KAMI, AGENDA, TELAGA, PINJAM & DONASI, TESTIMONI) */}
+        {audienceMode === 'petualang' && activePage === 'keluarga' && (
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
+            {renderPageHeader(
+              'Dunia Keluarga & Komunitas · Dusun Grontol, Desa Tlogosari',
+              'Mengenal Rumah Baca Almahyra, Jadwal & TELAGA',
+              'Pusat informasi keluarga, jadwal kegiatan mingguan, program komunitas TELAGA, serta layanan pinjam buku fisik & donasi Satu Rumah Satu Buku.',
+            )}
+
+            {/* Mengenal Rumah Baca Almahyra + 3D E-Paspor + KPI Strip */}
+            <section
+              id="tentang-kami"
+              aria-label="Mengenal Rumah Baca Almahyra"
+              className="scroll-mt-20 space-y-6"
+            >
+              <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-12">
+                <div className="lg:col-span-7 rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 space-y-5">
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-bold text-[#087C3B] dark:text-[#6EE7B7]">
+                      Tentang Rumah Baca Almahyra · {config.slogan}
+                    </p>
+                    <h2 className="font-display text-2xl font-bold text-[#111C17]">
+                      {config.heroTitle}
+                    </h2>
+                    <p className="text-sm leading-relaxed text-[#4A5D54]">
+                      Berpusat di {config.location} bersama koordinator{' '}
+                      <strong className="text-[#111C17]">{config.coordinator}</strong>, {config.heroSubtitle}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={onOpenLogin}
+                      className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-[#FFF8E8] px-4 py-2.5 text-xs font-bold text-[#111C17] hover:bg-[#FFF2D6] whitespace-nowrap"
+                    >
+                      <Users className="h-4 w-4 text-[#087C3B]" aria-hidden="true" />
+                      Masuk Portal Anggota / Pengelola
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onChangePage('prestasi')}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#FFC51B] px-4 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap"
+                    >
+                      <Award className="h-4 w-4" aria-hidden="true" />
+                      E-Paspor &amp; Kuis ({localPassport.points} Poin)
+                    </button>
+                  </div>
+
+                  {/* 4-COLUMN KPI STRIP */}
+                  <div className="grid grid-cols-2 gap-4 border-t border-[#EEF3F0] pt-4 sm:grid-cols-4">
+                    <div>
+                      <p className="text-xs font-semibold text-[#4A5D54]">Judul Aktif</p>
+                      <p className="font-display text-2xl font-bold tabular-nums text-[#087C3B] dark:text-[#6EE7B7]">
+                        {stats.totalTitles}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-[#4A5D54]">Eksemplar</p>
+                      <p className="font-display text-2xl font-bold tabular-nums text-[#111C17]">
+                        {stats.totalBooks}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-[#4A5D54]">Anggota Aktif</p>
+                      <p className="font-display text-2xl font-bold tabular-nums text-[#087C3B] dark:text-[#6EE7B7]">
+                        {stats.activeMembers}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-[#4A5D54]">Misi Selesai</p>
+                      <p className="font-display text-2xl font-bold tabular-nums text-[#F58220]">
+                        {stats.verifiedMissions}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5">
+                  <Card3DPassport member={featuredMember} config={config} compact />
+                </div>
+              </div>
+            </section>
+
+            <FamilyLiteracySection
+              db={db}
+              onOpenLogin={onOpenLogin}
+              onReadBook={onReadBook}
+            />
+
+            {renderScheduleSection()}
+
+            {config.showTelagaSection && (
+              <section id="bagian-telaga" className="scroll-mt-20 space-y-6">
+                <div className="grid grid-cols-1 items-center gap-8 rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 lg:grid-cols-12">
+                  <div className="lg:col-span-7 space-y-2.5">
+                    <p className="text-xs font-bold tracking-wide text-[#F58220]">
+                      Program Komunitas TELAGA &amp; Gotong Royong Desa
+                    </p>
+                    <h2 className="font-display text-2xl font-bold text-[#111C17]">
+                      {config.page1IntroTitle}
+                    </h2>
+                    <p className="text-sm leading-relaxed text-[#4A5D54]">
+                      {config.page1IntroBody}
+                    </p>
+                  </div>
+                  <div className="lg:col-span-5">
+                    <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-[#EEF3F0]">
+                      <ResilientImage
+                        src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
+                        fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                        alt="Ilustrasi Komunitas TELAGA Rumah Baca Almahyra"
+                        className="aspect-4/3 w-full object-cover object-top"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {TELAGA_PILLARS.map((pillar) => (
+                    <article
+                      key={pillar.code}
+                      className="rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-2.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono-tabular text-xs font-semibold text-[#4A5D54]">
+                          {pillar.code}. Pilar {pillar.letter}
+                        </span>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#087C3B] font-display text-sm font-bold text-white">
+                          {pillar.letter}
+                        </span>
+                      </div>
+                      <h3 className="font-display text-base font-bold text-[#111C17]">
+                        {pillar.title}
+                      </h3>
+                      <p className="text-xs leading-relaxed text-[#4A5D54]">{pillar.desc}</p>
+                    </article>
+                  ))}
+                </div>
               </section>
+            )}
+
+            <BorrowDonationPanel db={db} defaultTab="borrow" />
+
+            {(db.testimonials?.length ?? 0) > 0 && (
+              <section aria-label="Testimoni Orang Tua, Relawan, dan Anak" className="space-y-5">
+                <div>
+                  <p className="text-xs font-bold tracking-wide text-[#087C3B] dark:text-[#6EE7B7] flex items-center gap-1.5">
+                    <MessageSquareQuote className="h-4 w-4" aria-hidden="true" />
+                    Suara Hangat Warga &amp; Keluarga Dusun Grontol
+                  </p>
+                  <h2 className="font-display text-2xl font-bold text-[#111C17]">
+                    Cerita Mereka Bersama Rumah Baca Almahyra
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                  {(db.testimonials ?? []).map((t) => (
+                    <article
+                      key={t.id}
+                      className="flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-1" aria-label={`Rating ${t.rating} dari 5`}>
+                          {Array.from({ length: Math.min(5, Math.max(1, t.rating)) }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className="h-4 w-4 fill-[#FFC51B] text-[#B45309]"
+                              aria-hidden="true"
+                            />
+                          ))}
+                        </div>
+                        <p className="text-sm leading-relaxed text-[#4A5D54]">
+                          &ldquo;{t.kutipan}&rdquo;
+                        </p>
+                      </div>
+
+                      <div className="border-t border-[#EEF3F0] pt-3">
+                        <p className="font-display text-sm font-bold text-[#111C17]">{t.nama}</p>
+                        <p className="text-xs text-[#4A5D54]">
+                          {t.peran} · {t.komunitas}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* PAGE 6: PRESTASI (E-PASPOR BACA, MINI KUIS, JENJANG CAPAIAN & SERTIFIKAT) */}
+        {audienceMode === 'petualang' && activePage === 'prestasi' && (
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+            {renderPageHeader(
+              'Pilar Raih Prestasi · Apresiasi Literasi Anak',
+              'E-Paspor Baca, Mini Kuis & Jenjang Prestasi',
+              'Kumpulkan stempel buku, jawab kuis tebak cerita, pantau kenaikan jenjang capaian, dan unduh sertifikat digital keluarga.',
+            )}
+
+            <PassportAndQuizHub
+              db={db}
+              passport={localPassport}
+              onUpdatePassport={onUpdateLocalPassport}
+              onOpenCatalog={() => onChangePage('jelajahi-buku')}
+              onOpenLogin={onOpenLogin}
+            />
+
+            <PassportFlowInfographic config={config} />
+
+            {config.showLevelsSection && (
+              <div className="rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs font-bold text-[#B45309]">
+                      Jenjang Capaian · Apresiasi Tanpa Tekanan
+                    </p>
+                    <h2 className="font-display text-2xl font-bold text-[#111C17]">
+                      Jenjang Capaian, E-Paspor Baca &amp; Sertifikat Digital
+                    </h2>
+                    <p className="mt-1 text-sm text-[#4A5D54]">
+                      Setiap buku, kuis, dan aksi nyata dihargai dengan bintang literasi, lencana, dan piagam digital keluarga.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCertModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#FFC51B] px-4 py-2.5 text-xs font-extrabold text-[#10281B] hover:opacity-95 whitespace-nowrap shrink-0"
+                  >
+                    <Award className="h-4 w-4" aria-hidden="true" />
+                    Pratinjau Sertifikat Digital
+                  </button>
+                </div>
+
+                <LevelProgressionInfographic config={config} />
+              </div>
+            )}
+
+            {/* Warm Join Family Banner */}
+            <div className="rounded-3xl border-2 border-[#FFC51B] bg-gradient-to-r from-[#087C3B] via-[#087C3B] to-[#075A32] p-6 sm:p-8 text-white preserve-light">
+              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl space-y-2">
+                  <p className="text-xs font-extrabold uppercase tracking-wider text-[#FFC51B]">
+                    Gerakan Literasi Keluarga &amp; Sahabat Anak
+                  </p>
+                  <h2 className="font-display text-2xl sm:text-3xl font-extrabold">
+                    Ayo Bergabung Menjadi Keluarga Almahyra!
+                  </h2>
+                  <p className="text-sm text-white/90 leading-relaxed">
+                    Masuk menggunakan Nomor Induk Anggota (mis. <strong>ALMA-001</strong>) untuk membuka Dasbor Anak, Dasbor Orang Tua, jurnal bersama, dan unduh sertifikat literasi.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenLogin}
+                  className="inline-flex items-center gap-2 self-start rounded-xl bg-[#FFC51B] px-5 py-3 text-sm font-extrabold text-[#10281B] shadow-md hover:opacity-95 shrink-0"
+                >
+                  Masuk Sekarang
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
               </div>
             </div>
-          ) : (
-            /* MODE PETUALANG — HALAMAN 2: PASPOR BACA DIGITAL & MINI KUIS TEBAK CERITA (5 SOAL) */
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-10">
-              <PassportAndQuizHub
-                db={db}
-                passport={localPassport}
-                onUpdatePassport={onUpdateLocalPassport}
-                onOpenCatalog={() => onChangePage('page1')}
-                onOpenLogin={onOpenLogin}
-              />
-            </div>
-          )
-        ) : activePage === 'page1' ? (
-          /* MODE SAHABAT TELAGA — HALAMAN 1: PROGRAM TELAGA + JADWAL DUSUN GRONTOL + FORM WHATSAPP CEPAT */
+          </div>
+        )}
+
+        {/* MODE SAHABAT TELAGA VIEWS */}
+        {audienceMode === 'telaga' && activePage === 'telaga-program' && (
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-12">
             <section className="rounded-3xl border border-[#DCE4DF] bg-white p-6 sm:p-8">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -1425,7 +1477,7 @@ export function PublicLanding({
                   </a>
                   <button
                     type="button"
-                    onClick={() => onChangePage('page2')}
+                    onClick={() => onChangePage('telaga-katalog')}
                     className="inline-flex items-center gap-2 rounded-xl border border-[#DCE4DF] bg-[#F8FAF9] px-5 py-3 text-sm font-bold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap"
                   >
                     Cek Katalog Ketersediaan
@@ -1462,7 +1514,7 @@ export function PublicLanding({
                           src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
                           fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                           alt="Ilustrasi komunitas Rumah Baca Almahyra"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover object-top"
                         />
                       </div>
                     </div>
@@ -1519,7 +1571,7 @@ export function PublicLanding({
                       src={ILLUSTRATION_READING_ADVENTURE_URL}
                       fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                       alt="Peta ilustrasi enam zona petualangan belajar Rumah Baca Almahyra"
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -1593,8 +1645,9 @@ export function PublicLanding({
               </section>
             )}
           </div>
-        ) : (
-          /* MODE SAHABAT TELAGA — HALAMAN 2: KATALOG KETERSEDIAAN BUKU FISIK & FORM PINJAM/DONASI */
+        )}
+
+        {audienceMode === 'telaga' && activePage === 'telaga-katalog' && (
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10 space-y-12">
             <div className="flex flex-col gap-4 border-b border-[#E2E8E5] pb-6 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl space-y-2">
@@ -1610,7 +1663,7 @@ export function PublicLanding({
               </div>
               <button
                 type="button"
-                onClick={() => onChangePage('page1')}
+                onClick={() => onChangePage('telaga-program')}
                 className="self-start rounded-xl border border-[#DCE4DF] bg-white px-4 py-2.5 text-xs font-bold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
               >
                 Kembali ke Program TELAGA &amp; Jadwal
@@ -1630,8 +1683,8 @@ export function PublicLanding({
         )}
       </div>
 
-      {/* SECTION 14: CURVED WAVE GREEN FOOTER (MATCHING MOCKUP) */}
-      <footer className="mt-14 relative text-white preserve-light">
+      {/* CURVED WAVE GREEN FOOTER (MATCHING MOCKUP) */}
+      <footer className="mt-10 relative text-white preserve-light">
         <div className="overflow-hidden leading-none">
           <svg
             viewBox="0 0 1440 48"
@@ -1646,7 +1699,7 @@ export function PublicLanding({
           </svg>
         </div>
 
-        <div className="bg-gradient-to-b from-[#087C3B] to-[#06522C] pb-8 pt-2">
+        <div className="bg-gradient-to-b from-[#087C3B] to-[#06522C] pb-7 pt-2">
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
             <div className="flex items-center gap-3.5">
               <ResilientImage
@@ -1658,7 +1711,7 @@ export function PublicLanding({
               <div>
                 <p className="font-display text-lg font-extrabold">{config.appName}</p>
                 <p className="text-xs text-white/90">
-                  Bersama Menumbuhkan Generasi Literat · Dusun Grontol
+                  Bersama Menumbuhkan Generasi Literat
                 </p>
               </div>
             </div>
@@ -1666,10 +1719,7 @@ export function PublicLanding({
             <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-white/95">
               <button
                 type="button"
-                onClick={() => {
-                  onChangePage('page1');
-                  scrollToSection('tentang-kami');
-                }}
+                onClick={() => onChangePage('keluarga', 'tentang-kami')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
                 <Home className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1677,10 +1727,7 @@ export function PublicLanding({
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  onChangePage('page1');
-                  scrollToSection('jadwal-grontol');
-                }}
+                onClick={() => onChangePage('keluarga', 'jadwal-grontol')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
                 <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1688,10 +1735,7 @@ export function PublicLanding({
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  onChangePage('page1');
-                  scrollToSection('galeri-karya');
-                }}
+                onClick={() => onChangePage('galeri-karya')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
                 <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1699,10 +1743,7 @@ export function PublicLanding({
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  onChangePage('page1');
-                  scrollToSection('bagian-telaga');
-                }}
+                onClick={() => onChangePage('keluarga', 'formulir-pinjam-donasi')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />

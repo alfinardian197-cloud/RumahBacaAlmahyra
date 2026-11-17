@@ -6,7 +6,12 @@ import { MemberPortal } from './components/MemberPortal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { PublicLanding } from './components/PublicLanding';
 import { SplashScreen } from './components/SplashScreen';
-import { TopBar, type NavTabItem, type PublicRoleMode } from './components/TopBar';
+import {
+  TopBar,
+  type NavTabItem,
+  type PublicPageId,
+  type PublicRoleMode,
+} from './components/TopBar';
 import { DEFAULT_DB } from './data/defaultDb';
 import { initGoogleAuth } from './services/googleAuth';
 import type {
@@ -63,15 +68,14 @@ export default function App() {
     }
   });
   const [audienceMode, setAudienceMode] = useState<PublicRoleMode>('petualang');
-  const [activePublicAnchor, setActivePublicAnchor] = useState<string>('beranda-hero');
   const [localPassport, setLocalPassport] = useState<LocalDigitalPassportState>(() =>
     loadLocalPassportState(),
   );
   const [loginOpen, setLoginOpen] = useState(false);
   const [readingBookId, setReadingBookId] = useState<string | null>(null);
 
-  // Page states respecting strict portal flow
-  const [publicPage, setPublicPage] = useState<'page1' | 'page2'>('page1');
+  // Page states respecting clean multi-page flow
+  const [publicPage, setPublicPage] = useState<PublicPageId>('beranda');
   const [memberPage, setMemberPage] = useState<'passport' | 'catalog' | 'schedule'>('passport');
   const [adminPage, setAdminPage] = useState<'data' | 'reports' | 'appearance'>('data');
 
@@ -117,25 +121,23 @@ export default function App() {
 
   const handleChangePublicRoleMode = useCallback((mode: PublicRoleMode) => {
     setAudienceMode(mode);
-    setPublicPage('page1');
-    setActivePublicAnchor('beranda-hero');
+    setPublicPage(mode === 'telaga' ? 'telaga-program' : 'beranda');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const handleSelectPublicSection = useCallback((anchorId: string) => {
-    setAudienceMode('petualang');
-    setPublicPage('page1');
-    setActivePublicAnchor(anchorId);
+  const handleSelectPublicPage = useCallback((pageId: PublicPageId, anchorId?: string) => {
+    setAudienceMode(pageId.startsWith('telaga-') ? 'telaga' : 'petualang');
+    setPublicPage(pageId);
     window.setTimeout(() => {
-      if (anchorId === 'beranda-hero') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+      if (anchorId) {
+        const el = document.getElementById(anchorId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
       }
-      const el = document.getElementById(anchorId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 40);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 50);
   }, []);
 
   useEffect(() => {
@@ -153,10 +155,6 @@ export default function App() {
       // Ignore storage errors
     }
   }, [theme]);
-
-  const handleSetTheme = useCallback((nextTheme: ThemeMode) => {
-    setTheme(nextTheme);
-  }, []);
 
   const handleToggleTheme = useCallback(() => {
     setTheme((prev) => toggleThemeMode(prev));
@@ -424,8 +422,8 @@ export default function App() {
 
   const handleLogout = () => {
     setSession(null);
-    setPublicPage('page1');
-    setActivePublicAnchor('beranda-hero');
+    setAudienceMode('petualang');
+    setPublicPage('beranda');
     try {
       sessionStorage.removeItem(SESSION_STORAGE_KEY);
     } catch {
@@ -437,13 +435,17 @@ export default function App() {
     if (!session) {
       if (audienceMode === 'petualang') {
         return [
-          { id: 'page1', label: 'Beranda Ekosistem' },
-          { id: 'page2', label: 'Paspor & Kuis' },
+          { id: 'beranda', label: 'Beranda' },
+          { id: 'jelajahi-buku', label: 'Jelajahi Buku' },
+          { id: 'petualangan', label: 'Petualangan' },
+          { id: 'galeri-karya', label: 'Galeri Karya' },
+          { id: 'keluarga', label: 'Dunia Keluarga' },
+          { id: 'prestasi', label: 'Prestasi' },
         ];
       }
       return [
-        { id: 'page1', label: 'Program TELAGA' },
-        { id: 'page2', label: 'Katalog & Pinjaman' },
+        { id: 'telaga-program', label: 'Program TELAGA' },
+        { id: 'telaga-katalog', label: 'Katalog & Pinjaman' },
       ];
     }
     if (session.role === 'anggota') {
@@ -468,7 +470,7 @@ export default function App() {
 
   const handleSelectTab = (id: string) => {
     if (!session) {
-      setPublicPage(id as 'page1' | 'page2');
+      setPublicPage(id as PublicPageId);
     } else if (session.role === 'anggota') {
       setMemberPage(id as 'passport' | 'catalog' | 'schedule');
     } else {
@@ -493,12 +495,10 @@ export default function App() {
           session={session}
           tabs={navTabs}
           activeTab={activeTab}
-          activePublicAnchor={activePublicAnchor}
           theme={theme}
           publicRoleMode={audienceMode}
           onChangePublicRoleMode={handleChangePublicRoleMode}
-          onSelectPublicSection={handleSelectPublicSection}
-          onSelectTheme={handleSetTheme}
+          onSelectPublicPage={handleSelectPublicPage}
           onToggleTheme={handleToggleTheme}
           onSelectTab={handleSelectTab}
           onOpenLogin={() => setLoginOpen(true)}
@@ -520,7 +520,7 @@ export default function App() {
           audienceMode={audienceMode}
           localPassport={localPassport}
           onUpdateLocalPassport={handleUpdateLocalPassport}
-          onChangePage={handleSelectTab}
+          onChangePage={handleSelectPublicPage}
           onOpenLogin={() => setLoginOpen(true)}
           onReadBook={(book) => setReadingBookId(book.id)}
           onToggleFavorite={handleToggleFavorite}

@@ -28,46 +28,56 @@ export interface NavTabItem {
 
 export type PublicRoleMode = 'petualang' | 'telaga';
 
+export type PublicPageId =
+  | 'beranda'
+  | 'jelajahi-buku'
+  | 'petualangan'
+  | 'galeri-karya'
+  | 'keluarga'
+  | 'prestasi'
+  | 'telaga-program'
+  | 'telaga-katalog';
+
 export const PUBLIC_ECOSYSTEM_NAV: Array<{
   id: string;
   label: string;
-  anchorId: string;
+  pageId: PublicPageId;
   icon: LucideIcon;
   iconColor: string;
 }> = [
-  { id: 'beranda', label: 'Beranda', anchorId: 'beranda-hero', icon: Home, iconColor: '#087C3B' },
+  { id: 'beranda', label: 'Beranda', pageId: 'beranda', icon: Home, iconColor: '#087C3B' },
   {
     id: 'jelajahi-buku',
     label: 'Jelajahi Buku',
-    anchorId: 'rak-pilihan-workspace',
+    pageId: 'jelajahi-buku',
     icon: BookOpen,
     iconColor: '#0284C7',
   },
   {
     id: 'petualangan',
     label: 'Petualangan',
-    anchorId: 'petualangan-zona',
+    pageId: 'petualangan',
     icon: Compass,
     iconColor: '#D97706',
   },
   {
     id: 'galeri-karya',
     label: 'Galeri Karya',
-    anchorId: 'galeri-karya',
+    pageId: 'galeri-karya',
     icon: Palette,
     iconColor: '#EA580C',
   },
   {
     id: 'keluarga',
     label: 'Dunia Keluarga',
-    anchorId: 'dunia-keluarga',
+    pageId: 'keluarga',
     icon: Users,
     iconColor: '#2563EB',
   },
   {
     id: 'prestasi',
     label: 'Prestasi',
-    anchorId: 'prestasi-paspor',
+    pageId: 'prestasi',
     icon: Trophy,
     iconColor: '#D97706',
   },
@@ -78,12 +88,10 @@ interface TopBarProps {
   session: AuthSession | null;
   tabs: NavTabItem[];
   activeTab: string;
-  activePublicAnchor?: string;
   theme: ThemeMode;
   publicRoleMode?: PublicRoleMode;
   onChangePublicRoleMode?: (mode: PublicRoleMode) => void;
-  onSelectPublicSection?: (anchorId: string, navId: string) => void;
-  onSelectTheme: (theme: ThemeMode) => void;
+  onSelectPublicPage?: (pageId: PublicPageId, anchorId?: string) => void;
   onToggleTheme: () => void;
   onSelectTab: (id: string) => void;
   onOpenLogin: () => void;
@@ -95,12 +103,10 @@ export function TopBar({
   session,
   tabs,
   activeTab,
-  activePublicAnchor = 'beranda-hero',
   theme,
   publicRoleMode = 'petualang',
   onChangePublicRoleMode,
-  onSelectPublicSection,
-  onSelectTheme,
+  onSelectPublicPage,
   onToggleTheme,
   onSelectTab,
   onOpenLogin,
@@ -110,15 +116,15 @@ export function TopBar({
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#E7DEC6] bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2.5 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
         {/* Zone 1: Official App Icon Logo + Brand Title & Tagline */}
         <button
           type="button"
           onClick={() => {
-            if (!session && onSelectPublicSection) {
-              onSelectPublicSection('beranda-hero', 'beranda');
+            if (!session && onSelectPublicPage) {
+              onSelectPublicPage('beranda');
             } else {
-              onSelectTab(tabs[0]?.id ?? 'page1');
+              onSelectTab(tabs[0]?.id ?? 'passport');
             }
           }}
           className="flex items-center gap-2.5 text-left whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -141,17 +147,17 @@ export function TopBar({
           </div>
         </button>
 
-        {/* Zone 2: Single-line Navigation with Storybook Icons */}
-        {!session && onSelectPublicSection ? (
-          <nav className="hidden xl:flex items-center gap-1 2xl:gap-1.5" aria-label="Navigasi utama">
+        {/* Zone 2: Single-line Multi-Page Navigation */}
+        {!session && onSelectPublicPage && publicRoleMode === 'petualang' ? (
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="Navigasi utama">
             {PUBLIC_ECOSYSTEM_NAV.map((item) => {
-              const isActive = activePublicAnchor === item.anchorId && activeTab === 'page1';
+              const isActive = activeTab === item.pageId;
               const NavIcon = item.icon;
               return (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => onSelectPublicSection(item.anchorId, item.id)}
+                  onClick={() => onSelectPublicPage(item.pageId)}
                   className={`relative inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-[#087C3B] text-white shadow-xs'
@@ -202,7 +208,7 @@ export function TopBar({
             <div
               role="group"
               aria-label="Pengalih Mode Utama"
-              className="hidden lg:inline-flex items-center rounded-xl border border-[#DCE4DF] bg-[#FFF8E8] p-0.5 shrink-0"
+              className="hidden xl:inline-flex items-center rounded-xl border border-[#DCE4DF] bg-[#FFF8E8] p-0.5 shrink-0"
             >
               <button
                 type="button"
@@ -278,7 +284,7 @@ export function TopBar({
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label={mobileOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
             aria-expanded={mobileOpen}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE4DF] text-[#111C17] xl:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE4DF] text-[#111C17] lg:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -287,27 +293,18 @@ export function TopBar({
 
       {/* Mobile & Tablet Drawer */}
       {mobileOpen && (
-        <div className="border-t border-[#E2E8E5] bg-white px-4 py-4 xl:hidden">
+        <div className="border-t border-[#E2E8E5] bg-white px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-2" aria-label="Navigasi seluler">
-            {!session && onSelectPublicSection
-              ? [
-                  ...PUBLIC_ECOSYSTEM_NAV,
-                  {
-                    id: 'tentang-kami',
-                    label: 'Tentang Kami',
-                    anchorId: 'tentang-kami',
-                    icon: Compass,
-                    iconColor: '#087C3B',
-                  },
-                ].map((item) => {
-                  const isActive = activePublicAnchor === item.anchorId && activeTab === 'page1';
+            {!session && onSelectPublicPage
+              ? PUBLIC_ECOSYSTEM_NAV.map((item) => {
+                  const isActive = activeTab === item.pageId;
                   const NavIcon = item.icon;
                   return (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => {
-                        onSelectPublicSection(item.anchorId, item.id);
+                        onSelectPublicPage(item.pageId);
                         setMobileOpen(false);
                       }}
                       className={`flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-left text-sm font-bold ${
