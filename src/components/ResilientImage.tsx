@@ -16,7 +16,7 @@ export function ResilientImage({
   fallbackSrc,
   alt,
   className,
-  loading = 'lazy',
+  loading = 'eager',
   decoding = 'async',
   fetchPriority,
   renderFallback,

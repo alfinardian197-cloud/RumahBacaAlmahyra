@@ -8,6 +8,7 @@ import type {
 import { computeBookShelves } from '../utils/almahyra';
 import { BookCard } from './BookCard';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
+import { ResilientImage } from './ResilientImage';
 
 interface BerandaShowcaseProps {
   db: AlmahyraDatabase;
@@ -193,8 +194,18 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
-                  <CustomBookCoverSvg book={b} />
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                  {b.coverUrl ? (
+                    <ResilientImage
+                      src={b.coverUrl}
+                      alt={`Sampul ${b.judul}`}
+                      loading="eager"
+                      className="h-full w-full object-cover object-[50%_28%]"
+                      renderFallback={() => <CustomBookCoverSvg book={b} />}
+                    />
+                  ) : (
+                    <CustomBookCoverSvg book={b} />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
@@ -240,8 +251,18 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
-                  <CustomBookCoverSvg book={b} />
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                  {b.coverUrl ? (
+                    <ResilientImage
+                      src={b.coverUrl}
+                      alt={`Sampul ${b.judul}`}
+                      loading="eager"
+                      className="h-full w-full object-cover object-[50%_28%]"
+                      renderFallback={() => <CustomBookCoverSvg book={b} />}
+                    />
+                  ) : (
+                    <CustomBookCoverSvg book={b} />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold" style={{ color: 'var(--brand-primary-ink)' }}>
@@ -287,8 +308,18 @@ export function BerandaShowcase({
                 key={b.id}
                 className="flex items-center gap-3 rounded-xl border border-[#EEF3F0] bg-[#F8FAF9] p-3"
               >
-                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0">
-                  <CustomBookCoverSvg book={b} />
+                <div className="h-14 w-14 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                  {b.coverUrl ? (
+                    <ResilientImage
+                      src={b.coverUrl}
+                      alt={`Sampul ${b.judul}`}
+                      loading="eager"
+                      className="h-full w-full object-cover object-[50%_28%]"
+                      renderFallback={() => <CustomBookCoverSvg book={b} />}
+                    />
+                  ) : (
+                    <CustomBookCoverSvg book={b} />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold flex items-center gap-1" style={{ color: 'var(--brand-accent-ink)' }}>

@@ -2,25 +2,28 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --brand-primary: #047857;
-  --brand-secondary: #059669;
-  --brand-accent: #eab308;
-  --brand-primary-ink: #047857;
+  --brand-primary: #087c3b;
+  --brand-dark: #075a32;
+  --brand-secondary: #7ed321;
+  --brand-accent: #ffc51b;
+  --brand-sky: #08a9ef;
+  --brand-orange: #f58220;
+  --brand-primary-ink: #087c3b;
   --brand-accent-ink: #b45309;
-  --surface-canvas: #fbf8f1;
+  --surface-canvas: #fff8e8;
   --surface-card: #ffffff;
-  --surface-subtle: #f4efe2;
-  --surface-muted: #ebe4d3;
-  --border-subtle: #e6decb;
-  --border-strong: #d6ccb4;
-  --ink-primary: #12231b;
-  --ink-secondary: #425a4e;
+  --surface-subtle: #fff2d6;
+  --surface-muted: #f5ebd2;
+  --border-subtle: #e7dec6;
+  --border-strong: #d4c7a7;
+  --ink-primary: #10281b;
+  --ink-secondary: #3e5b4c;
 }
 
 html.dark {
   color-scheme: dark;
   --brand-primary-ink: #6ee7b7;
-  --brand-accent-ink: #facc15;
+  --brand-accent-ink: #ffd75e;
   --surface-canvas: #07130e;
   --surface-card: #0e2018;
   --surface-subtle: #142b21;
@@ -33,7 +36,7 @@ html.dark {
 
 @layer base {
   body {
-    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--surface-canvas);
     color: var(--ink-primary);
     transition: background-color 180ms ease, color 180ms ease;
@@ -44,7 +47,7 @@ html.dark {
   h3,
   h4,
   .font-display {
-    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Fredoka", "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .font-mono-tabular {
@@ -113,12 +116,14 @@ html.dark {
   html.dark .bg-\[\#F8FAF9\] {
     background-color: var(--surface-canvas);
   }
-  html.dark .bg-white:not(.preserve-light) {
+  html.dark .bg-white:not(.preserve-light),
+  html.dark .bg-\[\#FFFDF6\]:not(.preserve-light) {
     background-color: var(--surface-card);
   }
   html.dark .bg-white\/95:not(.preserve-light) {
     background-color: rgba(14, 32, 24, 0.94);
   }
+  html.dark .bg-\[\#FFF8E8\]:not(.preserve-light),
   html.dark .bg-\[\#F2F6F4\],
   html.dark .hover\:bg-\[\#F2F6F4\]:hover {
     background-color: var(--surface-subtle);

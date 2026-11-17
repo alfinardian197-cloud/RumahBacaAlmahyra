@@ -7,6 +7,7 @@ export interface AuthSession {
   displayName: string;
   memberId?: string;
   nomorInduk?: string;
+  token?: string;
 }
 
 export interface LandingConfig {
@@ -184,6 +185,39 @@ export interface AdminAccount {
   jabatan: string;
 }
 
+export type CreationCategory =
+  | 'Cerita pendek'
+  | 'Puisi'
+  | 'Gambar'
+  | 'Komik'
+  | 'Resensi buku'
+  | 'Kerajinan';
+
+export interface CreationWork {
+  id: string;
+  judul: string;
+  kategori: CreationCategory;
+  namaSamaran: string;
+  jenjangUsia: string;
+  memberNomorInduk?: string;
+  ringkasan: string;
+  konten: string;
+  imageUrl?: string;
+  createdAt: string;
+  parentApproved: boolean;
+  moderationStatus: 'pending' | 'approved' | 'rejected';
+  catatanModerator?: string;
+}
+
+export interface TestimonialItem {
+  id: string;
+  nama: string;
+  peran: string;
+  komunitas: string;
+  kutipan: string;
+  rating: number;
+}
+
 export interface AlmahyraDatabase {
   config: LandingConfig;
   members: Member[];
@@ -198,4 +232,6 @@ export interface AlmahyraDatabase {
   readingProgress?: ReadingProgress[];
   readingJournals?: ReadingJournalEntry[];
   challenges?: ReadingChallenge[];
+  creations?: CreationWork[];
+  testimonials?: TestimonialItem[];
 }

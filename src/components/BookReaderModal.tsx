@@ -19,7 +19,6 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import { DEFAULT_BOOK_COVER_URL } from '../data/defaultDb';
 import type {
   AlmahyraDatabase,
   AuthSession,
@@ -30,12 +29,14 @@ import {
   getBookQuizQuestions,
   getBookReadablePages,
   isBookActive,
+  type LocalDigitalPassportState,
 } from '../utils/almahyra';
 import {
   getStorySoundtrackProfile,
   storyAudioEngine,
 } from '../utils/storyAudioEngine';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
+import { RealActionMissionCard } from './RealActionMissionCard';
 import { ResilientImage } from './ResilientImage';
 
 interface BookReaderModalProps {
@@ -43,10 +44,12 @@ interface BookReaderModalProps {
   db: AlmahyraDatabase;
   session: AuthSession | null;
   progress?: ReadingProgress;
+  localPassport?: LocalDigitalPassportState;
   onClose: () => void;
   onSwitchBook: (book: Book) => void;
   onOpenLogin: () => void;
   onQuickClaimStamp?: (book: Book) => { alreadyClaimed: boolean };
+  onClaimRealAction?: (book: Book, note?: string) => { alreadyClaimed: boolean };
   onRecordReading: (params: {
     bookId: string;
     lastPage: number;
@@ -67,10 +70,12 @@ export function BookReaderModal({
   db,
   session,
   progress,
+  localPassport,
   onClose,
   onSwitchBook,
   onOpenLogin,
   onQuickClaimStamp,
+  onClaimRealAction,
   onRecordReading,
 }: BookReaderModalProps) {
   const pages = useMemo(() => (book ? getBookReadablePages(book) : []), [book]);
@@ -206,6 +211,17 @@ export function BookReaderModal({
   const currentPageData = pages[pageIdx] ?? pages[0];
   const isComic = book.kategori === 'Komik Edukasi';
   const isFavorite = Boolean(progress?.isFavorite);
+  const isLastReadingPage = pageIdx === pages.length - 1;
+  const existingRealActionRecord = localPassport?.realActionMissions?.find(
+    (m) => m.bookId === book.id,
+  );
+
+  const handleRealActionClaim = (targetBook: Book, note?: string) => {
+    if (onClaimRealAction) {
+      return onClaimRealAction(targetBook, note);
+    }
+    return { alreadyClaimed: false };
+  };
 
   const recommendedBooks = db.books
     .filter(
@@ -569,8 +585,8 @@ export function BookReaderModal({
 
       {/* Main Content Stage */}
       {activeTab === 'read' && currentPageData ? (
-        <main className="flex-1 min-h-0 overflow-y-auto md:overflow-hidden flex flex-col justify-center px-4 py-3 sm:px-8 sm:py-5">
-          <div className="mx-auto w-full max-w-6xl space-y-3 sm:space-y-4">
+        <main className="flex-1 min-h-0 overflow-y-auto flex flex-col px-4 py-4 sm:px-8 sm:py-6">
+          <div className="mx-auto my-auto w-full max-w-6xl space-y-4 sm:space-y-5">
             {speechMessage && (
               <p className="rounded-xl border border-[#DFD7C4] bg-[#F3EFE4] px-4 py-2 text-xs text-[#4B5A50] dark:border-[#243B30] dark:bg-[#13221B] dark:text-[#A4B9AE]">
                 {speechMessage}
@@ -622,13 +638,12 @@ export function BookReaderModal({
               <div className="md:col-span-5 space-y-2">
                 <div className="overflow-hidden rounded-2xl border border-[#DFD7C4] bg-[#F3EFE4] shadow-md dark:border-[#243B30] dark:bg-[#13221B]">
                   <div className="h-[23dvh] max-h-[210px] w-full md:h-auto md:max-h-[50dvh] md:aspect-4/3">
-                    {book.coverUrl?.startsWith('data:image/') ? (
+                    {book.coverUrl ? (
                       <ResilientImage
                         src={book.coverUrl}
-                        fallbackSrc={DEFAULT_BOOK_COVER_URL}
                         alt={`Ilustrasi ${book.judul}`}
                         loading="eager"
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover object-[50%_28%]"
                         renderFallback={() => <CustomBookCoverSvg book={book} />}
                       />
                     ) : (
@@ -700,6 +715,16 @@ export function BookReaderModal({
                 )}
               </article>
             </div>
+
+            {isLastReadingPage && (
+              <div className="mt-6">
+                <RealActionMissionCard
+                  book={book}
+                  existingRecord={existingRealActionRecord}
+                  onClaimRealAction={handleRealActionClaim}
+                />
+              </div>
+            )}
           </div>
         </main>
       ) : (
@@ -863,7 +888,14 @@ export function BookReaderModal({
             )}
 
             {activeTab === 'journal' && (
-              <form onSubmit={handleCompleteReading} className="space-y-5">
+              <div className="space-y-6">
+                <RealActionMissionCard
+                  book={book}
+                  existingRecord={existingRealActionRecord}
+                  onClaimRealAction={handleRealActionClaim}
+                />
+
+                <form onSubmit={handleCompleteReading} className="space-y-5">
                 <div className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-5 space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -957,6 +989,7 @@ export function BookReaderModal({
                   )}
                 </div>
               </form>
+              </div>
             )}
 
             {/* Contextual Book Recommendations inside Quiz / Journal / PDF */}
@@ -974,8 +1007,18 @@ export function BookReaderModal({
                       onClick={() => onSwitchBook(rec)}
                       className="flex items-center gap-3 rounded-xl border border-[#DFD7C4] bg-[#FFFDF7] p-3 text-left transition-colors hover:border-[#BFD0C7] dark:border-[#243B30] dark:bg-[#122019]"
                     >
-                      <div className="h-14 w-16 overflow-hidden rounded-lg shrink-0">
-                        <CustomBookCoverSvg book={rec} />
+                      <div className="h-14 w-16 overflow-hidden rounded-lg shrink-0 bg-[#F2F6F4]">
+                        {rec.coverUrl ? (
+                          <ResilientImage
+                            src={rec.coverUrl}
+                            alt={`Sampul ${rec.judul}`}
+                            loading="eager"
+                            className="h-full w-full object-cover object-[50%_28%]"
+                            renderFallback={() => <CustomBookCoverSvg book={rec} />}
+                          />
+                        ) : (
+                          <CustomBookCoverSvg book={rec} />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p

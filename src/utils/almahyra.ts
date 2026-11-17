@@ -4,11 +4,14 @@ import type {
   Book,
   BookPage,
   BookQuizQuestion,
+  CreationCategory,
+  CreationWork,
   Loan,
   Member,
   PassportLog,
   ReadingJournalEntry,
   ReadingProgress,
+  TestimonialItem,
   ThemeMode,
 } from '../types/almahyra';
 
@@ -754,6 +757,15 @@ export function normalizeAssetUrl(url: string | undefined): string | undefined {
   return trimmed;
 }
 
+const LEGACY_GENERIC_COVER_URLS = new Set([
+  '/images/book_cover_folktale_1794800503588.jpg',
+  '/images/zone_adventure_craft_1794800503519.jpg',
+  '/images/illustration_science_explore_1794805037083.jpg',
+  '/images/illustration_eco_garden_1794805037060.jpg',
+  '/images/illustration_story_stage_1794805036949.jpg',
+  '/images/illustration_telaga_community_1794805036320.jpg',
+]);
+
 export function hydrateDatabaseWithDefaults(
   incoming: Partial<AlmahyraDatabase>,
   fallback: AlmahyraDatabase,
@@ -765,6 +777,11 @@ export function hydrateDatabaseWithDefaults(
 
   const mergedBooks: Book[] = rawBooks.map((b) => {
     const def = defaultBooksByCode.get(b.kodeBuku);
+    const rawTrimmedCover = b.coverUrl?.trim();
+    const shouldUpgradeLegacyGenericCover = Boolean(
+      def?.coverUrl &&
+        (!rawTrimmedCover || LEGACY_GENERIC_COVER_URLS.has(rawTrimmedCover)),
+    );
     return {
       ...def,
       ...b,
@@ -776,7 +793,9 @@ export function hydrateDatabaseWithDefaults(
       tanggalTerbit: b.tanggalTerbit ?? def?.tanggalTerbit ?? '2026-11-01',
       isiBacaan: b.isiBacaan && b.isiBacaan.length > 0 ? b.isiBacaan : def?.isiBacaan,
       kuis: b.kuis && b.kuis.length > 0 ? b.kuis : def?.kuis,
-      coverUrl: normalizeAssetUrl(b.coverUrl) || normalizeAssetUrl(def?.coverUrl),
+      coverUrl: shouldUpgradeLegacyGenericCover
+        ? normalizeAssetUrl(def?.coverUrl)
+        : normalizeAssetUrl(b.coverUrl) || normalizeAssetUrl(def?.coverUrl),
     };
   });
 
@@ -799,11 +818,27 @@ export function hydrateDatabaseWithDefaults(
   if (!rawConfig.appName || rawConfig.appName === 'ALMAHYRA App') {
     rawConfig.appName = 'Rumah Baca Almahyra';
   }
+  if (!rawConfig.tagline || rawConfig.tagline === 'A Living Learning Adventure') {
+    rawConfig.tagline = fallback.config.tagline;
+  }
   if (
-    rawConfig.heroTitle?.startsWith('Taman Baca Keluarga') ||
+    !rawConfig.heroTitle ||
+    rawConfig.heroTitle === 'Rumah Baca Almahyra' ||
+    rawConfig.heroTitle.startsWith('Taman Baca Keluarga') ||
     rawConfig.heroTitle === 'Rumah Baca Keluarga & Petualangan Literasi Anak Desa'
   ) {
-    rawConfig.heroTitle = 'Rumah Baca Almahyra';
+    rawConfig.heroTitle = fallback.config.heroTitle;
+  }
+  if (
+    !rawConfig.heroSubtitle ||
+    rawConfig.heroSubtitle.startsWith('Ruang belajar komunitas yang hangat')
+  ) {
+    rawConfig.heroSubtitle = fallback.config.heroSubtitle;
+  }
+  if (rawConfig.primaryColor === '#047857' || rawConfig.primaryColor === '#136B36') {
+    rawConfig.primaryColor = fallback.config.primaryColor;
+    rawConfig.secondaryColor = fallback.config.secondaryColor;
+    rawConfig.accentColor = fallback.config.accentColor;
   }
 
   const migratedMembers = (
@@ -872,6 +907,14 @@ export function hydrateDatabaseWithDefaults(
       incoming.challenges && incoming.challenges.length > 0
         ? incoming.challenges
         : (fallback.challenges ?? []),
+    creations:
+      Array.isArray(incoming.creations) && incoming.creations.length > 0
+        ? incoming.creations
+        : (fallback.creations ?? []),
+    testimonials:
+      Array.isArray(incoming.testimonials) && incoming.testimonials.length > 0
+        ? incoming.testimonials
+        : (fallback.testimonials ?? []),
   };
 }
 
@@ -1358,13 +1401,40 @@ export interface LocalPassportStamp {
   points: number;
 }
 
+export type RealActionTheme = 'kompos-lingkungan' | 'sains-dapur-kebun' | 'alam-dongeng';
+
+export interface RealActionMissionSpec {
+  theme: RealActionTheme;
+  themeLabel: string;
+  missionTitle: string;
+  instruction: string;
+  checklistSteps?: string[];
+  observationPrompt?: string;
+  observationPlaceholder?: string;
+  creativeOptions?: string[];
+}
+
+export interface LocalRealActionRecord {
+  id: string;
+  bookId: string;
+  bookTitle: string;
+  theme: RealActionTheme;
+  note?: string;
+  completedAt: string;
+  extraStars: number;
+}
+
+export const REAL_ACTION_BADGE_NAME = 'Pahlawan Alam Grontol';
+
 export interface LocalDigitalPassportState {
   childName: string;
   points: number;
+  extraStars: number;
   stamps: LocalPassportStamp[];
   badges: string[];
   bestQuizScore: number;
   quizAttempts: number;
+  realActionMissions: LocalRealActionRecord[];
 }
 
 export interface MiniQuizQuestion {
@@ -1444,14 +1514,75 @@ export const MINI_QUIZ_TEBAK_CERITA: MiniQuizQuestion[] = [
   },
 ];
 
+export function getBookRealActionMission(
+  book: Pick<Book, 'judul' | 'kategori' | 'zona' | 'deskripsi'>,
+): RealActionMissionSpec {
+  const haystack = `${book.judul} ${book.kategori} ${book.zona} ${book.deskripsi}`.toLowerCase();
+
+  if (
+    book.kategori === 'Lingkungan dan Alam' ||
+    book.zona === 'Zona Sahabat Bumi' ||
+    /(kompos|pilah|sampah|daur|pohon|biji|kebun hijau|limbah)/.test(haystack)
+  ) {
+    return {
+      theme: 'kompos-lingkungan',
+      themeLabel: 'Tema Kompos & Lingkungan',
+      missionTitle: 'Misi Kapten Pilah: Pilah 3 Jenis Sampah & Bahan Kompos',
+      instruction:
+        'Ajak ayah, ibu, atau kakak memilah sampah di rumah menjadi sampah organik dan anorganik, lalu centang 3 langkah aksimu di bawah ini:',
+      checklistSteps: [
+        'Mengumpulkan sampah organik rumah (kulit buah, sisa sayur, atau daun kering)',
+        'Memisahkan sampah anorganik bersih (botol plastik, kardus, atau kertas bekas)',
+        'Menaruh sampah organik ke wadah kompos atau area tanah kebun bersama orang tua',
+      ],
+    };
+  }
+
+  if (
+    book.kategori === 'Sains dan Pengetahuan' ||
+    book.kategori === 'Ensiklopedia Anak' ||
+    book.zona === 'Zona Pengetahuan' ||
+    book.zona === 'Zona Eksplorasi' ||
+    /(sains|dapur|kebun|eksperimen|kecambah|sawi|kapilaritas|matahari|percobaan)/.test(haystack)
+  ) {
+    return {
+      theme: 'sains-dapur-kebun',
+      themeLabel: 'Tema Sains Dapur & Kebun',
+      missionTitle: 'Misi Ilmuwan Cilik: Eksperimen Dapur & Kebun di Rumah',
+      instruction:
+        'Coba satu eksperimen sederhana di rumah — misalnya merendam biji kacang hijau di kapas basah hingga berkecambah atau mencelupkan batang sawi putih ke air berwarna — lalu catat hasil pengamatanmu!',
+      observationPrompt: 'Catatan Pengamatan Singkatmu:',
+      observationPlaceholder:
+        'Contoh: Setelah beberapa jam, ujung daun sawi mulai menyerap warna merah melalui batangnya!',
+    };
+  }
+
+  return {
+    theme: 'alam-dongeng',
+    themeLabel: 'Tema Alam & Dongeng',
+    missionTitle: 'Misi Sahabat Alam & Dongeng: Gambar Tokoh atau Catat 2 Tanaman',
+    instruction:
+      'Pilih salah satu aksi seru di rumah: gambarlah tokoh favorit dari cerita ini, atau jalan-jalan sebentar di halaman rumah dan catat 2 jenis tanaman yang kamu temui.',
+    creativeOptions: [
+      'Menggambar tokoh atau adegan favorit cerita',
+      'Mengamati & mencatat 2 jenis tanaman di sekitar rumah',
+    ],
+    observationPrompt: 'Tulis 2 Jenis Tanaman yang Ditemui atau Deskripsi Gambarmu:',
+    observationPlaceholder:
+      'Contoh: Di halaman rumah ada pohon mangga dan bunga melati, atau aku menggambar lentera senja!',
+  };
+}
+
 export function getDefaultLocalPassportState(): LocalDigitalPassportState {
   return {
     childName: '',
     points: 0,
+    extraStars: 0,
     stamps: [],
     badges: [],
     bestQuizScore: 0,
     quizAttempts: 0,
+    realActionMissions: [],
   };
 }
 
@@ -1466,10 +1597,14 @@ export function loadLocalPassportState(): LocalDigitalPassportState {
     return {
       childName: typeof parsed.childName === 'string' ? parsed.childName : '',
       points: typeof parsed.points === 'number' ? parsed.points : 0,
+      extraStars: typeof parsed.extraStars === 'number' ? parsed.extraStars : 0,
       stamps: Array.isArray(parsed.stamps) ? parsed.stamps : [],
       badges: Array.isArray(parsed.badges) ? parsed.badges : [],
       bestQuizScore: typeof parsed.bestQuizScore === 'number' ? parsed.bestQuizScore : 0,
       quizAttempts: typeof parsed.quizAttempts === 'number' ? parsed.quizAttempts : 0,
+      realActionMissions: Array.isArray(parsed.realActionMissions)
+        ? parsed.realActionMissions
+        : [],
     };
   } catch {
     return getDefaultLocalPassportState();
@@ -1505,6 +1640,9 @@ export function deriveBadgesFromLocalPassport(
   if (state.bestQuizScore === 100) {
     badges.add('Juara 100% Tebak Cerita');
   }
+  if ((state.realActionMissions?.length ?? 0) >= 1) {
+    badges.add(REAL_ACTION_BADGE_NAME);
+  }
   return Array.from(badges);
 }
 
@@ -1530,6 +1668,41 @@ export function claimBookStampInLocalPassport(
   };
   draft.badges = deriveBadgesFromLocalPassport(draft);
   return { nextState: draft, alreadyClaimed };
+}
+
+export function claimRealActionMissionInLocalPassport(
+  state: LocalDigitalPassportState,
+  book: Pick<Book, 'id' | 'judul' | 'kategori' | 'zona' | 'deskripsi'>,
+  note?: string,
+): {
+  nextState: LocalDigitalPassportState;
+  alreadyClaimed: boolean;
+  missionSpec: RealActionMissionSpec;
+} {
+  const missionSpec = getBookRealActionMission(book);
+  const existing = state.realActionMissions ?? [];
+  const alreadyClaimed = existing.some((m) => m.bookId === book.id);
+  const extraStarsEarned = alreadyClaimed ? 0 : 2;
+  const pointsEarned = alreadyClaimed ? 0 : 2;
+
+  const newRecord: LocalRealActionRecord = {
+    id: `ram-${book.id}-${Date.now()}`,
+    bookId: book.id,
+    bookTitle: book.judul,
+    theme: missionSpec.theme,
+    note: note?.trim() || undefined,
+    completedAt: new Date().toISOString().slice(0, 10),
+    extraStars: 2,
+  };
+
+  const draft: LocalDigitalPassportState = {
+    ...state,
+    points: state.points + pointsEarned,
+    extraStars: (state.extraStars ?? 0) + extraStarsEarned,
+    realActionMissions: alreadyClaimed ? existing : [newRecord, ...existing],
+  };
+  draft.badges = deriveBadgesFromLocalPassport(draft);
+  return { nextState: draft, alreadyClaimed, missionSpec };
 }
 
 export function evaluateMiniQuiz(
@@ -1564,6 +1737,185 @@ export function recordQuizAttemptInLocalPassport(
   draft.badges = deriveBadgesFromLocalPassport(draft);
   return draft;
 }
+
+export const CREATION_CATEGORIES: CreationCategory[] = [
+  'Cerita pendek',
+  'Puisi',
+  'Gambar',
+  'Komik',
+  'Resensi buku',
+  'Kerajinan',
+];
+
+export interface AdventureZoneDef {
+  id: string;
+  name: string;
+  color: string;
+  accentBg: string;
+  tagline: string;
+  description: string;
+  activities: string[];
+  rewardBadge: string;
+  sampleCover: string;
+}
+
+export const ADVENTURE_WORLD_ZONES: AdventureZoneDef[] = [
+  {
+    id: 'zona-imajinasi',
+    name: 'Zona Imajinasi',
+    color: '#08A9EF',
+    accentBg: '#E6F7FE',
+    tagline: 'Dongeng Nusantara, Fabel & Dunia Ajaib',
+    description: 'Menjelajahi kisah rakyat, fabel ceria, dan cerita dunia yang membangkitkan empati serta daya khayal anak.',
+    activities: ['Baca nyaring bersama keluarga', 'Tebak tokoh cerita', 'Gambar adegan favorit'],
+    rewardBadge: 'Pemburu Cerita',
+    sampleCover: '/images/covers/bk-02-kancil-hutan.jpg',
+  },
+  {
+    id: 'zona-pengetahuan',
+    name: 'Zona Pengetahuan',
+    color: '#087C3B',
+    accentBg: '#E7F6ED',
+    tagline: 'Sains Dapur, Kebun & Rasa Ingin Tahu',
+    description: 'Belajar konsep sains sederhana dari dapur dan halaman rumah lewat pengamatan langsung yang aman.',
+    activities: ['Percobaan kapilaritas sawi', 'Catatan pengamatan cilik', 'Kuis sains harian'],
+    rewardBadge: 'Ilmuwan Cilik',
+    sampleCover: '/images/covers/bk-03-sains-dapur.jpg',
+  },
+  {
+    id: 'zona-kreativitas',
+    name: 'Zona Kreativitas',
+    color: '#F58220',
+    accentBg: '#FFF1E5',
+    tagline: 'Menulis, Origami, Batik & Kerajinan',
+    description: 'Ruang berkarya bebas menciptakan puisi, komik 4 panel, origami bintang, hingga pembatas buku alam.',
+    activities: ['Minggu Kreasi origami & batik', 'Kirim karya ke Galeri', 'Buat resensi bergambar'],
+    rewardBadge: 'Seniman Buku',
+    sampleCover: '/images/covers/bk-09-batik-nusantara.jpg',
+  },
+  {
+    id: 'zona-eksplorasi',
+    name: 'Zona Eksplorasi',
+    color: '#7ED321',
+    accentBg: '#F1FBE5',
+    tagline: 'Bintang Malam, Tubuh Hebat & Siklus Air',
+    description: 'Mengamati langit malam, mengenal cara kerja tubuh manusia, dan menelusuri perjalanan tetes air di desa.',
+    activities: ['Observasi fase bulan', 'Jurnal penjelajah cilik', 'Tantangan baca 5 menit'],
+    rewardBadge: 'Penjelajah Kata',
+    sampleCover: '/images/covers/bk-10-langit-malam.jpg',
+  },
+  {
+    id: 'zona-sahabat-bumi',
+    name: 'Zona Sahabat Bumi',
+    color: '#075A32',
+    accentBg: '#E3F3EA',
+    tagline: 'Kompos, Pilah Sampah & Kebun Polibag',
+    description: 'Aksi nyata merawat lingkungan Dusun Grontol lewat gerakan Jumat Tukar Sampah dan kebun sayur keluarga.',
+    activities: ['Pilah 3 jenis sampah rumah', 'Tanam bibit di polibag', 'Misi Pahlawan Alam Grontol'],
+    rewardBadge: 'Pahlawan Alam Grontol',
+    sampleCover: '/images/covers/bk-05-kapten-pilah.jpg',
+  },
+  {
+    id: 'zona-panggung-cerita',
+    name: 'Zona Panggung Cerita',
+    color: '#FFC51B',
+    accentBg: '#FFF8DF',
+    tagline: 'Sabtu Dongeng, MC Cilik & Kisah Pahlawan',
+    description: 'Melatih keberanian berbicara, membaca nyaring, dan meneladani tokoh inspiratif serta pahlawan literasi.',
+    activities: ['Sabtu Dongeng boneka tangan', 'Cerita lisan 2 menit', 'Berbagi kisah bersama orang tua'],
+    rewardBadge: 'Pencerita Cilik',
+    sampleCover: '/images/covers/bk-08-pelita-baca.jpg',
+  },
+];
+
+export function filterApprovedCreations(
+  creations: CreationWork[] | undefined,
+  category: 'Semua' | CreationCategory = 'Semua',
+): CreationWork[] {
+  const list = (creations ?? []).filter(
+    (c) => c.parentApproved === true && c.moderationStatus === 'approved',
+  );
+  if (category === 'Semua') return list;
+  return list.filter((c) => c.kategori === category);
+}
+
+export function computeZoneAdventureStats(
+  books: Book[],
+  missions: AlmahyraDatabase['missions'],
+  passportLogs: PassportLog[],
+): Array<
+  AdventureZoneDef & {
+    bookCount: number;
+    missionCount: number;
+    completedCount: number;
+    progressPercent: number;
+  }
+> {
+  return ADVENTURE_WORLD_ZONES.map((zone) => {
+    const key = zone.name.toLowerCase();
+    const bookCount = books.filter(
+      (b) => isBookActive(b) && (b.zona ?? '').toLowerCase().includes(key.replace('zona ', '')),
+    ).length;
+    const missionCount = missions.filter((m) =>
+      (m.zona ?? '').toLowerCase().includes(key.replace('zona ', '')),
+    ).length;
+    const completedCount = passportLogs.filter((log) =>
+      (log.zona ?? '').toLowerCase().includes(key.replace('zona ', '')),
+    ).length;
+    const progressPercent = Math.min(100, 25 + completedCount * 15);
+    return {
+      ...zone,
+      bookCount,
+      missionCount,
+      completedCount,
+      progressPercent,
+    };
+  });
+}
+
+export function clampValidatedReadingPoints(rawPoints: unknown): number {
+  const n = Number(rawPoints);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return Math.min(10, Math.floor(n));
+}
+
+export function sanitizeDatabaseForClient(
+  db: AlmahyraDatabase,
+  session?: Pick<AuthSession, 'role' | 'memberId' | 'nomorInduk'> | null,
+): AlmahyraDatabase {
+  const role = session?.role;
+  const isStaff = role === 'admin' || role === 'superadmin';
+  const callerInduk = session?.nomorInduk?.toUpperCase();
+
+  const sanitizedAdmins = db.admins.map((a) => ({
+    ...a,
+    password: '',
+  }));
+
+  const sanitizedMembers = db.members.map((m) => {
+    const isSelf = Boolean(callerInduk && m.nomorInduk.toUpperCase() === callerInduk);
+    return {
+      ...m,
+      password: '',
+      orangTua: isStaff || isSelf ? m.orangTua : 'Wali Anggota Terdaftar',
+    };
+  });
+
+  const sanitizedCreations = (db.creations ?? []).filter((c) => {
+    if (isStaff) return true;
+    const isAuthor = Boolean(callerInduk && c.memberNomorInduk?.toUpperCase() === callerInduk);
+    return (c.parentApproved && c.moderationStatus === 'approved') || isAuthor;
+  });
+
+  return {
+    ...db,
+    admins: isStaff ? sanitizedAdmins : [],
+    members: sanitizedMembers,
+    creations: sanitizedCreations,
+  };
+}
+
+
 
 
 

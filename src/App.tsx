@@ -3,14 +3,22 @@ import { AdminPortal } from './components/AdminPortal';
 import { BookReaderModal } from './components/BookReaderModal';
 import { LoginModal } from './components/LoginModal';
 import { MemberPortal } from './components/MemberPortal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { PublicLanding } from './components/PublicLanding';
 import { SplashScreen } from './components/SplashScreen';
 import { TopBar, type NavTabItem, type PublicRoleMode } from './components/TopBar';
 import { DEFAULT_DB } from './data/defaultDb';
 import { initGoogleAuth } from './services/googleAuth';
-import type { AlmahyraDatabase, AuthSession, Book, ThemeMode } from './types/almahyra';
+import type {
+  AlmahyraDatabase,
+  AuthSession,
+  Book,
+  CreationCategory,
+  ThemeMode,
+} from './types/almahyra';
 import {
   claimBookStampInLocalPassport,
+  claimRealActionMissionInLocalPassport,
   getBookReadablePages,
   hydrateDatabaseWithDefaults,
   loadLocalPassportState,
@@ -55,16 +63,21 @@ export default function App() {
     }
   });
   const [audienceMode, setAudienceMode] = useState<PublicRoleMode>('petualang');
+  const [activePublicAnchor, setActivePublicAnchor] = useState<string>('beranda-hero');
   const [localPassport, setLocalPassport] = useState<LocalDigitalPassportState>(() =>
     loadLocalPassportState(),
   );
   const [loginOpen, setLoginOpen] = useState(false);
   const [readingBookId, setReadingBookId] = useState<string | null>(null);
 
-  // Page states respecting strict page count limits (2 public, max 3 other portals)
+  // Page states respecting strict portal flow
   const [publicPage, setPublicPage] = useState<'page1' | 'page2'>('page1');
   const [memberPage, setMemberPage] = useState<'passport' | 'catalog' | 'schedule'>('passport');
   const [adminPage, setAdminPage] = useState<'data' | 'reports' | 'appearance'>('data');
+
+  const authHeaders = useMemo((): Record<string, string> => {
+    return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
+  }, [session?.token]);
 
   const handleDismissSplash = useCallback(() => {
     setShowSplash(false);
@@ -91,10 +104,38 @@ export default function App() {
     return resultInfo;
   }, []);
 
+  const handleClaimRealAction = useCallback((book: Book, note?: string) => {
+    let resultInfo = { alreadyClaimed: false };
+    setLocalPassport((prev) => {
+      const res = claimRealActionMissionInLocalPassport(prev, book, note);
+      resultInfo = { alreadyClaimed: res.alreadyClaimed };
+      saveLocalPassportState(res.nextState);
+      return res.nextState;
+    });
+    return resultInfo;
+  }, []);
+
   const handleChangePublicRoleMode = useCallback((mode: PublicRoleMode) => {
     setAudienceMode(mode);
     setPublicPage('page1');
+    setActivePublicAnchor('beranda-hero');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleSelectPublicSection = useCallback((anchorId: string) => {
+    setAudienceMode('petualang');
+    setPublicPage('page1');
+    setActivePublicAnchor(anchorId);
+    window.setTimeout(() => {
+      if (anchorId === 'beranda-hero') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const el = document.getElementById(anchorId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 40);
   }, []);
 
   useEffect(() => {
@@ -121,9 +162,12 @@ export default function App() {
     setTheme((prev) => toggleThemeMode(prev));
   }, []);
 
+  // Load database with optional auth Bearer token (refetches automatically on login/logout)
   useEffect(() => {
     let active = true;
-    fetch('/api/db')
+    fetch('/api/db', {
+      headers: session?.token ? { Authorization: `Bearer ${session.token}` } : undefined,
+    })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Failed to load'))))
       .then((data: Partial<AlmahyraDatabase>) => {
         if (active && data?.config && Array.isArray(data.members)) {
@@ -131,7 +175,7 @@ export default function App() {
         }
       })
       .catch(() => {
-        // Keep DEFAULT_DB fallback if offline
+        // Keep current/DEFAULT_DB fallback if offline
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -139,32 +183,41 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [session?.token]);
 
-  // Apply theme colors dynamically from icon logo / config
+  // Apply theme colors dynamically from config
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty('--brand-primary', db.config.primaryColor || '#047857');
-    root.style.setProperty('--brand-secondary', db.config.secondaryColor || '#059669');
-    root.style.setProperty('--brand-accent', db.config.accentColor || '#D97706');
+    root.style.setProperty('--brand-primary', db.config.primaryColor || '#087C3B');
+    root.style.setProperty('--brand-secondary', db.config.secondaryColor || '#7ED321');
+    root.style.setProperty('--brand-accent', db.config.accentColor || '#FFC51B');
   }, [db.config.primaryColor, db.config.secondaryColor, db.config.accentColor]);
 
-  const handleUpdateDb = useCallback(async (nextDb: AlmahyraDatabase) => {
-    setDb(nextDb);
-    await fetch('/api/db', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nextDb),
-    });
-  }, []);
+  const handleUpdateDb = useCallback(
+    async (nextDb: AlmahyraDatabase) => {
+      setDb(nextDb);
+      await fetch('/api/db', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders,
+        },
+        body: JSON.stringify(nextDb),
+      });
+    },
+    [authHeaders],
+  );
 
   const handleResetDb = useCallback(async () => {
-    const res = await fetch('/api/db/reset', { method: 'POST' });
+    const res = await fetch('/api/db/reset', {
+      method: 'POST',
+      headers: authHeaders,
+    });
     if (res.ok) {
       const fresh = (await res.json()) as Partial<AlmahyraDatabase>;
       setDb(hydrateDatabaseWithDefaults(fresh, DEFAULT_DB));
     }
-  }, []);
+  }, [authHeaders]);
 
   const viewerKey = session?.nomorInduk || 'guest';
 
@@ -180,23 +233,32 @@ export default function App() {
       toggleFavorite?: boolean;
       awardPoints?: number;
     }) => {
-      let updatedSnapshot: AlmahyraDatabase | null = null;
-      setDb((prev) => {
-        updatedSnapshot = recordBookReadingAction(prev, {
+      setDb((prev) =>
+        recordBookReadingAction(prev, {
           viewerKey,
           ...params,
+        }),
+      );
+      try {
+        const res = await fetch('/api/reading/record', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
+          body: JSON.stringify(params),
         });
-        return updatedSnapshot;
-      });
-      if (updatedSnapshot) {
-        await fetch('/api/db', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedSnapshot),
-        });
+        if (res.ok) {
+          const data = (await res.json()) as { db?: Partial<AlmahyraDatabase> };
+          if (data.db) {
+            setDb(hydrateDatabaseWithDefaults(data.db, DEFAULT_DB));
+          }
+        }
+      } catch {
+        // Optimistic update stays visible offline
       }
     },
-    [viewerKey],
+    [authHeaders, viewerKey],
   );
 
   const handleToggleFavorite = useCallback(
@@ -213,6 +275,111 @@ export default function App() {
       });
     },
     [db.readingProgress, handleRecordReading, viewerKey],
+  );
+
+  const handleSubmitCreation = useCallback(
+    async (payload: {
+      judul: string;
+      kategori: CreationCategory;
+      namaSamaran: string;
+      jenjangUsia: string;
+      ringkasan: string;
+      konten: string;
+    }) => {
+      try {
+        const res = await fetch('/api/creations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = (await res.json()) as {
+          ok?: boolean;
+          error?: string;
+          db?: Partial<AlmahyraDatabase>;
+        };
+        if (!res.ok) {
+          return { ok: false, message: data.error || 'Gagal mengirim karya.' };
+        }
+        if (data.db) {
+          setDb(hydrateDatabaseWithDefaults(data.db, DEFAULT_DB));
+        }
+        return {
+          ok: true,
+          message:
+            session?.role === 'admin' || session?.role === 'superadmin'
+              ? 'Karya berhasil diterbitkan ke Galeri!'
+              : 'Karya terkirim! Menunggu persetujuan orang tua & moderasi Admin sebelum tayang di galeri publik.',
+        };
+      } catch {
+        return { ok: false, message: 'Gagal terhubung ke server untuk mengirim karya.' };
+      }
+    },
+    [authHeaders, session?.role],
+  );
+
+  const handleModerateCreation = useCallback(
+    async (
+      creationId: string,
+      action: 'approve' | 'reject' | 'parent-approve',
+      catatan?: string,
+    ) => {
+      try {
+        const res = await fetch(`/api/creations/${encodeURIComponent(creationId)}/moderate`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
+          body: JSON.stringify({ action, catatan }),
+        });
+        const data = (await res.json()) as {
+          error?: string;
+          db?: Partial<AlmahyraDatabase>;
+        };
+        if (!res.ok) {
+          return { ok: false, message: data.error || 'Gagal memperbarui status karya.' };
+        }
+        if (data.db) {
+          setDb(hydrateDatabaseWithDefaults(data.db, DEFAULT_DB));
+        }
+        return { ok: true, message: 'Status publikasi karya diperbarui.' };
+      } catch {
+        return { ok: false, message: 'Koneksi ke server terganggu.' };
+      }
+    },
+    [authHeaders],
+  );
+
+  const handleUpdateMemberProfile = useCallback(
+    async (payload: { nomorInduk?: string; targetMingguan?: number; orangTua?: string }) => {
+      try {
+        const res = await fetch('/api/member/profile', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = (await res.json()) as {
+          error?: string;
+          db?: Partial<AlmahyraDatabase>;
+        };
+        if (!res.ok) {
+          return { ok: false, message: data.error || 'Gagal memperbarui profil.' };
+        }
+        if (data.db) {
+          setDb(hydrateDatabaseWithDefaults(data.db, DEFAULT_DB));
+        }
+        return { ok: true, message: 'Profil & target mingguan berhasil diperbarui.' };
+      } catch {
+        return { ok: false, message: 'Gagal terhubung ke server.' };
+      }
+    },
+    [authHeaders],
   );
 
   const readingBook = useMemo(
@@ -258,6 +425,7 @@ export default function App() {
   const handleLogout = () => {
     setSession(null);
     setPublicPage('page1');
+    setActivePublicAnchor('beranda-hero');
     try {
       sessionStorage.removeItem(SESSION_STORAGE_KEY);
     } catch {
@@ -269,7 +437,7 @@ export default function App() {
     if (!session) {
       if (audienceMode === 'petualang') {
         return [
-          { id: 'page1', label: 'Rak & Katalog' },
+          { id: 'page1', label: 'Beranda Ekosistem' },
           { id: 'page2', label: 'Paspor & Kuis' },
         ];
       }
@@ -280,13 +448,13 @@ export default function App() {
     }
     if (session.role === 'anggota') {
       return [
-        { id: 'passport', label: 'Beranda & E-Paspor' },
+        { id: 'passport', label: 'Dasbor & E-Paspor' },
         { id: 'catalog', label: 'Katalog & Misi' },
-        { id: 'schedule', label: 'Jadwal & Pinjaman' },
+        { id: 'schedule', label: 'Jadwal & Karya' },
       ];
     }
     return [
-      { id: 'data', label: 'Data & Sirkulasi' },
+      { id: 'data', label: 'Data, Katalog & Moderasi' },
       { id: 'reports', label: 'Kegiatan & Laporan' },
       { id: 'appearance', label: 'Tampilan & Spreadsheet' },
     ];
@@ -325,9 +493,11 @@ export default function App() {
           session={session}
           tabs={navTabs}
           activeTab={activeTab}
+          activePublicAnchor={activePublicAnchor}
           theme={theme}
           publicRoleMode={audienceMode}
           onChangePublicRoleMode={handleChangePublicRoleMode}
+          onSelectPublicSection={handleSelectPublicSection}
           onSelectTheme={handleSetTheme}
           onToggleTheme={handleToggleTheme}
           onSelectTab={handleSelectTab}
@@ -344,6 +514,7 @@ export default function App() {
       ) : !session ? (
         <PublicLanding
           db={db}
+          session={session}
           viewerKey={viewerKey}
           activePage={publicPage}
           audienceMode={audienceMode}
@@ -353,6 +524,7 @@ export default function App() {
           onOpenLogin={() => setLoginOpen(true)}
           onReadBook={(book) => setReadingBookId(book.id)}
           onToggleFavorite={handleToggleFavorite}
+          onSubmitCreation={handleSubmitCreation}
         />
       ) : session.role === 'anggota' ? (
         <MemberPortal
@@ -361,6 +533,9 @@ export default function App() {
           activePage={memberPage}
           onReadBook={(book) => setReadingBookId(book.id)}
           onToggleFavorite={handleToggleFavorite}
+          onSubmitCreation={handleSubmitCreation}
+          onModerateCreation={handleModerateCreation}
+          onUpdateMemberProfile={handleUpdateMemberProfile}
         />
       ) : (
         <AdminPortal
@@ -369,6 +544,7 @@ export default function App() {
           activePage={adminPage}
           onUpdateDb={handleUpdateDb}
           onResetDb={handleResetDb}
+          onModerateCreation={handleModerateCreation}
         />
       )}
 
@@ -377,10 +553,12 @@ export default function App() {
         db={db}
         session={session}
         progress={readingProgress}
+        localPassport={localPassport}
         onClose={() => setReadingBookId(null)}
         onSwitchBook={(book) => setReadingBookId(book.id)}
         onOpenLogin={() => setLoginOpen(true)}
         onQuickClaimStamp={handleQuickClaimStamp}
+        onClaimRealAction={handleClaimRealAction}
         onRecordReading={handleRecordReading}
       />
 
@@ -390,6 +568,8 @@ export default function App() {
         onClose={() => setLoginOpen(false)}
         onSuccess={handleLoginSuccess}
       />
+
+      <OfflineIndicator />
     </div>
   );
 }

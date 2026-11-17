@@ -12,6 +12,7 @@ import {
   Palette,
   Plus,
   RotateCcw,
+  ShieldCheck,
   Trash2,
   Upload,
   UserPlus,
@@ -51,6 +52,7 @@ import { BookCollectionManager } from './BookCollectionManager';
 import { ResilientImage } from './ResilientImage';
 import { Card3DPassport } from './Card3DPassport';
 import { ConfirmDialog } from './ConfirmDialog';
+import { DigitalCertificateModal } from './DigitalCertificateModal';
 
 interface AdminPortalProps {
   db: AlmahyraDatabase;
@@ -58,6 +60,11 @@ interface AdminPortalProps {
   activePage: 'data' | 'reports' | 'appearance';
   onUpdateDb: (nextDb: AlmahyraDatabase) => Promise<void>;
   onResetDb: () => Promise<void>;
+  onModerateCreation?: (
+    creationId: string,
+    action: 'approve' | 'reject' | 'parent-approve',
+    catatan?: string,
+  ) => Promise<{ ok: boolean; message: string }>;
 }
 
 export function AdminPortal({
@@ -66,8 +73,11 @@ export function AdminPortal({
   activePage,
   onUpdateDb,
   onResetDb,
+  onModerateCreation,
 }: AdminPortalProps) {
-  const [dataTab, setDataTab] = useState<'members' | 'books' | 'loans' | 'passport'>('members');
+  const [dataTab, setDataTab] = useState<'members' | 'books' | 'loans' | 'passport' | 'creations'>('members');
+  const [certMember, setCertMember] = useState<Member | null>(null);
+  const [modNotes, setModNotes] = useState<Record<string, string>>({});
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
   // Member form & preview
@@ -598,6 +608,10 @@ export function AdminPortal({
               { id: 'books', label: 'Katalog Buku' },
               { id: 'loans', label: 'Peminjaman' },
               { id: 'passport', label: 'Verifikasi E-Paspor' },
+              {
+                id: 'creations',
+                label: `Moderasi Karya (${(db.creations ?? []).filter((c) => c.moderationStatus === 'pending').length})`,
+              },
             ].map((t) => (
               <button
                 key={t.id}
@@ -714,6 +728,13 @@ export function AdminPortal({
                             className="rounded-lg border border-[#DCE4DF] px-2.5 py-1 text-xs font-semibold text-[#111C17] hover:bg-[#F2F6F4]"
                           >
                             E-Kartu 3D
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCertMember(m)}
+                            className="rounded-lg border border-[#FFC51B] bg-[#FFF8DF] px-2.5 py-1 text-xs font-semibold text-[#10281B] hover:bg-[#FFF2D6]"
+                          >
+                            Sertifikat
                           </button>
                           <button
                             type="button"
@@ -938,6 +959,117 @@ export function AdminPortal({
                   ))}
                 </div>
               </div>
+            </div>
+          )}
+
+          {dataTab === 'creations' && (
+            <div className="rounded-2xl border border-[#E2E8E5] bg-white p-6 space-y-5">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="font-display text-lg font-bold text-[#111C17] flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-[#087C3B]" aria-hidden="true" />
+                    Moderasi Galeri Karya Anak ({(db.creations ?? []).length} Total Karya)
+                  </h2>
+                  <p className="text-xs text-[#4A5D54]">
+                    Karya hanya tampil di Galeri Publik setelah disetujui moderator &amp; berstatus Layak Terbit.
+                  </p>
+                </div>
+              </div>
+
+              {(db.creations ?? []).length === 0 ? (
+                <p className="text-sm text-[#4A5D54]">Belum ada kiriman karya.</p>
+              ) : (
+                <div className="space-y-4">
+                  {(db.creations ?? []).map((cr) => (
+                    <div
+                      key={cr.id}
+                      className="rounded-2xl border border-[#E7EEEA] bg-[#F8FAF9] p-4 space-y-3"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className="rounded-md bg-white border border-[#DCE4DF] px-2 py-0.5 font-bold text-[#111C17]">
+                              {cr.kategori}
+                            </span>
+                            <span
+                              className={`rounded-md px-2 py-0.5 font-bold ${
+                                cr.moderationStatus === 'approved'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : cr.moderationStatus === 'rejected'
+                                    ? 'bg-red-100 text-red-800'
+                                    : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {cr.moderationStatus.toUpperCase()}
+                            </span>
+                            <span className="text-[#4A5D54]">{cr.createdAt}</span>
+                          </div>
+                          <h3 className="mt-1.5 font-display text-base font-bold text-[#111C17]">
+                            {cr.judul}
+                          </h3>
+                          <p className="text-xs text-[#4A5D54]">
+                            Penulis Samaran: <strong>{cr.namaSamaran}</strong> · {cr.jenjangUsia}
+                            {cr.memberNomorInduk ? ` · ID: ${cr.memberNomorInduk}` : ''}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (onModerateCreation) {
+                                const res = await onModerateCreation(
+                                  cr.id,
+                                  'approve',
+                                  modNotes[cr.id],
+                                );
+                                notify(res.ok ? 'ok' : 'err', res.message);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1 rounded-lg bg-[#087C3B] px-3 py-1.5 text-xs font-bold text-white hover:opacity-95"
+                          >
+                            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                            Setujui Terbit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (onModerateCreation) {
+                                const res = await onModerateCreation(
+                                  cr.id,
+                                  'reject',
+                                  modNotes[cr.id] || 'Mohon perbaiki atau lengkapi karya.',
+                                );
+                                notify(res.ok ? 'ok' : 'err', res.message);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-50"
+                          >
+                            <X className="h-3.5 w-3.5" aria-hidden="true" />
+                            Tolak / Revisi
+                          </button>
+                        </div>
+                      </div>
+
+                      <p className="rounded-xl border border-[#DCE4DF] bg-white p-3 text-xs leading-relaxed text-[#111C17]">
+                        {cr.konten}
+                      </p>
+
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <input
+                          type="text"
+                          value={modNotes[cr.id] ?? cr.catatanModerator ?? ''}
+                          onChange={(e) =>
+                            setModNotes((prev) => ({ ...prev, [cr.id]: e.target.value }))
+                          }
+                          placeholder="Catatan moderator (opsional)..."
+                          className="w-full rounded-lg border border-[#DCE4DF] bg-white px-3 py-1.5 text-xs text-[#111C17]"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1738,6 +1870,23 @@ export function AdminPortal({
           if (act) await act();
         }}
       />
+
+      {certMember && (
+        <DigitalCertificateModal
+          open={Boolean(certMember)}
+          recipientName={certMember.nama}
+          memberCode={certMember.nomorInduk}
+          points={certMember.poin}
+          stampsCount={
+            db.passportLogs.filter(
+              (l) => l.nomorInduk.toUpperCase() === certMember.nomorInduk.toUpperCase(),
+            ).length
+          }
+          badges={certMember.lencana}
+          config={db.config}
+          onClose={() => setCertMember(null)}
+        />
+      )}
     </main>
   );
 }

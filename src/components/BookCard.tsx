@@ -54,17 +54,18 @@ export function BookCard({
     window.speechSynthesis.speak(utter);
   };
 
-  const hasCustomUploadCover = Boolean(book.coverUrl?.startsWith('data:image/'));
+  const hasCoverImage = Boolean(book.coverUrl?.trim());
 
   return (
     <article className="book-3d-card flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-4 transition-colors hover:border-[#BFD0C7]">
       <div>
         <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-[#EEF3F0] bg-[#F2F6F4]">
-          {hasCustomUploadCover && book.coverUrl ? (
+          {hasCoverImage && book.coverUrl ? (
             <ResilientImage
               src={book.coverUrl}
               alt={`Sampul ${book.judul}`}
-              className="h-full w-full object-cover"
+              loading="eager"
+              className="h-full w-full object-cover object-[50%_28%]"
               renderFallback={() => <CustomBookCoverSvg book={book} />}
             />
           ) : (

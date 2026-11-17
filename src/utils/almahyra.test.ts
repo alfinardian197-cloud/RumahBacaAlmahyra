@@ -9,37 +9,45 @@ import {
   buildWhatsAppShareHref,
   calculateLevelInfo,
   claimBookStampInLocalPassport,
+  claimRealActionMissionInLocalPassport,
+  clampValidatedReadingPoints,
   computeBookShelves,
   computeCompanionDashboard,
   computeJourneyStepStatuses,
   computeLibraryStats,
   computeTopReadersLeaderboard,
+  computeZoneAdventureStats,
+  CREATION_CATEGORIES,
   DEFAULT_CATEGORIES,
   DEFAULT_READER_LEVELS,
   evaluateMiniQuiz,
   extractSpreadsheetId,
+  filterApprovedCreations,
   filterBooks,
   filterBooksAdvanced,
   generateBedtimeStoryAndPrompts,
   generateDeterministicQrMatrix,
   getBookQuizQuestions,
   getBookReadablePages,
+  getBookRealActionMission,
   getDefaultLocalPassportState,
   hydrateDatabaseWithDefaults,
   MINI_QUIZ_TEBAK_CERITA,
   normalizeAssetUrl,
   parseBulkBooksCsv,
+  REAL_ACTION_BADGE_NAME,
   recordBookReadingAction,
   recordQuizAttemptInLocalPassport,
   recordsToSheetRows,
   resolveThemeMode,
   SAHABAT_GALLERY_PHOTOS,
+  sanitizeDatabaseForClient,
   sheetRowsToRecords,
   toggleThemeMode,
 } from './almahyra';
 import { getStorySoundtrackProfile } from './storyAudioEngine';
 import { DEFAULT_DB } from '../data/defaultDb';
-import type { AdminAccount, Book, Member } from '../types/almahyra';
+import type { AdminAccount, Book, CreationWork, Member } from '../types/almahyra';
 
 test('extractSpreadsheetId parses raw IDs and full Google Sheets URLs', () => {
   const rawId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms';
@@ -362,7 +370,7 @@ test('getStorySoundtrackProfile matches instruments to story categories and hydr
   );
   assert.equal(migrated.members[0].nomorInduk, 'ALMA-001');
   assert.equal(migrated.config.appName, 'Rumah Baca Almahyra');
-  assert.equal(migrated.config.heroTitle, 'Rumah Baca Almahyra');
+  assert.equal(migrated.config.heroTitle, 'Selamat Datang di Dunia Literasi Almahyra!');
 });
 
 test('getBookReadablePages splits overly long chapters across multiple pages cleanly', () => {
@@ -567,3 +575,142 @@ test('6 featured pilihanAlmahyra books, TK reader level, local digital passport 
   assert.ok(afterQuiz.badges.includes('Bintang Kuis Tebak Cerita'));
   assert.ok(afterQuiz.badges.includes('Juara 100% Tebak Cerita'));
 });
+
+test('Misi Petualang Nyata tailors themes per book, adds +2 Bintang Ekstra, and unlocks Pahlawan Alam Grontol', () => {
+  const komposBook = DEFAULT_DB.books.find((b) => b.judul.includes('Kapten Pilah'))!;
+  const sainsBook = DEFAULT_DB.books.find((b) => b.judul.includes('Sains Dapur'))!;
+  const dongengBook = DEFAULT_DB.books.find((b) => b.judul.includes('Lentera Senja'))!;
+
+  const mKompos = getBookRealActionMission(komposBook);
+  assert.equal(mKompos.theme, 'kompos-lingkungan');
+  assert.equal(mKompos.checklistSteps?.length, 3);
+
+  const mSains = getBookRealActionMission(sainsBook);
+  assert.equal(mSains.theme, 'sains-dapur-kebun');
+  assert.ok(mSains.observationPrompt);
+
+  const mDongeng = getBookRealActionMission(dongengBook);
+  assert.equal(mDongeng.theme, 'alam-dongeng');
+  assert.equal(mDongeng.creativeOptions?.length, 2);
+
+  const startState = getDefaultLocalPassportState();
+  const res1 = claimRealActionMissionInLocalPassport(
+    startState,
+    komposBook,
+    'Memilah sampah daun & plastik',
+  );
+  assert.equal(res1.alreadyClaimed, false);
+  assert.equal(res1.nextState.extraStars, 2);
+  assert.equal(res1.nextState.points, 2);
+  assert.equal(res1.nextState.realActionMissions.length, 1);
+  assert.ok(res1.nextState.badges.includes(REAL_ACTION_BADGE_NAME));
+
+  // Duplicate claim on the same book does not double-count extraStars
+  const resDup = claimRealActionMissionInLocalPassport(res1.nextState, komposBook, 'Ulang');
+  assert.equal(resDup.alreadyClaimed, true);
+  assert.equal(resDup.nextState.extraStars, 2);
+  assert.equal(resDup.nextState.points, 2);
+});
+
+test('All curated and BUDI book covers point to existing local assets and legacy generic covers migrate cleanly', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  const curatedCovers = new Set<string>();
+  for (const book of DEFAULT_DB.books) {
+    assert.ok(book.coverUrl, `Missing coverUrl on ${book.kodeBuku}`);
+    assert.ok(book.coverUrl.startsWith('/images/'), `Expected local /images path on ${book.kodeBuku}, got ${book.coverUrl}`);
+    const diskPath = path.join(process.cwd(), 'public', book.coverUrl);
+    assert.equal(fs.existsSync(diskPath), true, `Missing cover file on disk: ${diskPath}`);
+    if (book.coverUrl.startsWith('/images/covers/')) {
+      assert.equal(curatedCovers.has(book.coverUrl), false, `Duplicate curated cover ${book.coverUrl}`);
+      curatedCovers.add(book.coverUrl);
+    }
+  }
+  assert.equal(curatedCovers.size, 12);
+
+  const upgraded = hydrateDatabaseWithDefaults(
+    {
+      books: [
+        {
+          ...DEFAULT_DB.books[0],
+          coverUrl: '/images/book_cover_folktale_1794800503588.jpg',
+        },
+        {
+          ...DEFAULT_DB.books[4],
+          coverUrl: '/images/illustration_eco_garden_1794805037060.jpg',
+        },
+      ],
+    },
+    DEFAULT_DB,
+  );
+  assert.equal(upgraded.books.find((b) => b.kodeBuku === 'IMG-001')?.coverUrl, '/images/covers/bk-01-lentera-gunung.jpg');
+  assert.equal(upgraded.books.find((b) => b.kodeBuku === 'KMK-005')?.coverUrl, '/images/covers/bk-05-kapten-pilah.jpg');
+});
+
+test('Creation moderation, privacy sanitization, 6 adventure zones, and clamped reading points enforce safety rules', () => {
+  assert.equal(CREATION_CATEGORIES.length, 6);
+
+  const sampleCreations: CreationWork[] = [
+    ...(DEFAULT_DB.creations ?? []),
+    {
+      id: 'cr-pending',
+      judul: 'Puisi Belum Disetujui',
+      kategori: 'Puisi',
+      namaSamaran: 'Nadia P.',
+      jenjangUsia: 'SD',
+      memberNomorInduk: 'ALMA-001',
+      ringkasan: 'Ringkasan',
+      konten: 'Isi karya menunggu moderasi.',
+      createdAt: '2026-11-16',
+      parentApproved: false,
+      moderationStatus: 'pending',
+    },
+    {
+      id: 'cr-unconsented',
+      judul: 'Gambar Belum Izin Wali',
+      kategori: 'Gambar',
+      namaSamaran: 'Bagus P.',
+      jenjangUsia: 'SD',
+      memberNomorInduk: 'ALMA-002',
+      ringkasan: 'Ringkasan',
+      konten: 'Sudah dicek admin tapi belum izin wali.',
+      createdAt: '2026-11-16',
+      parentApproved: false,
+      moderationStatus: 'approved',
+    },
+  ];
+
+  const publicVisible = filterApprovedCreations(sampleCreations, 'Semua');
+  assert.equal(publicVisible.some((c) => c.id === 'cr-pending'), false);
+  assert.equal(publicVisible.some((c) => c.id === 'cr-unconsented'), false);
+  assert.equal(publicVisible.length, DEFAULT_DB.creations?.length ?? 0);
+
+  const dbWithPending = { ...DEFAULT_DB, creations: sampleCreations };
+  const guestView = sanitizeDatabaseForClient(dbWithPending, null);
+  assert.equal(guestView.admins.length, 0);
+  assert.ok(guestView.members.every((m) => m.password === ''));
+  assert.ok(guestView.members.every((m) => m.orangTua === 'Wali Anggota Terdaftar'));
+  assert.equal(guestView.creations?.some((c) => c.id === 'cr-pending'), false);
+
+  const memberView = sanitizeDatabaseForClient(dbWithPending, {
+    role: 'anggota',
+    nomorInduk: 'ALMA-001',
+    memberId: 'mem-1',
+  });
+  assert.equal(memberView.admins.length, 0);
+  assert.equal(memberView.creations?.some((c) => c.id === 'cr-pending'), true);
+  assert.equal(memberView.creations?.some((c) => c.id === 'cr-unconsented'), false);
+  assert.equal(memberView.members.find((m) => m.nomorInduk === 'ALMA-001')?.orangTua, 'Ibu Siti Aminah');
+  assert.equal(memberView.members.find((m) => m.nomorInduk === 'ALMA-002')?.orangTua, 'Wali Anggota Terdaftar');
+
+  const zones = computeZoneAdventureStats(DEFAULT_DB.books, DEFAULT_DB.missions, DEFAULT_DB.passportLogs);
+  assert.equal(zones.length, 6);
+  assert.ok(zones.every((z) => z.progressPercent >= 25 && z.progressPercent <= 100));
+
+  assert.equal(clampValidatedReadingPoints(-5), 0);
+  assert.equal(clampValidatedReadingPoints(5), 5);
+  assert.equal(clampValidatedReadingPoints(999), 10);
+});
+
+

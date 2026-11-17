@@ -759,24 +759,32 @@ export function BookCollectionManager({
             />
           </div>
 
-          {/* Cover Upload & PDF Material Upload */}
-          <div className="grid grid-cols-2 gap-2.5 rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-3">
+          {/* Cover Upload / URL & PDF Material Upload */}
+          <div className="grid grid-cols-1 gap-2.5 rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <span className="block text-[11px] font-semibold text-[#111C17]">
-                Sampul Buku
-              </span>
+              <label htmlFor="bk-cover-url" className="block text-[11px] font-semibold text-[#111C17]">
+                Sampul Buku (Foto Pexels / Pixabay / Unggah)
+              </label>
               <div className="flex items-center gap-2">
                 <ResilientImage
                   src={coverUrl}
                   fallbackSrc={DEFAULT_BOOK_COVER_URL}
                   alt="Pratinjau sampul"
-                  className="h-10 w-10 rounded-lg object-cover border border-[#DCE4DF]"
+                  className="h-10 w-10 shrink-0 rounded-lg object-cover border border-[#DCE4DF]"
                 />
-                <label className="cursor-pointer rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#111C17] hover:bg-[#F2F6F4]">
+                <label className="cursor-pointer rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-1.5 text-[11px] font-semibold text-[#111C17] hover:bg-[#F2F6F4] whitespace-nowrap">
                   Unggah Sampul
                   <input type="file" accept="image/*" onChange={handleCoverUpload} className="sr-only" />
                 </label>
               </div>
+              <input
+                id="bk-cover-url"
+                type="text"
+                value={coverUrl}
+                onChange={(e) => setCoverUrl(e.target.value)}
+                placeholder="https://images.pexels.com/... atau /images/covers/..."
+                className="w-full rounded-lg border border-[#DCE4DF] bg-white px-2.5 py-1.5 text-[11px] text-[#111C17]"
+              />
             </div>
 
             <div className="space-y-1.5">

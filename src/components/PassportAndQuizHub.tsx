@@ -216,11 +216,17 @@ export function PassportAndQuizHub({
                   {levelInfo.currentLevel}
                 </h2>
               </div>
-              <div className="flex items-center gap-4 text-right font-mono-tabular">
+              <div className="flex flex-wrap items-center gap-4 text-right font-mono-tabular">
                 <div>
                   <p className="text-[11px] text-[#4A5D54]">Poin Terkumpul</p>
                   <p className="text-lg font-bold" style={{ color: 'var(--brand-primary-ink)' }}>
                     {passport.points} pts
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-[#4A5D54]">Bintang Ekstra</p>
+                  <p className="text-lg font-bold text-amber-600 dark:text-amber-300">
+                    ★ {passport.extraStars}
                   </p>
                 </div>
                 <div>
@@ -337,6 +343,38 @@ export function PassportAndQuizHub({
               </div>
             )}
           </div>
+
+          {passport.realActionMissions.length > 0 && (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-6 space-y-3 dark:border-emerald-700/40 dark:bg-emerald-950/20">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="font-display text-lg font-bold text-[#111C17] flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+                  Misi Petualang Nyata Selesai ({passport.realActionMissions.length})
+                </h2>
+                <span className="font-mono-tabular text-xs font-bold text-amber-700 dark:text-amber-300">
+                  +{passport.extraStars} Bintang Ekstra
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {passport.realActionMissions.map((rec) => (
+                  <div
+                    key={rec.id}
+                    className="rounded-xl border border-emerald-200 bg-white p-3.5 space-y-1 dark:border-emerald-700/40 dark:bg-[#0E2018]"
+                  >
+                    <p className="font-display text-sm font-bold text-[#111C17] line-clamp-1">
+                      {rec.bookTitle}
+                    </p>
+                    {rec.note && (
+                      <p className="text-xs text-[#4A5D54] line-clamp-2">{rec.note}</p>
+                    )}
+                    <p className="font-mono-tabular text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                      +{rec.extraStars} Bintang Ekstra · {rec.completedAt}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

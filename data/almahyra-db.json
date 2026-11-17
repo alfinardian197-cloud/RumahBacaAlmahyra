@@ -6,11 +6,11 @@
     "location": "Kediaman Ananda Almahyra, Dusun Grontol, Desa Tlogosari, Kabupaten Pasuruan",
     "coordinator": "Mohammad Alfin Ardiansyah, S.Pd.",
     "logoUrl": "/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png",
-    "primaryColor": "#047857",
-    "secondaryColor": "#059669",
-    "accentColor": "#D97706",
-    "heroTitle": "Rumah Baca Almahyra",
-    "heroSubtitle": "Ruang belajar komunitas yang hangat dan inklusif di Dusun Grontol. Anak-anak membaca, bercerita, bereksperimen sains sederhana, merawat bumi, dan mengumpulkan capaian E-Paspor Baca.",
+    "primaryColor": "#087C3B",
+    "secondaryColor": "#075A32",
+    "accentColor": "#FFC51B",
+    "heroTitle": "Selamat Datang di Dunia Literasi Almahyra!",
+    "heroSubtitle": "Tempat anak-anak membaca, berkarya, menjelajahi pengetahuan, dan meraih prestasi melalui petualangan yang menyenangkan bersama keluarga di Dusun Grontol.",
     "heroCtaLabel": "Jelajahi Katalog & Jadwal",
     "heroImageUrl": "/images/hero_reading_terrace_1794800502182.jpg",
     "announcementText": "Sabtu Dongeng & Soft Opening E-Paspor Baca berlangsung setiap Sabtu pukul 15.30–17.00 WIB di Teras Almahyra.",
@@ -30,26 +30,6 @@
     "lastSyncedAt": "",
     "autoSyncEnabled": false
   },
-  "categories": [
-    "Cerita Nusantara",
-    "Dongeng Dunia",
-    "Fabel dan Cerita Binatang",
-    "Komik Edukasi",
-    "Sains dan Pengetahuan",
-    "Sejarah dan Pahlawan",
-    "Lingkungan dan Alam",
-    "Kisah Inspiratif",
-    "Budaya Indonesia",
-    "Ensiklopedia Anak"
-  ],
-  "readerLevels": [
-    "PAUD",
-    "TK",
-    "SD Awal",
-    "SD Lanjut",
-    "SMP",
-    "Semua Usia"
-  ],
   "admins": [
     {
       "id": "adm-super",
@@ -167,7 +147,7 @@
       "stok": 3,
       "lokasiRak": "Rak Rendah A1",
       "deskripsi": "Kisah hangat anak-anak desa lereng gunung yang menyalakan lentera baca di teras rumah setiap sore.",
-      "coverUrl": "/images/book_cover_folktale_1794800503588.jpg",
+      "coverUrl": "/images/covers/bk-01-lentera-gunung.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 64,
@@ -228,7 +208,7 @@
       "stok": 2,
       "lokasiRak": "Rak Rendah A2",
       "deskripsi": "Fabel ceria tentang kecerdikan Kancil, kerja sama Kura-Kura, dan pentingnya menjaga kejujuran di rimba hijau.",
-      "coverUrl": "/images/zone_adventure_craft_1794800503519.jpg",
+      "coverUrl": "/images/covers/bk-02-kancil-hutan.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 82,
@@ -285,7 +265,7 @@
       "stok": 4,
       "lokasiRak": "Rak Tengah B1",
       "deskripsi": "Panduan eksperimen sains aman berbahan dapur dan halaman rumah: kapilaritas sawi pelangi, gunung cuka-soda, hingga kompas air.",
-      "coverUrl": "/images/illustration_science_explore_1794805037083.jpg",
+      "coverUrl": "/images/covers/bk-03-sains-dapur.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 71,
@@ -342,7 +322,7 @@
       "stok": 3,
       "lokasiRak": "Rak Rendah A4",
       "deskripsi": "Dongeng dunia tentang seorang anak tukang lipat kertas yang menerbangkan pesan persahabatan melintasi lembah pegunungan.",
-      "coverUrl": "/images/zone_adventure_craft_1794800503519.jpg",
+      "coverUrl": "/images/covers/bk-04-bintang-kertas.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 48,
@@ -399,7 +379,7 @@
       "stok": 4,
       "lokasiRak": "Rak Komik C2",
       "deskripsi": "Komik penuh dialog seru tentang cara membedakan sampah organik, anorganik bersih, dan minyak jelantah di rumah.",
-      "coverUrl": "/images/illustration_eco_garden_1794805037060.jpg",
+      "coverUrl": "/images/covers/bk-05-kapten-pilah.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 95,
@@ -456,7 +436,7 @@
       "stok": 3,
       "lokasiRak": "Rak Hijau D1",
       "deskripsi": "Panduan praktis berkebun keluarga: mengenal kecambah, menyiram secukupnya di pagi hari, dan merawat kebun sayur polibag.",
-      "coverUrl": "/images/illustration_eco_garden_1794805037060.jpg",
+      "coverUrl": "/images/covers/bk-06-pohon-harapan.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 56,
@@ -513,7 +493,7 @@
       "stok": 2,
       "lokasiRak": "Rak Sejarah E2",
       "deskripsi": "Kisah keteladanan Ki Hadjar Dewantara, R.A. Kartini, dan pejuang literasi Nusantara yang memperjuangkan sekolah dan rumah baca rakyat.",
-      "coverUrl": "/images/illustration_story_stage_1794805036949.jpg",
+      "coverUrl": "/images/covers/bk-07-pelita-sejarah.jpg",
       "aktif": true,
       "pilihanAlmahyra": false,
       "dibacaCount": 52,
@@ -570,7 +550,7 @@
       "stok": 3,
       "lokasiRak": "Rak Depan E1",
       "deskripsi": "Kisah nyata inspiratif tentang kakak kelas yang merintis pojok baca halaman rumah bersama relawan muda desa.",
-      "coverUrl": "/images/illustration_telaga_community_1794805036320.jpg",
+      "coverUrl": "/images/covers/bk-08-pelita-baca.jpg",
       "aktif": true,
       "pilihanAlmahyra": true,
       "dibacaCount": 68,
@@ -627,7 +607,7 @@
       "stok": 3,
       "lokasiRak": "Rak Tengah B3",
       "deskripsi": "Mengenal kekayaan motif batik, harmoni alat musik bambu angklung, tari tradisional, dan jajanan pasar Nusantara.",
-      "coverUrl": "/images/book_cover_folktale_1794800503588.jpg",
+      "coverUrl": "/images/covers/bk-09-batik-nusantara.jpg",
       "aktif": true,
       "pilihanAlmahyra": false,
       "dibacaCount": 59,
@@ -684,7 +664,7 @@
       "stok": 3,
       "lokasiRak": "Rak Tengah C1",
       "deskripsi": "Fakta menakjubkan seputar detak jantung, cara mata melihat pelangi, hingga fase bulan purnama dan rasi bintang.",
-      "coverUrl": "/images/illustration_science_explore_1794805037083.jpg",
+      "coverUrl": "/images/covers/bk-10-langit-malam.jpg",
       "aktif": true,
       "pilihanAlmahyra": false,
       "dibacaCount": 61,
@@ -741,7 +721,7 @@
       "stok": 3,
       "lokasiRak": "Rak Komik C3",
       "deskripsi": "Komik bergambar tentang perjalanan Tetes Air bernama Tiko dari awan mendung menuju akar pohon dan kembali naik ke langit.",
-      "coverUrl": "/images/illustration_telaga_community_1794805036320.jpg",
+      "coverUrl": "/images/covers/bk-11-air-hujan.jpg",
       "aktif": true,
       "pilihanAlmahyra": false,
       "dibacaCount": 77,
@@ -798,7 +778,7 @@
       "stok": 2,
       "lokasiRak": "Rak Rendah A3",
       "deskripsi": "Kisah klasik Nusantara dari Jawa Tengah yang mengajarkan sikap rendah hati, welas asih, dan menghormati sesama.",
-      "coverUrl": "/images/book_cover_folktale_1794800503588.jpg",
+      "coverUrl": "/images/covers/bk-12-danau-kabut.jpg",
       "aktif": true,
       "pilihanAlmahyra": false,
       "dibacaCount": 66,
@@ -1701,7 +1681,159 @@
       "kategoriBuku": "Cerita Nusantara"
     }
   ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "hari": "Senin–Kamis",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Main & Baca Sore",
+      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
+      "zona": "Semua Zona",
+      "kuota": 25,
+      "pesertaTerdaftar": 18
+    },
+    {
+      "id": "sch-2",
+      "hari": "Jumat",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Jumat Tukar Sampah",
+      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
+      "zona": "Zona Sahabat Bumi",
+      "kuota": 20,
+      "pesertaTerdaftar": 14
+    },
+    {
+      "id": "sch-3",
+      "hari": "Sabtu",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Sabtu Dongeng",
+      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
+      "zona": "Zona Panggung Cerita",
+      "kuota": 30,
+      "pesertaTerdaftar": 26
+    },
+    {
+      "id": "sch-4",
+      "hari": "Minggu",
+      "waktu": "08.00–10.00 WIB",
+      "program": "Minggu Kreasi",
+      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
+      "zona": "Zona Kreativitas & Eksplorasi",
+      "kuota": 25,
+      "pesertaTerdaftar": 21
+    }
+  ],
+  "missions": [
+    {
+      "id": "mis-1",
+      "judul": "Pemburu Cerita",
+      "zona": "Zona Imajinasi",
+      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
+      "verifikasi": "Tanya jawab pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-2",
+      "judul": "Pencerita Cilik",
+      "zona": "Zona Panggung Cerita",
+      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
+      "verifikasi": "Cerita lisan 1–2 menit",
+      "poin": 5
+    },
+    {
+      "id": "mis-3",
+      "judul": "Seniman Buku",
+      "zona": "Zona Kreativitas",
+      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
+      "verifikasi": "Karya ditunjukkan kepada pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-4",
+      "judul": "Ilmuwan Cilik",
+      "zona": "Zona Pengetahuan",
+      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
+      "verifikasi": "Menjelaskan hasil pengamatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-5",
+      "judul": "Sahabat Bumi",
+      "zona": "Zona Sahabat Bumi",
+      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
+      "verifikasi": "Demonstrasi kegiatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-6",
+      "judul": "Teman Penolong",
+      "zona": "Semua Zona",
+      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
+      "verifikasi": "Konfirmasi fasilitator",
+      "poin": 3
+    }
+  ],
+  "categories": [
+    "Cerita Nusantara",
+    "Dongeng Dunia",
+    "Fabel dan Cerita Binatang",
+    "Komik Edukasi",
+    "Sains dan Pengetahuan",
+    "Sejarah dan Pahlawan",
+    "Lingkungan dan Alam",
+    "Kisah Inspiratif",
+    "Budaya Indonesia",
+    "Ensiklopedia Anak"
+  ],
+  "readerLevels": [
+    "PAUD",
+    "TK",
+    "SD Awal",
+    "SD Lanjut",
+    "SMP",
+    "Semua Usia"
+  ],
   "readingProgress": [
+    {
+      "id": "rp-guest-bk-1",
+      "viewerKey": "guest",
+      "bookId": "bk-1",
+      "lastPage": 3,
+      "totalPages": 4,
+      "isFavorite": false,
+      "completedCount": 0,
+      "lastReadAt": "2026-11-17T05:33:35.282Z"
+    },
+    {
+      "id": "rp-guest-bk-3",
+      "viewerKey": "guest",
+      "bookId": "bk-3",
+      "lastPage": 2,
+      "totalPages": 3,
+      "isFavorite": false,
+      "completedCount": 0,
+      "lastReadAt": "2026-11-17T05:33:34.142Z"
+    },
+    {
+      "id": "rp-guest-bk-5",
+      "viewerKey": "guest",
+      "bookId": "bk-5",
+      "lastPage": 2,
+      "totalPages": 3,
+      "isFavorite": false,
+      "completedCount": 0,
+      "lastReadAt": "2026-11-17T05:33:33.096Z"
+    },
+    {
+      "id": "rp-guest-bk-4",
+      "viewerKey": "guest",
+      "bookId": "bk-4",
+      "lastPage": 0,
+      "totalPages": 3,
+      "isFavorite": true,
+      "completedCount": 0,
+      "lastReadAt": "2026-11-17T05:27:37.737Z"
+    },
     {
       "id": "rp-ALMA-001-bk-1",
       "viewerKey": "ALMA-001",
@@ -1803,96 +1935,121 @@
       "lencanaHadiah": "Sahabat Bumi"
     }
   ],
-  "schedules": [
+  "creations": [
     {
-      "id": "sch-1",
-      "hari": "Senin–Kamis",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Main & Baca Sore",
-      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
-      "zona": "Semua Zona",
-      "kuota": 25,
-      "pesertaTerdaftar": 18
+      "id": "cr-1",
+      "judul": "Rumah Pohon Lentera Grontol",
+      "kategori": "Gambar",
+      "namaSamaran": "Nadia P.",
+      "jenjangUsia": "SD",
+      "memberNomorInduk": "ALMA-001",
+      "ringkasan": "Lukisan rumah baca hangat dengan jendela terbuka dan pohon rindang di halaman dusun.",
+      "konten": "Aku menggambar rumah baca Almahyra waktu sore hari saat teman-teman membawa tas buku warna kuning dan hijau.",
+      "imageUrl": "/images/covers/bk-01-lentera-gunung.jpg",
+      "createdAt": "2026-11-12",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Disetujui wali & fasilitator Sabtu Dongeng."
     },
     {
-      "id": "sch-2",
-      "hari": "Jumat",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Jumat Tukar Sampah",
-      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
-      "zona": "Zona Sahabat Bumi",
-      "kuota": 20,
-      "pesertaTerdaftar": 14
+      "id": "cr-2",
+      "judul": "Kapten Pilah Menyelamatkan Taman",
+      "kategori": "Komik",
+      "namaSamaran": "Bagus P.",
+      "jenjangUsia": "SD",
+      "memberNomorInduk": "ALMA-002",
+      "ringkasan": "Komik 4 panel tentang dua anak desa yang mengubah botol bekas menjadi pot bunga matahari.",
+      "konten": "Panel 1: Halaman berantakan setelah hujan. Panel 2: Bagus & Rina menyiapkan tiga keranjang pilah. Panel 3: Daun kering masuk kotak kompos. Panel 4: Pot botol warna-warni berjejer di pagar Teras Almahyra!",
+      "imageUrl": "/images/covers/bk-05-kapten-pilah.jpg",
+      "createdAt": "2026-11-13",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Karya kreatif Zona Sahabat Bumi."
     },
     {
-      "id": "sch-3",
-      "hari": "Sabtu",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Sabtu Dongeng",
-      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
-      "zona": "Zona Panggung Cerita",
-      "kuota": 30,
-      "pesertaTerdaftar": 26
+      "id": "cr-3",
+      "judul": "Puisi Pagi di Kaki Gunung",
+      "kategori": "Puisi",
+      "namaSamaran": "Rara S.",
+      "jenjangUsia": "SMP",
+      "memberNomorInduk": "ALMA-003",
+      "ringkasan": "Puisi tiga bait tentang semangat membaca sebelum berangkat sekolah di Desa Tlogosari.",
+      "konten": "Embun turun menyapa dedaunan jambu,\nSatu halaman kubuka sebelum dering bel berbunyi,\nDari kata kecil di sudut dusun yang tenang,\nTumbuh sayap mimpi menembus langit biru.",
+      "imageUrl": "/images/covers/bk-06-pohon-harapan.jpg",
+      "createdAt": "2026-11-14",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Karya pilihan Pekan Literasi."
     },
     {
-      "id": "sch-4",
-      "hari": "Minggu",
-      "waktu": "08.00–10.00 WIB",
-      "program": "Minggu Kreasi",
-      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
-      "zona": "Zona Kreativitas & Eksplorasi",
-      "kuota": 25,
-      "pesertaTerdaftar": 21
+      "id": "cr-4",
+      "judul": "Ulasan Buku: Ensiklopedia Sains Dapur",
+      "kategori": "Resensi buku",
+      "namaSamaran": "Alya R.",
+      "jenjangUsia": "SD",
+      "memberNomorInduk": "ALMA-005",
+      "ringkasan": "Cerita seru mencoba percobaan sawi pelangi bersama ibu di dapur rumah.",
+      "konten": "Menurutku buku ini seru sekali! Aku paling suka Bab Percobaan Sawi Putih. Setelah direndam air kunyit dan pandan semalaman, ujung daunnya berubah warna tanpa sihir, melainkan lewat pembuluh kapiler.",
+      "imageUrl": "/images/covers/bk-03-sains-dapur.jpg",
+      "createdAt": "2026-11-14",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Disetujui Ibu/Wali & Pendamping."
+    },
+    {
+      "id": "cr-5",
+      "judul": "Burung Kertas Sahabat Lembah",
+      "kategori": "Cerita pendek",
+      "namaSamaran": "Fajar R.",
+      "jenjangUsia": "PAUD",
+      "memberNomorInduk": "ALMA-004",
+      "ringkasan": "Kisah singkat burung origami yang membawa salam semangat membaca untuk adik PAUD.",
+      "konten": "Pagi itu aku melipat kertas kuning bersama kakak pendamping. Kami menuliskan pesan semangat belajar dan menggantungkannya di rak rendah Zona Imajinasi.",
+      "imageUrl": "/images/covers/bk-04-bintang-kertas.jpg",
+      "createdAt": "2026-11-15",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Karya kolaborasi anak & orang tua."
+    },
+    {
+      "id": "cr-6",
+      "judul": "Pembatas Buku Daun Kering Lamina",
+      "kategori": "Kerajinan",
+      "namaSamaran": "Kirana D.",
+      "jenjangUsia": "SD",
+      "ringkasan": "Kerajinan tangan pembatas buku dari daun jambu kering dan pita kuning.",
+      "konten": "Kami mengumpulkan daun kering yang jatuh di taman rumah baca, menjemurnya di dalam buku tebal selama tiga hari, lalu melapisinya untuk pembatas buku cantik.",
+      "imageUrl": "/images/covers/bk-11-air-hujan.jpg",
+      "createdAt": "2026-11-15",
+      "parentApproved": true,
+      "moderationStatus": "approved",
+      "catatanModerator": "Karya Zona Kreativitas Minggu Kreasi."
     }
   ],
-  "missions": [
+  "testimonials": [
     {
-      "id": "mis-1",
-      "judul": "Pemburu Cerita",
-      "zona": "Zona Imajinasi",
-      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
-      "verifikasi": "Tanya jawab pendamping",
-      "poin": 5
+      "id": "tst-1",
+      "nama": "Ibu Siti Aminah",
+      "peran": "Orang Tua Anggota (ALMA-001)",
+      "komunitas": "Warga Dusun Grontol, Desa Tlogosari",
+      "kutipan": "Anak saya jadi rajin membaca sebelum tidur dan tidak malu lagi bercerita di depan teman-temannya berkat Sabtu Dongeng & E-Paspor Baca.",
+      "rating": 5
     },
     {
-      "id": "mis-2",
-      "judul": "Pencerita Cilik",
-      "zona": "Zona Panggung Cerita",
-      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
-      "verifikasi": "Cerita lisan 1–2 menit",
-      "poin": 5
+      "id": "tst-2",
+      "nama": "Bapak Hendra Wijaya",
+      "peran": "Wali Murid & Donatur Buku",
+      "komunitas": "Komunitas Satu Rumah Satu Buku",
+      "kutipan": "Sistem katalog digital dan Misi Petualang Nyata membuat belajar anak terasa seperti bermain, tapi tetap terpantau rapi bersama orang tua.",
+      "rating": 5
     },
     {
-      "id": "mis-3",
-      "judul": "Seniman Buku",
-      "zona": "Zona Kreativitas",
-      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
-      "verifikasi": "Karya ditunjukkan kepada pendamping",
-      "poin": 5
-    },
-    {
-      "id": "mis-4",
-      "judul": "Ilmuwan Cilik",
-      "zona": "Zona Pengetahuan",
-      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
-      "verifikasi": "Menjelaskan hasil pengamatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-5",
-      "judul": "Sahabat Bumi",
-      "zona": "Zona Sahabat Bumi",
-      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
-      "verifikasi": "Demonstrasi kegiatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-6",
-      "judul": "Teman Penolong",
-      "zona": "Semua Zona",
-      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
-      "verifikasi": "Konfirmasi fasilitator",
-      "poin": 3
+      "id": "tst-3",
+      "nama": "Rara Sekar",
+      "peran": "Sahabat Baca Remaja (ALMA-003)",
+      "komunitas": "Relawan Muda Rumah Baca Almahyra",
+      "kutipan": "Menjadi kakak pendamping di Zona Panggung Cerita mengajarkan saya berbagi cerita sambil mengumpulkan poin lencana Duta Literasi.",
+      "rating": 5
     }
   ]
 }

@@ -17,21 +17,34 @@ export const ILLUSTRATION_ECO_GARDEN_COVER_URL =
 export const ILLUSTRATION_STORY_STAGE_COVER_URL =
   '/images/illustration_story_stage_1794805036949.jpg';
 
+export const COVER_LENTERA_GUNUNG_URL = '/images/covers/bk-01-lentera-gunung.jpg';
+export const COVER_KANCIL_HUTAN_URL = '/images/covers/bk-02-kancil-hutan.jpg';
+export const COVER_SAINS_DAPUR_URL = '/images/covers/bk-03-sains-dapur.jpg';
+export const COVER_BINTANG_KERTAS_URL = '/images/covers/bk-04-bintang-kertas.jpg';
+export const COVER_KAPTEN_PILAH_URL = '/images/covers/bk-05-kapten-pilah.jpg';
+export const COVER_POHON_HARAPAN_URL = '/images/covers/bk-06-pohon-harapan.jpg';
+export const COVER_PELITA_SEJARAH_URL = '/images/covers/bk-07-pelita-sejarah.jpg';
+export const COVER_PELITA_BACA_URL = '/images/covers/bk-08-pelita-baca.jpg';
+export const COVER_BATIK_NUSANTARA_URL = '/images/covers/bk-09-batik-nusantara.jpg';
+export const COVER_LANGIT_MALAM_URL = '/images/covers/bk-10-langit-malam.jpg';
+export const COVER_AIR_HUJAN_URL = '/images/covers/bk-11-air-hujan.jpg';
+export const COVER_DANAU_KABUT_URL = '/images/covers/bk-12-danau-kabut.jpg';
+
 export const DEFAULT_DB: AlmahyraDatabase = {
   config: {
     appName: 'Rumah Baca Almahyra',
-    tagline: 'A Living Learning Adventure · Baca, Berkarya, Bertualang, Raih Prestasi!',
+    tagline: 'Baca, Berkarya, Bertualang, Raih Prestasi!',
     slogan: 'Dari Rumah Kecil, Lahir Penjelajah Dunia',
     location: 'Kediaman Ananda Almahyra, Dusun Grontol, Desa Tlogosari, Kabupaten Pasuruan',
     coordinator: 'Mohammad Alfin Ardiansyah, S.Pd.',
     logoUrl: DEFAULT_LOGO_URL,
-    primaryColor: '#047857',
-    secondaryColor: '#059669',
-    accentColor: '#D97706',
-    heroTitle: 'Rumah Baca Almahyra',
+    primaryColor: '#087C3B',
+    secondaryColor: '#075A32',
+    accentColor: '#FFC51B',
+    heroTitle: 'Selamat Datang di Dunia Literasi Almahyra!',
     heroSubtitle:
-      'Ruang belajar komunitas yang hangat dan inklusif di Dusun Grontol. Anak-anak membaca, bercerita, bereksperimen sains sederhana, merawat bumi, dan mengumpulkan capaian E-Paspor Baca.',
-    heroCtaLabel: 'Jelajahi Katalog & Jadwal',
+      'Tempat anak-anak membaca, berkarya, menjelajahi pengetahuan, dan meraih prestasi melalui petualangan yang menyenangkan bersama keluarga di Dusun Grontol.',
+    heroCtaLabel: 'Mulai Petualangan',
     heroImageUrl: DEFAULT_HERO_IMAGE_URL,
     announcementText:
       'Sabtu Dongeng & Soft Opening E-Paspor Baca berlangsung setiap Sabtu pukul 15.30–17.00 WIB di Teras Almahyra.',
@@ -155,12 +168,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Rendah A1',
       deskripsi:
         'Kisah hangat anak-anak desa lereng gunung yang menyalakan lentera baca di teras rumah setiap sore.',
-      coverUrl: DEFAULT_BOOK_COVER_URL,
+      coverUrl: COVER_LENTERA_GUNUNG_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 64,
       tanggalTerbit: '2026-11-12',
-      lisensi: 'Lisensi Terbuka Rumah Baca Almahyra (CC BY-NC 4.0)',
+      lisensi: 'Lisensi Terbuka Rumah Baca Almahyra (CC BY-NC 4.0) · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Lentera di Teras Kayu',
@@ -217,12 +230,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Rendah A2',
       deskripsi:
         'Fabel ceria tentang kecerdikan Kancil, kerja sama Kura-Kura, dan pentingnya menjaga kejujuran di rimba hijau.',
-      coverUrl: DEFAULT_ZONE_IMAGE_URL,
+      coverUrl: COVER_KANCIL_HUTAN_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 82,
       tanggalTerbit: '2026-11-05',
-      lisensi: 'Lisensi Komunitas Literasi Keluarga',
+      lisensi: 'Lisensi Komunitas Literasi Keluarga · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bagian 1 · Mata Air yang Mengering',
@@ -275,12 +288,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Tengah B1',
       deskripsi:
         'Panduan eksperimen sains aman berbahan dapur dan halaman rumah: kapilaritas sawi pelangi, gunung cuka-soda, hingga kompas air.',
-      coverUrl: ILLUSTRATION_SCIENCE_COVER_URL,
+      coverUrl: COVER_SAINS_DAPUR_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 71,
       tanggalTerbit: '2026-11-10',
-      lisensi: 'Materi Edukasi Terbuka Sains Anak',
+      lisensi: 'Materi Edukasi Terbuka Sains Anak · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Percobaan 1 · Sawi Putih Berubah Warna',
@@ -329,12 +342,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Rendah A4',
       deskripsi:
         'Dongeng dunia tentang seorang anak tukang lipat kertas yang menerbangkan pesan persahabatan melintasi lembah pegunungan.',
-      coverUrl: DEFAULT_ZONE_IMAGE_URL,
+      coverUrl: COVER_BINTANG_KERTAS_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 48,
       tanggalTerbit: '2026-11-08',
-      lisensi: 'Terjemahan Adaptasi Non-Komersial Almahyra',
+      lisensi: 'Terjemahan Adaptasi Non-Komersial Almahyra · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bagian 1 · Kota Kecil di Puncak Bukit',
@@ -387,12 +400,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Komik C2',
       deskripsi:
         'Komik penuh dialog seru tentang cara membedakan sampah organik, anorganik bersih, dan minyak jelantah di rumah.',
-      coverUrl: ILLUSTRATION_ECO_GARDEN_COVER_URL,
+      coverUrl: COVER_KAPTEN_PILAH_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 95,
       tanggalTerbit: '2026-11-14',
-      lisensi: 'Karya Asli Relawan Visual Almahyra',
+      lisensi: 'Karya Asli Relawan Visual Almahyra · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Panel 1 · Rina & Misteri Tiga Tong Warna',
@@ -445,12 +458,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Hijau D1',
       deskripsi:
         'Panduan praktis berkebun keluarga: mengenal kecambah, menyiram secukupnya di pagi hari, dan merawat kebun sayur polibag.',
-      coverUrl: ILLUSTRATION_ECO_GARDEN_COVER_URL,
+      coverUrl: COVER_POHON_HARAPAN_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 56,
       tanggalTerbit: '2026-11-02',
-      lisensi: 'Panduan Komunitas Desa Tlogosari',
+      lisensi: 'Panduan Komunitas Desa Tlogosari · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Tidurnya Sebutir Biji',
@@ -503,12 +516,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Sejarah E2',
       deskripsi:
         'Kisah keteladanan Ki Hadjar Dewantara, R.A. Kartini, dan pejuang literasi Nusantara yang memperjuangkan sekolah dan rumah baca rakyat.',
-      coverUrl: ILLUSTRATION_STORY_STAGE_COVER_URL,
+      coverUrl: COVER_PELITA_SEJARAH_URL,
       aktif: true,
       pilihanAlmahyra: false,
       dibacaCount: 52,
       tanggalTerbit: '2026-10-28',
-      lisensi: 'Arsip Edukasi Sejarah Anak',
+      lisensi: 'Arsip Edukasi Sejarah Anak · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Surat Harapan dari Rembang',
@@ -561,12 +574,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Depan E1',
       deskripsi:
         'Kisah nyata inspiratif tentang kakak kelas yang merintis pojok baca halaman rumah bersama relawan muda desa.',
-      coverUrl: ILLUSTRATION_TELAGA_COMMUNITY_URL,
+      coverUrl: COVER_PELITA_BACA_URL,
       aktif: true,
       pilihanAlmahyra: true,
       dibacaCount: 68,
       tanggalTerbit: '2026-11-11',
-      lisensi: 'Publikasi Asli Rumah Baca Almahyra',
+      lisensi: 'Publikasi Asli Rumah Baca Almahyra · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Sepeda Tua & Kotak Kayu',
@@ -619,12 +632,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Tengah B3',
       deskripsi:
         'Mengenal kekayaan motif batik, harmoni alat musik bambu angklung, tari tradisional, dan jajanan pasar Nusantara.',
-      coverUrl: DEFAULT_BOOK_COVER_URL,
+      coverUrl: COVER_BATIK_NUSANTARA_URL,
       aktif: true,
       pilihanAlmahyra: false,
       dibacaCount: 59,
       tanggalTerbit: '2026-11-06',
-      lisensi: 'Seri Cinta Budaya Nusantara Almahyra',
+      lisensi: 'Seri Cinta Budaya Nusantara Almahyra · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Cerita di Balik Motif Batik',
@@ -677,12 +690,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Tengah C1',
       deskripsi:
         'Fakta menakjubkan seputar detak jantung, cara mata melihat pelangi, hingga fase bulan purnama dan rasi bintang.',
-      coverUrl: ILLUSTRATION_SCIENCE_COVER_URL,
+      coverUrl: COVER_LANGIT_MALAM_URL,
       aktif: true,
       pilihanAlmahyra: false,
       dibacaCount: 61,
       tanggalTerbit: '2026-11-09',
-      lisensi: 'Ensiklopedia Terbuka Anak Indonesia',
+      lisensi: 'Ensiklopedia Terbuka Anak Indonesia · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Entri 1 · Pompa Kecil Bernama Jantung',
@@ -735,12 +748,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Komik C3',
       deskripsi:
         'Komik bergambar tentang perjalanan Tetes Air bernama Tiko dari awan mendung menuju akar pohon dan kembali naik ke langit.',
-      coverUrl: ILLUSTRATION_TELAGA_COMMUNITY_URL,
+      coverUrl: COVER_AIR_HUJAN_URL,
       aktif: true,
       pilihanAlmahyra: false,
       dibacaCount: 77,
       tanggalTerbit: '2026-11-15',
-      lisensi: 'Lisensi Asli Rumah Baca Almahyra',
+      lisensi: 'Lisensi Asli Rumah Baca Almahyra · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Panel 1 · Lompatan dari Awan Putih',
@@ -789,12 +802,12 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       lokasiRak: 'Rak Rendah A3',
       deskripsi:
         'Kisah klasik Nusantara dari Jawa Tengah yang mengajarkan sikap rendah hati, welas asih, dan menghormati sesama.',
-      coverUrl: DEFAULT_BOOK_COVER_URL,
+      coverUrl: COVER_DANAU_KABUT_URL,
       aktif: true,
       pilihanAlmahyra: false,
       dibacaCount: 66,
       tanggalTerbit: '2026-11-13',
-      lisensi: 'Adaptasi Cerita Rakyat Anak Nusantara',
+      lisensi: 'Adaptasi Cerita Rakyat Anak Nusantara · Foto Sampul Pexels (Bebas Hak Cipta)',
       isiBacaan: [
         {
           judulBab: 'Bab 1 · Kedatangan Anak Pengembara',
@@ -1908,6 +1921,123 @@ export const DEFAULT_DB: AlmahyraDatabase = {
       tugas: 'Membantu teman memilih buku atau merapikan kembali rak baca.',
       verifikasi: 'Konfirmasi fasilitator',
       poin: 3,
+    },
+  ],
+  creations: [
+    {
+      id: 'cr-1',
+      judul: 'Rumah Pohon Lentera Grontol',
+      kategori: 'Gambar',
+      namaSamaran: 'Nadia P.',
+      jenjangUsia: 'SD',
+      memberNomorInduk: 'ALMA-001',
+      ringkasan: 'Lukisan rumah baca hangat dengan jendela terbuka dan pohon rindang di halaman dusun.',
+      konten: 'Aku menggambar rumah baca Almahyra waktu sore hari saat teman-teman membawa tas buku warna kuning dan hijau.',
+      imageUrl: '/images/covers/bk-01-lentera-gunung.jpg',
+      createdAt: '2026-11-12',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Disetujui wali & fasilitator Sabtu Dongeng.',
+    },
+    {
+      id: 'cr-2',
+      judul: 'Kapten Pilah Menyelamatkan Taman',
+      kategori: 'Komik',
+      namaSamaran: 'Bagus P.',
+      jenjangUsia: 'SD',
+      memberNomorInduk: 'ALMA-002',
+      ringkasan: 'Komik 4 panel tentang dua anak desa yang mengubah botol bekas menjadi pot bunga matahari.',
+      konten: 'Panel 1: Halaman berantakan setelah hujan. Panel 2: Bagus & Rina menyiapkan tiga keranjang pilah. Panel 3: Daun kering masuk kotak kompos. Panel 4: Pot botol warna-warni berjejer di pagar Teras Almahyra!',
+      imageUrl: '/images/covers/bk-05-kapten-pilah.jpg',
+      createdAt: '2026-11-13',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Karya kreatif Zona Sahabat Bumi.',
+    },
+    {
+      id: 'cr-3',
+      judul: 'Puisi Pagi di Kaki Gunung',
+      kategori: 'Puisi',
+      namaSamaran: 'Rara S.',
+      jenjangUsia: 'SMP',
+      memberNomorInduk: 'ALMA-003',
+      ringkasan: 'Puisi tiga bait tentang semangat membaca sebelum berangkat sekolah di Desa Tlogosari.',
+      konten: 'Embun turun menyapa dedaunan jambu,\nSatu halaman kubuka sebelum dering bel berbunyi,\nDari kata kecil di sudut dusun yang tenang,\nTumbuh sayap mimpi menembus langit biru.',
+      imageUrl: '/images/covers/bk-06-pohon-harapan.jpg',
+      createdAt: '2026-11-14',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Karya pilihan Pekan Literasi.',
+    },
+    {
+      id: 'cr-4',
+      judul: 'Ulasan Buku: Ensiklopedia Sains Dapur',
+      kategori: 'Resensi buku',
+      namaSamaran: 'Alya R.',
+      jenjangUsia: 'SD',
+      memberNomorInduk: 'ALMA-005',
+      ringkasan: 'Cerita seru mencoba percobaan sawi pelangi bersama ibu di dapur rumah.',
+      konten: 'Menurutku buku ini seru sekali! Aku paling suka Bab Percobaan Sawi Putih. Setelah direndam air kunyit dan pandan semalaman, ujung daunnya berubah warna tanpa sihir, melainkan lewat pembuluh kapiler.',
+      imageUrl: '/images/covers/bk-03-sains-dapur.jpg',
+      createdAt: '2026-11-14',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Disetujui Ibu/Wali & Pendamping.',
+    },
+    {
+      id: 'cr-5',
+      judul: 'Burung Kertas Sahabat Lembah',
+      kategori: 'Cerita pendek',
+      namaSamaran: 'Fajar R.',
+      jenjangUsia: 'PAUD',
+      memberNomorInduk: 'ALMA-004',
+      ringkasan: 'Kisah singkat burung origami yang membawa salam semangat membaca untuk adik PAUD.',
+      konten: 'Pagi itu aku melipat kertas kuning bersama kakak pendamping. Kami menuliskan pesan semangat belajar dan menggantungkannya di rak rendah Zona Imajinasi.',
+      imageUrl: '/images/covers/bk-04-bintang-kertas.jpg',
+      createdAt: '2026-11-15',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Karya kolaborasi anak & orang tua.',
+    },
+    {
+      id: 'cr-6',
+      judul: 'Pembatas Buku Daun Kering Lamina',
+      kategori: 'Kerajinan',
+      namaSamaran: 'Kirana D.',
+      jenjangUsia: 'SD',
+      ringkasan: 'Kerajinan tangan pembatas buku dari daun jambu kering dan pita kuning.',
+      konten: 'Kami mengumpulkan daun kering yang jatuh di taman rumah baca, menjemurnya di dalam buku tebal selama tiga hari, lalu melapisinya untuk pembatas buku cantik.',
+      imageUrl: '/images/covers/bk-11-air-hujan.jpg',
+      createdAt: '2026-11-15',
+      parentApproved: true,
+      moderationStatus: 'approved',
+      catatanModerator: 'Karya Zona Kreativitas Minggu Kreasi.',
+    },
+  ],
+  testimonials: [
+    {
+      id: 'tst-1',
+      nama: 'Ibu Siti Aminah',
+      peran: 'Orang Tua Anggota (ALMA-001)',
+      komunitas: 'Warga Dusun Grontol, Desa Tlogosari',
+      kutipan: 'Anak saya jadi rajin membaca sebelum tidur dan tidak malu lagi bercerita di depan teman-temannya berkat Sabtu Dongeng & E-Paspor Baca.',
+      rating: 5,
+    },
+    {
+      id: 'tst-2',
+      nama: 'Bapak Hendra Wijaya',
+      peran: 'Wali Murid & Donatur Buku',
+      komunitas: 'Komunitas Satu Rumah Satu Buku',
+      kutipan: 'Sistem katalog digital dan Misi Petualang Nyata membuat belajar anak terasa seperti bermain, tapi tetap terpantau rapi bersama orang tua.',
+      rating: 5,
+    },
+    {
+      id: 'tst-3',
+      nama: 'Rara Sekar',
+      peran: 'Sahabat Baca Remaja (ALMA-003)',
+      komunitas: 'Relawan Muda Rumah Baca Almahyra',
+      kutipan: 'Menjadi kakak pendamping di Zona Panggung Cerita mengajarkan saya berbagi cerita sambil mengumpulkan poin lencana Duta Literasi.',
+      rating: 5,
     },
   ],
 };
