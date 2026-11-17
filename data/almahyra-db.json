@@ -30,6 +30,25 @@
     "lastSyncedAt": "",
     "autoSyncEnabled": false
   },
+  "categories": [
+    "Cerita Nusantara",
+    "Dongeng Dunia",
+    "Fabel dan Cerita Binatang",
+    "Komik Edukasi",
+    "Sains dan Pengetahuan",
+    "Sejarah dan Pahlawan",
+    "Lingkungan dan Alam",
+    "Kisah Inspiratif",
+    "Budaya Indonesia",
+    "Ensiklopedia Anak"
+  ],
+  "readerLevels": [
+    "PAUD",
+    "SD Awal",
+    "SD Lanjut",
+    "SMP",
+    "Semua Usia"
+  ],
   "admins": [
     {
       "id": "adm-super",
@@ -821,6 +840,773 @@
           "penjelasan": "Cerita rakyat Nusantara menanamkan budi pekerti luhur dan empati."
         }
       ]
+    },
+    {
+      "id": "bk-13",
+      "kodeBuku": "BUDI-NSN-013",
+      "judul": "Hari Sabtu di Pasar Wulandoni",
+      "penulis": "Tuti Adhayati (Ilustrator: Pingki Ayako Saputro)",
+      "kategori": "Cerita Nusantara",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 5,
+      "zona": "Zona Imajinasi",
+      "status": "Tersedia",
+      "stok": 4,
+      "lokasiRak": "Rak BUDI Nusantara",
+      "deskripsi": "Koleksi BUDI Kemendikdasmen: kisah Nila mengenal keunikan tradisi barter di Pasar Wulandoni, Lembata, serta cara kerja nilai tukar barang.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/pYcwlDFvAtO1qeOcaSFbT8TbIokZvRnbh40yv1qY.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/qEpZ7ZOjY9ClBV9AOwLvuZuG7u6ZIRx03Rz51Gv6.pdf",
+      "pdfNamaFile": "BUDI_Hari_Sabtu_di_Pasar_Wulandoni.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": true,
+      "dibacaCount": 89,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Pasar Unik di Hari Sabtu",
+          "isi": "Di Lembata, setiap hari Sabtu warga pesisir dan warga gunung bertemu di Pasar Wulandoni. Uniknya, mereka masih saling bertukar hasil laut dengan hasil kebun secara langsung tanpa uang kertas."
+        },
+        {
+          "judulBab": "Bab 2 · Tas Impian Nila",
+          "isi": "Nila mengira semua toko memakai cara barter seperti di Pasar Wulandoni. Ia rajin mengumpulkan kerang cantik dan hasil kebun selama sepekan agar bisa ditukar dengan tas sekolah impian."
+        },
+        {
+          "judulBab": "Bab 3 · Belajar Jual Beli & Tradisi Lokal",
+          "isi": "Dari pengalaman serunya bersama ibu dan para pedagang, Nila belajar membedakan jual beli tradisional berbasis barter dengan transaksi toko modern, sambil bangga pada tradisi Nusantara.",
+          "pesanMoral": "Mengenal kearifan lokal Nusantara membuat kita menghargai keberagaman tradisi di Indonesia."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Apa keunikan utama transaksi tradisional di Pasar Wulandoni dalam cerita ini?",
+          "pilihan": [
+            "Warga saling bertukar barang dengan barang (barter)",
+            "Semua barang dibayar memakai kartu elektronik luar negeri",
+            "Pasar hanya dibuka setahun sekali di malam hari"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Pasar Wulandoni dikenal dengan tradisi barter hasil laut dan hasil kebun warga."
+        },
+        {
+          "pertanyaan": "Apa yang dikumpulkan Nila selama sepekan untuk ditukar dengan tas impiannya?",
+          "pilihan": [
+            "Barang-barang hasil alam untuk dibarter",
+            "Batu kerikil dari halaman sekolah",
+            "Kertas koran bekas semalam"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Nila bersemangat mengumpulkan barang karena terinspirasi cara barter di pasar."
+        }
+      ]
+    },
+    {
+      "id": "bk-14",
+      "kodeBuku": "BUDI-KMK-014",
+      "judul": "Di Balik Kisah Rawapening",
+      "penulis": "Jatu Kaannaha Putri (Ilustrator: Abdul Khotib)",
+      "kategori": "Komik Edukasi",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 4,
+      "zona": "Zona Imajinasi",
+      "status": "Tersedia",
+      "stok": 4,
+      "lokasiRak": "Rak BUDI Komik",
+      "deskripsi": "Komik digital BUDI Kemendikdasmen yang mengisahkan perjalanan Baro Klinthing menuju Gunung Telomoyo dan nilai budi pekerti di balik legenda Rawapening.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/y5RiUZruVLzzZRfGCrzf1kx0k4tmTjDa6lvlXeC1.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/MrboDoOMoUSOnBHMxGYikQ4WRV6OLlohj44bMT6m.pdf",
+      "pdfNamaFile": "BUDI_Komik_Di_Balik_Kisah_Rawapening.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": true,
+      "dibacaCount": 112,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Panel 1 · Perjalanan ke Gunung Telomoyo",
+          "isi": "[Panel 1 - Lereng Gunung] Baro Klinthing beranjak remaja dan bertekad menemui ayahandanya yang bertapa di Gunung Telomoyo demi membuktikan kesungguhan hati serta keberaniannya."
+        },
+        {
+          "judulBab": "Panel 2 · Ujian Ketekunan & Kesabaran",
+          "isi": "[Panel 2 - Hutan Pegunungan] Di hadapan ayahandanya, Baro Klinthing menerima tugas berat. Dengan tekun dan rendah hati ia menuntaskan ujian tersebut walau harus menahan lapar dan lelah."
+        },
+        {
+          "judulBab": "Panel 3 · Pesan Welas Asih di Desa",
+          "isi": "[Panel 3 - Desa Ngasem] Komik ini mengingatkan pembaca bahwa ketulusan, rasa hormat kepada orang tua, dan keramahan kepada sesama akan selalu membawa kebaikan.",
+          "pesanMoral": "Kesabaran dan ketulusan hati jauh lebih berharga daripada kesombongan."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Di gunung manakah ayahanda Baro Klinthing bertapa dalam komik ini?",
+          "pilihan": [
+            "Gunung Telomoyo",
+            "Gunung Kerinci",
+            "Gunung Rinjani"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Baro Klinthing melakukan perjalanan menuju Gunung Telomoyo untuk menemui ayahandanya."
+        },
+        {
+          "pertanyaan": "Sikap apa yang menonjol saat Baro Klinthing menjalankan perintah ayahandanya?",
+          "pilihan": [
+            "Tekun, sabar, dan penuh kesungguhan",
+            "Cepat menyerah di tengah jalan",
+            "Mengeluh dan pulang sebelum tugas selesai"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Ketekunan dan rendah hati menjadi nilai utama dalam kisah Rawapening."
+        }
+      ]
+    },
+    {
+      "id": "bk-15",
+      "kodeBuku": "BUDI-KMK-015",
+      "judul": "Bolang Sahabat Alam",
+      "penulis": "Mutiara (Ilustrator: Joko Susilo)",
+      "kategori": "Komik Edukasi",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 4,
+      "zona": "Zona Sahabat Bumi",
+      "status": "Tersedia",
+      "stok": 4,
+      "lokasiRak": "Rak BUDI Komik",
+      "deskripsi": "Komik edukasi BUDI Kemendikdasmen tentang Bolang dan tiga sahabatnya yang menyusun jurnal kegiatan seru menjaga kelestarian alam.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/7dp2iurOuYT1sUm7gWAmpCFCQqTTRC2dlDVd2LVQ.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/BlMRIPENItfwIJUfUPlA3WZGVACMI3MRubZAHKwd.pdf",
+      "pdfNamaFile": "BUDI_Komik_Bolang_Sahabat_Alam.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 84,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Panel 1 · Tugas Jurnal Sahabat Alam",
+          "isi": "[Panel 1 - Kelas] Bu Guru memberi tugas membuat jurnal kegiatan liburan. Bolang mengajak ketiga sahabatnya merancang aksi nyata yang bermanfaat bagi lingkungan sekitar rumah."
+        },
+        {
+          "judulBab": "Panel 2 · Aksi Hijau di Sungai & Kebun",
+          "isi": "[Panel 2 - Tepi Sungai] Mereka mengamati burung liar, membersihkan ranting plastik di pinggir parit, dan mencatat nama tanaman obat yang tumbuh subur di halaman warga."
+        },
+        {
+          "judulBab": "Panel 3 · Jurnal Penuh Cerita Bermakna",
+          "isi": "[Panel 3 - Ruang Kelas] Jurnal bergambar karya Bolang dan sahabatnya dipuji karena memadukan petualangan seru dengan kepedulian menjaga alam tetap asri.",
+          "pesanMoral": "Menulis jurnal kegiatan membantu kita mengingat keindahan alam dan cara merawatnya."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Tugas sekolah apakah yang dikerjakan Bolang dan ketiga sahabatnya?",
+          "pilihan": [
+            "Membuat jurnal kegiatan menarik bersama sahabat alam",
+            "Menghafal daftar harga mainan plastik",
+            "Bermain gim sendirian di rumah"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Bolang dan teman-temannya mengisi tugas jurnal dengan kegiatan ramah alam."
+        },
+        {
+          "pertanyaan": "Bagaimana cara agar tugas jurnal terasa lebih seru menurut komik ini?",
+          "pilihan": [
+            "Bekerja sama dengan teman dan mengamati langsung alam sekitar",
+            "Menunggu akhir pekan tanpa melakukan apa-apa",
+            "Menyalin tulisan orang lain tanpa membaca"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Pengamatan langsung bersama sahabat membuat belajar terasa hidup dan menyenangkan."
+        }
+      ]
+    },
+    {
+      "id": "bk-16",
+      "kodeBuku": "BUDI-SNS-016",
+      "judul": "DNA! Mengapa Kita Berbeda",
+      "penulis": "Salma Intifada",
+      "kategori": "Sains dan Pengetahuan",
+      "jenjangPembaca": "SD Lanjut",
+      "estimasiMenit": 6,
+      "zona": "Zona Pengetahuan",
+      "status": "Tersedia",
+      "stok": 4,
+      "lokasiRak": "Rak BUDI Sains",
+      "deskripsi": "Bacaan sains anak dari BUDI Kemendikdasmen tentang Rubi yang penasaran mengapa ciri fisik dan bakatnya berbeda dari Kak Safira, lalu mengenal rahasia DNA.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/xupKr8t2mU1Di2nLfb98oODArLKcxM1yYXcyAeaT.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Isi_DNA%20Mengapa%20Kita%20Berbeda_1787287468.pdf",
+      "pdfNamaFile": "BUDI_DNA_Mengapa_Kita_Berbeda.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": true,
+      "dibacaCount": 93,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Pertanyaan Besar Rubi",
+          "isi": "Rubi sangat mengagumi Kak Safira yang anggun menari. Namun Rubi heran mengapa bentuk rambut, warna mata, hingga bakat mereka berdua tampak berbeda meski tinggal dalam satu keluarga."
+        },
+        {
+          "judulBab": "Bab 2 · Buku Resep Istimewa Bernama DNA",
+          "isi": "Ibu menjelaskan bahwa di dalam tubuh manusia terdapat DNA, semacam buku resep rahasia dari ayah dan ibu yang tercampur unik pada setiap anak seperti sidik jari yang tak pernah sama persis."
+        },
+        {
+          "judulBab": "Bab 3 · Bersyukur atas Keunikan Diri",
+          "isi": "Rubi akhirnya tersenyum lega! Ia tetap satu keluarga tercinta dengan Kak Safira, dan keunikan DNA justru memberinya bakat sains dan menggambar yang siap ia kembangkan.",
+          "pesanMoral": "Setiap anak memiliki kombinasi keunikan DNA dan bakat berharga yang patut disyukuri."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Mengapa kakak beradik dapat memiliki ciri fisik dan bakat yang berbeda?",
+          "pilihan": [
+            "Karena setiap anak menerima kombinasi genetik DNA yang unik dari orang tuanya",
+            "Karena makanan pagi mereka berbeda warna",
+            "Karena nama panggilan mereka tidak sama"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "DNA mewariskan sifat dengan kombinasi unik sehingga tiap individu istimewa."
+        },
+        {
+          "pertanyaan": "Sikap baik apa yang dipelajari Rubi setelah memahami tentang DNA?",
+          "pilihan": [
+            "Menghargai keunikan diri sendiri dan terus mengasah bakatnya",
+            "Menyerah mencoba hal baru selamanya",
+            "Membandingkan diri dengan sedih setiap hari"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Perbedaan justru memperkaya kelebihan setiap anggota keluarga."
+        }
+      ]
+    },
+    {
+      "id": "bk-17",
+      "kodeBuku": "BUDI-LNG-017",
+      "judul": "Kakak Rangkong Badak",
+      "penulis": "Sarah Fauzia (Ilustrator: Randi Ramliyana)",
+      "kategori": "Lingkungan dan Alam",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 5,
+      "zona": "Zona Sahabat Bumi",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Alam",
+      "deskripsi": "Kisah satwa Indonesia dari BUDI Kemendikdasmen tentang Rino si burung rangkong badak yang belajar membangun sarang pohon aman demi menjaga keluarganya.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/x5qjBzhVA3jzuaGvqwoWf5vMFdmjHlZuQPcOKDNL.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/edit-Sarah%20Fauzia_Kakak%20Rangkong%20Badak_C%20(1)_1787287619.pdf",
+      "pdfNamaFile": "BUDI_Kakak_Rangkong_Badak.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 63,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Penjaga Kanopi Hutan Nusantara",
+          "isi": "Di hutan hujan tropis tinggal Rino, seekor burung rangkong badak berparuh lengkung indah. Rangkong berperan penting menyebarkan biji pohon buah agar hutan tetap rimbun."
+        },
+        {
+          "judulBab": "Bab 2 · Membangun Sarang Aman untuk Adik",
+          "isi": "Rino ingin membuktikan dirinya siap menjadi kakak hebat. Ia membantu ayahnya mencari lubang pohon tinggi yang kokoh serta mengantar buah segar untuk ibu yang menjaga sarang."
+        },
+        {
+          "judulBab": "Bab 3 · Merawat Rumah Satwa Langka",
+          "isi": "Ketika pohon-pohon besar terjaga, keluarga rangkong dapat hidup damai. Menjaga hutan berarti ikut melindungi tempat tinggal satwa endemik Indonesia seperti Rino.",
+          "pesanMoral": "Tanggung jawab sebagai kakak sejalan dengan kepedulian menjaga kelestarian hutan."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Apa peran penting burung rangkong badak bagi keseimbangan hutan?",
+          "pilihan": [
+            "Membantu menyebarkan biji buah sehingga pohon-pohon hutan terus tumbuh",
+            "Menebang seluruh batang pohon besar",
+            "Mengeringkan mata air pegunungan"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Rangkong sering disebut petani hutan karena menyebarkan biji buah ke area luas."
+        },
+        {
+          "pertanyaan": "Bagaimana Rino menunjukkan tanggung jawabnya sebagai kakak?",
+          "pilihan": [
+            "Membantu ayah menyiapkan sarang aman dan mengantar makanan untuk ibu serta adiknya",
+            "Pergi jauh meninggalkan keluarganya saat hujan turun",
+            "Menghabiskan seluruh buah di sarang sendirian"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Rino membantu ayah dan melindungi ibu serta adik dengan penuh kasih."
+        }
+      ]
+    },
+    {
+      "id": "bk-18",
+      "kodeBuku": "BUDI-BDY-018",
+      "judul": "Kawih Kinarsih",
+      "penulis": "Yeti Nurmayati (Ilustrator: Rizki Goni)",
+      "kategori": "Budaya Indonesia",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 5,
+      "zona": "Zona Kreativitas",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Budaya",
+      "deskripsi": "Koleksi seni budaya BUDI Kemendikdasmen: Kinar dan adiknya Didi belajar mencintai kawih atau tembang tradisional Sunda bersama Pak Arif.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/op13VCxGXLFjr4GSlkNxwy2OjJ0Qum8Hr1PXep9q.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Isi-Kawih%20Kinarsih%20(1)_1787289046.pdf",
+      "pdfNamaFile": "BUDI_Kawih_Kinarsih.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 69,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Ajakan Mengikuti Lomba Kawih",
+          "isi": "Pak Arif yakin Kinar memiliki suara merdu untuk membawakan kawih, lagu tradisional Sunda yang penuh cengkok indah. Namun Kinar ragu karena khawatir dinilai kuno oleh teman-temannya."
+        },
+        {
+          "judulBab": "Bab 2 · Latihan Seru Bersama Didi",
+          "isi": "Di rumah, suara alunan suling dan kecapi membuat Didi ikut berdendang riang. Perlahan Kinar menyadari betapa hangat makna syair kawih yang bercerita tentang alam dan persahabatan."
+        },
+        {
+          "judulBab": "Bab 3 · Tampil Percaya Diri di Panggung",
+          "isi": "Dengan dukungan Didi dan Pak Arif, Kinar melangkah mantap ke atas panggung. Tepuk tangan meriah membuktikan seni tradisional Indonesia selalu memukau bila dibawakan sepenuh hati.",
+          "pesanMoral": "Bangga melestarikan lagu daerah membuat budaya kita terus dicintai generasi muda."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Apa arti kata kawih dalam seni budaya Sunda pada cerita ini?",
+          "pilihan": [
+            "Lagu atau tembang tradisional Sunda",
+            "Alat pertukangan dari besi baja",
+            "Permainan papan asal Eropa"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Kawih merupakan seni vokal lagu tradisional masyarakat Sunda."
+        },
+        {
+          "pertanyaan": "Siapa yang setia menemani Kinar berlatih hingga kembali percaya diri?",
+          "pilihan": [
+            "Adiknya Didi dan gurunya Pak Arif",
+            "Penjaga stasiun kereta api",
+            "Kinar berlatih diam-diam tanpa memberi tahu siapa pun"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Dukungan Didi dan bimbingan Pak Arif membantu Kinar tampil percaya diri."
+        }
+      ]
+    },
+    {
+      "id": "bk-19",
+      "kodeBuku": "BUDI-BDY-019",
+      "judul": "Yuk Mengenal Rencong Aceh",
+      "penulis": "Firmansyah",
+      "kategori": "Budaya Indonesia",
+      "jenjangPembaca": "SD Lanjut",
+      "estimasiMenit": 5,
+      "zona": "Zona Kreativitas",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Budaya",
+      "deskripsi": "Bacaan budaya lokal BUDI Kemendikdasmen tentang Adi dan Lani mewawancarai budayawan Pak Sabri mengenai makna dan filosofi kerajinan Rencong Aceh.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/tPAw74gjvXQBdSORewmeQJa55GAmpM2RRVtmKSvV.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Esra_Firmansyah_Yuk%20Mengenal%20Rencong%20Aceh_Lokalitas%20sebagai%20Identitas_Jenjang%20C%20(1)_1787286621.pdf",
+      "pdfNamaFile": "BUDI_Yuk_Mengenal_Rencong_Aceh.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 54,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Tugas Reportase Budaya Lokal",
+          "isi": "Ibu Risma menugaskan siswa menulis artikel tentang warisan budaya di kampung mereka. Adi dan Lani bersemangat mengunjungi bengkel perajin tradisional di Aceh untuk menggali kisah nyata."
+        },
+        {
+          "judulBab": "Bab 2 · Penjelasan Pak Sabri sang Budayawan",
+          "isi": "Pak Sabri menjelaskan bahwa bentuk lekuk gagang hingga bilah Rencong Aceh menyimpan simbol keberanian, kehormatan, serta kearifan sejarah masyarakat Aceh dalam menjaga martabat dan damai."
+        },
+        {
+          "judulBab": "Bab 3 · Laporan Penuh Rasa Bangga",
+          "isi": "Adi dan Lani menyusun catatan wawancara dan sketsa lengkap. Lewat tulisan siswa, teman sekelas ikut mengenal kerajinan warisan daerah sebagai identitas bangsa Indonesia.",
+          "pesanMoral": "Mengenal sejarah di balik kerajinan daerah menumbuhkan rasa bangga pada jati diri bangsa."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Siapa narasumber budayawan yang diwawancarai Adi dan Lani?",
+          "pilihan": [
+            "Pak Sabri",
+            "Pak Lurah Yogyakarta",
+            "Kakek dari Lembata"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Adi dan Lani berdiskusi langsung dengan Pak Sabri sang budayawan dan pemahat ahli."
+        },
+        {
+          "pertanyaan": "Nilai utama apakah yang dipelajari Adi dan Lani dari tugas reportase ini?",
+          "pilihan": [
+            "Kebanggaan dan pemahaman makna budaya lokal Aceh",
+            "Cara merusak benda bersejarah",
+            "Melupakan tradisi desa demi tren sesaat"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Warisan lokal menjadi sumber pengetahuan sejarah dan identitas budaya."
+        }
+      ]
+    },
+    {
+      "id": "bk-20",
+      "kodeBuku": "BUDI-SJR-020",
+      "judul": "Sekolah Enden Uwi",
+      "penulis": "Grace Marina & Ina Inong (Ilustrator: Ruhiat)",
+      "kategori": "Sejarah dan Pahlawan",
+      "jenjangPembaca": "SD Lanjut",
+      "estimasiMenit": 6,
+      "zona": "Zona Panggung Cerita",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Tokoh Bangsa",
+      "deskripsi": "Kisah tokoh pahlawan pendidikan BUDI Kemendikdasmen: perjuangan gigih Enden Uwi (Raden Dewi Sartika) di Bandung mendirikan sekolah bagi anak-anak perempuan.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/j046A8I4nsK4kqUwISmw7Zu15qkXhpE3jj9NQwMB.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Isi_Sekolah%20Enden%20Uwi%20(1)%20Revisi_1786688473.pdf",
+      "pdfNamaFile": "BUDI_Sekolah_Enden_Uwi.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": true,
+      "dibacaCount": 74,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Kepedulian Gadis Menak dari Bandung",
+          "isi": "Sejak kecil, Enden Uwi merasa prihatin melihat banyak anak perempuan di sekitarnya belum diizinkan bersekolah, membaca, dan menulis seperti anak laki-laki."
+        },
+        {
+          "judulBab": "Bab 2 · Kelas Rahasia & Kegigihan Hati",
+          "isi": "Dengan memanfaatkan ruang sederhana di dekat rumah Raden Aria, Enden Uwi mulai mengajarkan membaca dan berhitung secara diam-diam. Meski sempat ditentang, tekadnya tidak pernah surut."
+        },
+        {
+          "judulBab": "Bab 3 · Lahirnya Sakola Istri Pelita Bangsa",
+          "isi": "Kesungguhan Enden Uwi akhirnya membuahkan dukungan hingga lahirlah sekolah resmi pertama bagi perempuan pribumi, membuktikan ilmu pengetahuan adalah hak semua anak Indonesia.",
+          "pesanMoral": "Keteguhan membela hak belajar bagi sesama adalah wujud kepahlawanan yang abadi."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Mengapa Enden Uwi mendirikan kelas belajar di sekitar rumah Raden Aria?",
+          "pilihan": [
+            "Agar anak-anak perempuan di sekitarnya dapat belajar membaca dan menulis",
+            "Untuk menyembunyikan mainan kayu miliknya",
+            "Untuk berjualan kue sepanjang pagi"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Enden Uwi ingin membuka kesempatan belajar bagi anak-anak perempuan."
+        },
+        {
+          "pertanyaan": "Sikap teladan apakah yang ditunjukkan Enden Uwi saat menghadapi penolakan?",
+          "pilihan": [
+            "Gigih, sabar, dan terus memperjuangkan pendidikan bagi sesama",
+            "Langsung berhenti mengajar selamanya",
+            "Marah dan membuang semua buku bacaannya"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Kegigihan Enden Uwi menginspirasi lahirnya sekolah perempuan di Tanah Air."
+        }
+      ]
+    },
+    {
+      "id": "bk-21",
+      "kodeBuku": "BUDI-SJR-021",
+      "judul": "Mahapatih Gajah Mada",
+      "penulis": "Retno Utami (Ilustrator: Denny Prasetyo)",
+      "kategori": "Sejarah dan Pahlawan",
+      "jenjangPembaca": "SMP",
+      "estimasiMenit": 6,
+      "zona": "Zona Eksplorasi",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Sejarah",
+      "deskripsi": "Komik sejarah BUDI Kemendikdasmen tentang keteguhan tekad Mahapatih Gajah Mada di era Kerajaan Majapahit dalam menjaga persatuan Nusantara.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/yB9EE38dcINTw6oKL7KRcGfcbMfC3e6tXZkiiS5r.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/K2ZRYbUDA8sZuJtJpDdof2if5iu5T574FrBJz34y.pdf",
+      "pdfNamaFile": "BUDI_Komik_Mahapatih_Gajah_Mada.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 79,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Ksatria Tangguh Majapahit",
+          "isi": "Di masa Kerajaan Majapahit, Gajah Mada dikenal sebagai prajurit disiplin dan cerdas dalam menjaga keamanan istana. Keberanian serta kesetiaannya membuatnya dipercaya memikul tanggung jawab besar."
+        },
+        {
+          "judulBab": "Bab 2 · Sumpah Palapa & Visi Persatuan",
+          "isi": "Ketika diangkat menjadi Mahapatih, Gajah Mada mengucapkan Sumpah Palapa sebagai tekad mempersatukan pulau-pulau di Nusantara agar hidup rukun dan berdaulat."
+        },
+        {
+          "judulBab": "Bab 3 · Nilai Kebersamaan untuk Masa Kini",
+          "isi": "Kisah sejarah ini mengajarkan pelajar masa kini bahwa cita-cita besar selalu membutuhkan kerja keras, strategi bijak, serta menjaga persatuan dalam keberagaman.",
+          "pesanMoral": "Tekad kuat yang dipadukan dengan semangat persatuan membawa kemajuan bangsa."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Di kerajaan Nusantara manakah Mahapatih Gajah Mada mengabdi?",
+          "pilihan": [
+            "Kerajaan Majapahit",
+            "Kerajaan Samudera Pasai",
+            "Kesultanan Ternate"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Mahapatih Gajah Mada adalah tokoh pemersatu terkenal dari Kerajaan Majapahit."
+        },
+        {
+          "pertanyaan": "Nilai kepemimpinan apa yang dapat dipelajari dari kisah Mahapatih Gajah Mada?",
+          "pilihan": [
+            "Disiplin, keteguhan tekad, dan visi menjaga persatuan",
+            "Mementingkan diri sendiri di atas kepentingan warga",
+            "Menolak bekerja sama dengan daerah lain"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Visi persatuan Nusantara menjadi teladan sejarah bangsa Indonesia."
+        }
+      ]
+    },
+    {
+      "id": "bk-22",
+      "kodeBuku": "BUDI-FBL-022",
+      "judul": "Mimi dan Si Loreng",
+      "penulis": "Yayan Rika Harari",
+      "kategori": "Fabel dan Cerita Binatang",
+      "jenjangPembaca": "PAUD",
+      "estimasiMenit": 4,
+      "zona": "Zona Imajinasi",
+      "status": "Tersedia",
+      "stok": 4,
+      "lokasiRak": "Rak BUDI PAUD",
+      "deskripsi": "Cerita bergambar anak usia dini dari BUDI Kemendikdasmen tentang Mimi, kucing peliharaan Si Putih, dan sahabat barunya Si Loreng belajar kejujuran.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/x1b9q9CmWEVRpIMsUyFZ1Q5m6odND7oXKFhd5AAB.jpg",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/book/8wCJ74PVDyATZQqm4kcu9AyzvbIBJjMc1FVikXEb.pdf",
+      "pdfNamaFile": "BUDI_Mimi_dan_Si_Loreng.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 65,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bagian 1 · Tamu Berbulu Loreng",
+          "isi": "Seekor kucing bertubuh loreng datang ke teras rumah Mimi dan langsung akrab bermain bersama Si Putih. Mimi langsung jatuh hati ingin mengajaknya tinggal di dalam rumah."
+        },
+        {
+          "judulBab": "Bagian 2 · Nasihat Ibu tentang Kejujuran",
+          "isi": "Ibu mengingatkan Mimi dengan lembut bahwa kita tidak boleh langsung mengambil hewan atau barang yang mungkin masih dicari pemilik aslinya. Merawat kucing juga butuh tanggung jawab harian."
+        },
+        {
+          "judulBab": "Bagian 3 · Menyayangi dengan Bijaksana",
+          "isi": "Mimi pun ikut membantu memberi makan di teras sambil mencari tahu apakah Si Loreng punya pemilik. Mencintai binatang berarti tetap jujur dan bertanggung jawab.",
+          "pesanMoral": "Kasih sayang kepada hewan selalu disertai kejujuran dan sikap bertanggung jawab."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Mengapa Ibu melarang Mimi langsung memelihara Si Loreng di dalam rumah?",
+          "pilihan": [
+            "Karena kita tidak boleh mengambil yang bukan milik kita serta perlu tanggung jawab merawatnya",
+            "Karena Mimi takut melihat kucing putih",
+            "Karena rumah Mimi berada di atas pohon"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Ibu mengajarkan nilai kejujuran agar memastikan hewan tidak bertuan milik orang lain."
+        },
+        {
+          "pertanyaan": "Siapa nama kucing peliharaan Mimi yang berteman dengan Si Loreng?",
+          "pilihan": [
+            "Si Putih",
+            "Si Belang Biru",
+            "Si Cokelat"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Si Putih menyambut hangat kedatangan Si Loreng di rumah Mimi."
+        }
+      ]
+    },
+    {
+      "id": "bk-23",
+      "kodeBuku": "BUDI-INS-023",
+      "judul": "Loma dan Pendekar Randai",
+      "penulis": "Irvan Aqila (Ilustrator: Fajar Cipulala)",
+      "kategori": "Kisah Inspiratif",
+      "jenjangPembaca": "SD Lanjut",
+      "estimasiMenit": 5,
+      "zona": "Zona Panggung Cerita",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Inspirasi",
+      "deskripsi": "Kisah inspiratif dari BUDI Kemendikdasmen tentang Loma yang bangkit setelah gagal audisi tari, lalu menemukan jati dirinya melalui seni Randai Minangkabau.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/XVSDdwzabTwxOWSWV3rVcToya4kc0fvhKByApRuN.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Isi_Loma%20Pendekar%20Randai_1787289608.pdf",
+      "pdfNamaFile": "BUDI_Loma_dan_Pendekar_Randai.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 81,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Murung Setelah Gagal Audisi",
+          "isi": "Loma berhari-hari sedih karena lupa gerakan saat audisi tari modern di sekolah. Padahal sebelumnya ia sudah merasa bosan berlatih gerak dasar tradisional."
+        },
+        {
+          "judulBab": "Bab 2 · Bertemu Sang Pendekar Randai",
+          "isi": "Ayah mengajak Loma menyaksikan latihan kesenian Randai khas Minangkabau yang memadukan gerak silat tangkas, irama tepukan celana, nyanyian, serta kekompakan lingkaran penari."
+        },
+        {
+          "judulBab": "Bab 3 · Bangkit Lebih Tangguh di Panggung",
+          "isi": "Loma kembali berlatih disiplin bersama para pendekar Randai. Ia sadar seni tradisi Nusantara justru memiliki energi luar biasa dan mampu membawanya berprestasi.",
+          "pesanMoral": "Kegagalan bukan akhir perjalanan; ketekunan berlatih membuka pintu bakat sejati kita."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Kesenian tradisional asal Minangkabau apakah yang diperkenalkan Ayah kepada Loma?",
+          "pilihan": [
+            "Randai",
+            "Wayang Kulit",
+            "Barongsai"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Randai merupakan seni pertunjukan tradisi Minangkabau yang memadukan gerak dan cerita."
+        },
+        {
+          "pertanyaan": "Apa pelajaran terpenting dari pengalaman Loma gagal audisi?",
+          "pilihan": [
+            "Bangkit kembali, berlatih tekun, dan menghargai kekayaan seni tradisi",
+            "Menyalahkan teman satu panggung",
+            "Berhenti menari dan membenci musik selamanya"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Loma mengubah kekecewaan menjadi semangat berlatih lebih tekun."
+        }
+      ]
+    },
+    {
+      "id": "bk-24",
+      "kodeBuku": "BUDI-DNG-024",
+      "judul": "Sang Peramu dari Pulau Nateore",
+      "penulis": "Hervianna Artha (Ilustrator: Didin Jahidin dan Karnadi)",
+      "kategori": "Dongeng Dunia",
+      "jenjangPembaca": "SD Awal",
+      "estimasiMenit": 5,
+      "zona": "Zona Imajinasi",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Dongeng",
+      "deskripsi": "Dongeng fantasi penuh imajinasi dari BUDI Kemendikdasmen tentang Malaga si peramu di Pulau Nateore yang mematahkan prasangka demi menyelamatkan warga.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/adQqSiP873SznBziNF5oNOpKuD6Tv0WwWTqnzD5y.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/Esra_KOMIK_Si%20Peramu%20(1)_1787286770.pdf",
+      "pdfNamaFile": "BUDI_Sang_Peramu_dari_Pulau_Nateore.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 62,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Bab 1 · Pulau Nateore & Prasangka Warga",
+          "isi": "Di Pulau Nateore, banyak penduduk Suku Wane menjauhi Malaga karena mengira ramuan tanaman hutan miliknya berbahaya. Padahal Malaga diam-diam meracik obat penyembuh bagi makhluk pulau."
+        },
+        {
+          "judulBab": "Bab 2 · Amukan Bidadari Api & Belut Raksasa",
+          "isi": "Suatu hari Pulau Nateore diguncang ancaman Umu si Burung Bidadari Api dan Mora si Belut Laut Raksasa. Semua warga panik mencari perlindungan ke bukit tinggi."
+        },
+        {
+          "judulBab": "Bab 3 · Ramuan Penyelamat Membuka Kebenaran",
+          "isi": "Dengan keberanian dan ilmu peramunya, Malaga menenangkan pulau dan melindungi Suku Wane. Warga pun sadar agar tidak pernah menilai seseorang hanya dari desas-desus.",
+          "pesanMoral": "Jangan berprasangka buruk kepada orang lain sebelum mengenal kebaikan hatinya secara langsung."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Mengapa penduduk Suku Wane sempat takut kepada Malaga pada awal cerita?",
+          "pilihan": [
+            "Karena prasangka bahwa Malaga seorang penyihir jahat",
+            "Karena Malaga selalu berteriak di pasar pagi",
+            "Karena Malaga tidak suka menanam pohon buah"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Prasangka membuat warga salah menilai kebaikan sang peramu tanaman."
+        },
+        {
+          "pertanyaan": "Bagaimana Malaga membuktikan dirinya sahabat bagi penduduk Pulau Nateore?",
+          "pilihan": [
+            "Menyelamatkan warga saat bahaya Umu dan Mora datang melanda",
+            "Meninggalkan pulau sebelum bahaya tiba",
+            "Menyembunyikan seluruh air tawar di gua"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Tindakan nyata penuh keberanian mematahkan prasangka warga."
+        }
+      ]
+    },
+    {
+      "id": "bk-25",
+      "kodeBuku": "BUDI-ENS-025",
+      "judul": "Petualangan di Museum Nasional",
+      "penulis": "Yeni Yulianti (Ilustrator: Budi Prianto)",
+      "kategori": "Ensiklopedia Anak",
+      "jenjangPembaca": "SD Lanjut",
+      "estimasiMenit": 5,
+      "zona": "Zona Eksplorasi",
+      "status": "Tersedia",
+      "stok": 3,
+      "lokasiRak": "Rak BUDI Ensiklopedia",
+      "deskripsi": "Bacaan eksploratif BUDI Kemendikdasmen yang mengajak anak bertualang mengenal koleksi artefak, prasasti, keramik kuno, dan sejarah di Museum Nasional.",
+      "coverUrl": "https://budi.kemendikdasmen.go.id/storage/image/CBT0TDuXY9ogbjg89kDhAb7grSNX7LB8F2ZQ0PhU.png",
+      "pdfUrl": "https://budi.kemendikdasmen.go.id/storage/content/hn6OAHxIjX7Ko4itJS2iGYoSSBOpNmwdeT0xyQFI.pdf",
+      "pdfNamaFile": "BUDI_Petualangan_di_Museum_Nasional.pdf",
+      "aktif": true,
+      "pilihanAlmahyra": false,
+      "dibacaCount": 73,
+      "tanggalTerbit": "2026-11-16",
+      "lisensi": "BUDI Kemendikdasmen — Badan Pengembangan dan Pembinaan Bahasa",
+      "isiBacaan": [
+        {
+          "judulBab": "Entri 1 · Gerbang Patung Gajah Museum Nasional",
+          "isi": "Di depan Museum Nasional Jakarta berdiri patung gajah perunggu yang ramah menyambut pengunjung cilik. Di dalamnya tersimpan ratusan ribu bukti peradaban masa lalu Nusantara."
+        },
+        {
+          "judulBab": "Entri 2 · Prasasti Batu & Miniatur Rumah Adat",
+          "isi": "Setiap galeri bak mesin waktu: mulai dari prasasti kerajaan bertuliskan aksara kuno, perhiasan emas tradisional, hingga miniatur rumah adat dari Sabang sampai Merauke."
+        },
+        {
+          "judulBab": "Entri 3 · Menjadi Penjelajah Museum yang Tertib",
+          "isi": "Berkunjung ke museum semakin asyik bila kita membaca label informasi dengan cermat, menjaga jarak aman dari kaca etalase, dan mencatat temuan menarik di buku jurnal literasi.",
+          "pesanMoral": "Museum adalah jendela masa lalu yang membuat kita mencintai perjalanan sejarah bangsa."
+        }
+      ],
+      "kuis": [
+        {
+          "pertanyaan": "Apa saja koleksi berharga yang dapat diamati saat berkunjung ke Museum Nasional?",
+          "pilihan": [
+            "Prasasti kuno, artefak sejarah, dan miniatur rumah adat Nusantara",
+            "Barang elektronik terbaru tahun ini",
+            "Menu makanan cepat saji modern"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Museum Nasional menyimpan kekayaan sejarah, arkeologi, dan etnografi Indonesia."
+        },
+        {
+          "pertanyaan": "Sikap tertib apakah yang wajib diterapkan ketika membaca label koleksi di museum?",
+          "pilihan": [
+            "Tidak menyentuh benda koleksi dan menjaga ketenangan bersama",
+            "Berlari kencang di antara lemari kaca",
+            "Mencoret-coret dinding prasasti"
+          ],
+          "jawabanBenar": 0,
+          "penjelasan": "Menjaga ketertiban membantu melestarikan koleksi bersejarah agar tetap aman."
+        }
+      ]
     }
   ],
   "loans": [
@@ -914,128 +1700,7 @@
       "kategoriBuku": "Cerita Nusantara"
     }
   ],
-  "schedules": [
-    {
-      "id": "sch-1",
-      "hari": "Senin–Kamis",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Main & Baca Sore",
-      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
-      "zona": "Semua Zona",
-      "kuota": 25,
-      "pesertaTerdaftar": 18
-    },
-    {
-      "id": "sch-2",
-      "hari": "Jumat",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Jumat Tukar Sampah",
-      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
-      "zona": "Zona Sahabat Bumi",
-      "kuota": 20,
-      "pesertaTerdaftar": 14
-    },
-    {
-      "id": "sch-3",
-      "hari": "Sabtu",
-      "waktu": "15.30–17.00 WIB",
-      "program": "Sabtu Dongeng",
-      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
-      "zona": "Zona Panggung Cerita",
-      "kuota": 30,
-      "pesertaTerdaftar": 26
-    },
-    {
-      "id": "sch-4",
-      "hari": "Minggu",
-      "waktu": "08.00–10.00 WIB",
-      "program": "Minggu Kreasi",
-      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
-      "zona": "Zona Kreativitas & Eksplorasi",
-      "kuota": 25,
-      "pesertaTerdaftar": 21
-    }
-  ],
-  "missions": [
-    {
-      "id": "mis-1",
-      "judul": "Pemburu Cerita",
-      "zona": "Zona Imajinasi",
-      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
-      "verifikasi": "Tanya jawab pendamping",
-      "poin": 5
-    },
-    {
-      "id": "mis-2",
-      "judul": "Pencerita Cilik",
-      "zona": "Zona Panggung Cerita",
-      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
-      "verifikasi": "Cerita lisan 1–2 menit",
-      "poin": 5
-    },
-    {
-      "id": "mis-3",
-      "judul": "Seniman Buku",
-      "zona": "Zona Kreativitas",
-      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
-      "verifikasi": "Karya ditunjukkan kepada pendamping",
-      "poin": 5
-    },
-    {
-      "id": "mis-4",
-      "judul": "Ilmuwan Cilik",
-      "zona": "Zona Pengetahuan",
-      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
-      "verifikasi": "Menjelaskan hasil pengamatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-5",
-      "judul": "Sahabat Bumi",
-      "zona": "Zona Sahabat Bumi",
-      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
-      "verifikasi": "Demonstrasi kegiatan",
-      "poin": 5
-    },
-    {
-      "id": "mis-6",
-      "judul": "Teman Penolong",
-      "zona": "Semua Zona",
-      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
-      "verifikasi": "Konfirmasi fasilitator",
-      "poin": 3
-    }
-  ],
-  "categories": [
-    "Cerita Nusantara",
-    "Dongeng Dunia",
-    "Fabel dan Cerita Binatang",
-    "Komik Edukasi",
-    "Sains dan Pengetahuan",
-    "Sejarah dan Pahlawan",
-    "Lingkungan dan Alam",
-    "Kisah Inspiratif",
-    "Budaya Indonesia",
-    "Ensiklopedia Anak"
-  ],
-  "readerLevels": [
-    "PAUD",
-    "SD Awal",
-    "SD Lanjut",
-    "SMP",
-    "Semua Usia"
-  ],
   "readingProgress": [
-    {
-      "id": "rp-guest-bk-1",
-      "viewerKey": "guest",
-      "bookId": "bk-1",
-      "lastPage": 1,
-      "totalPages": 4,
-      "isFavorite": false,
-      "completedCount": 0,
-      "lastReadAt": "2026-11-16T23:08:25.692Z"
-    },
     {
       "id": "rp-ALMA-001-bk-1",
       "viewerKey": "ALMA-001",
@@ -1135,6 +1800,98 @@
       "bonusPoin": 5,
       "periode": "Bulanan",
       "lencanaHadiah": "Sahabat Bumi"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "hari": "Senin–Kamis",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Main & Baca Sore",
+      "aktivitas": "Baca bebas, peminjaman buku, misi literasi bergilir, dan pencatatan paspor.",
+      "zona": "Semua Zona",
+      "kuota": 25,
+      "pesertaTerdaftar": 18
+    },
+    {
+      "id": "sch-2",
+      "hari": "Jumat",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Jumat Tukar Sampah",
+      "aktivitas": "Membawa bahan daur ulang bersih, memilah sampah, dan misi Eco Hero.",
+      "zona": "Zona Sahabat Bumi",
+      "kuota": 20,
+      "pesertaTerdaftar": 14
+    },
+    {
+      "id": "sch-3",
+      "hari": "Sabtu",
+      "waktu": "15.30–17.00 WIB",
+      "program": "Sabtu Dongeng",
+      "aktivitas": "Read aloud, boneka tangan, tanya jawab interaktif, dan Story Explorer.",
+      "zona": "Zona Panggung Cerita",
+      "kuota": 30,
+      "pesertaTerdaftar": 26
+    },
+    {
+      "id": "sch-4",
+      "hari": "Minggu",
+      "waktu": "08.00–10.00 WIB",
+      "program": "Minggu Kreasi",
+      "aktivitas": "Menanam di kebun literasi, origami, menggambar, dan proyek sains kreatif.",
+      "zona": "Zona Kreativitas & Eksplorasi",
+      "kuota": 25,
+      "pesertaTerdaftar": 21
+    }
+  ],
+  "missions": [
+    {
+      "id": "mis-1",
+      "judul": "Pemburu Cerita",
+      "zona": "Zona Imajinasi",
+      "tugas": "Membaca satu cerita dan menyebutkan tokoh serta bagian favorit.",
+      "verifikasi": "Tanya jawab pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-2",
+      "judul": "Pencerita Cilik",
+      "zona": "Zona Panggung Cerita",
+      "tugas": "Menceritakan ulang isi bacaan di hadapan teman atau pendamping.",
+      "verifikasi": "Cerita lisan 1–2 menit",
+      "poin": 5
+    },
+    {
+      "id": "mis-3",
+      "judul": "Seniman Buku",
+      "zona": "Zona Kreativitas",
+      "tugas": "Menggambar adegan atau tokoh menarik dari buku yang dibaca.",
+      "verifikasi": "Karya ditunjukkan kepada pendamping",
+      "poin": 5
+    },
+    {
+      "id": "mis-4",
+      "judul": "Ilmuwan Cilik",
+      "zona": "Zona Pengetahuan",
+      "tugas": "Membaca materi sains dan melakukan percobaan aman sederhana.",
+      "verifikasi": "Menjelaskan hasil pengamatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-5",
+      "judul": "Sahabat Bumi",
+      "zona": "Zona Sahabat Bumi",
+      "tugas": "Menanam bibit atau memilah bahan daur ulang bersih saat Jumat Tukar Sampah.",
+      "verifikasi": "Demonstrasi kegiatan",
+      "poin": 5
+    },
+    {
+      "id": "mis-6",
+      "judul": "Teman Penolong",
+      "zona": "Semua Zona",
+      "tugas": "Membantu teman memilih buku atau merapikan kembali rak baca.",
+      "verifikasi": "Konfirmasi fasilitator",
+      "poin": 3
     }
   ]
 }

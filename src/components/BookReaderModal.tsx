@@ -664,24 +664,57 @@ export function BookReaderModal({
             </div>
 
             {activeTab === 'pdf' && book.pdfUrl && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs font-semibold text-[#1C2820] dark:text-[#ECF3EE]">
                     Dokumen Materi Bacaan: {book.pdfNamaFile || book.judul}
                   </p>
                   <a
                     href={book.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     download={book.pdfNamaFile || `${book.kodeBuku}.pdf`}
                     className="rounded-lg border border-[#D4CCB8] bg-[#FFFDF7] px-3 py-1.5 text-xs font-semibold text-[#1C2820] hover:bg-[#F3EFE4] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
                   >
-                    Unduh PDF Berizin
+                    Buka / Unduh PDF Berizin
                   </a>
                 </div>
-                <iframe
-                  title={`PDF ${book.judul}`}
-                  src={book.pdfUrl}
-                  className="h-[62dvh] w-full rounded-2xl border border-[#DFD7C4] bg-white dark:border-[#243B30]"
-                />
+                {book.pdfUrl.startsWith('data:') ? (
+                  <iframe
+                    title={`PDF ${book.judul}`}
+                    src={book.pdfUrl}
+                    className="h-[62dvh] w-full rounded-2xl border border-[#DFD7C4] bg-white dark:border-[#243B30]"
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-[#DFD7C4] bg-[#FFFDF7] p-6 sm:p-8 text-center space-y-4 dark:border-[#243B30] dark:bg-[#122019]">
+                    <p className="font-display text-base sm:text-lg font-bold text-[#16221A] dark:text-[#F1F7F3]">
+                      Sumber Resmi Dokumen PDF Tersedia
+                    </p>
+                    <p className="mx-auto max-w-xl text-sm text-[#4B5A50] dark:text-[#A4B9AE]">
+                      Dokumen PDF lengkap dari {book.lisensi || 'penerbit resmi'} dapat dibuka langsung di tab baru atau dibaca halaman demi halaman melalui tab Cerita di atas.
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+                      <a
+                        href={book.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ backgroundColor: db.config.primaryColor }}
+                        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-semibold text-white hover:opacity-95"
+                      >
+                        <FileText className="h-4 w-4" aria-hidden="true" />
+                        Buka PDF Resmi di Tab Baru
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('read')}
+                        className="inline-flex items-center gap-2 rounded-xl border border-[#D4CCB8] bg-[#F3EFE4] px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1C2820] hover:bg-[#E7E1D2] dark:border-[#2D473B] dark:bg-[#1A2D24] dark:text-[#ECF3EE]"
+                      >
+                        <BookOpen className="h-4 w-4" aria-hidden="true" />
+                        Kembali ke Bacaan Interaktif
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

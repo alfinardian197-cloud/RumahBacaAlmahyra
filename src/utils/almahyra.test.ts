@@ -237,7 +237,8 @@ test('resolveThemeMode and toggleThemeMode switch cleanly between light and dark
 test('DEFAULT_CATEGORIES covers all 10 required categories and filterBooksAdvanced respects active/minutes/favorites', () => {
   assert.equal(DEFAULT_CATEGORIES.length, 10);
   const books = DEFAULT_DB.books;
-  assert.ok(books.length >= 10);
+  assert.ok(books.length >= 25);
+  assert.ok(books.some((b) => b.kodeBuku.startsWith('BUDI-')));
   const usedCats = new Set(books.map((b) => b.kategori));
   for (const cat of DEFAULT_CATEGORIES) {
     assert.ok(usedCats.has(cat), `Missing book for category: ${cat}`);
