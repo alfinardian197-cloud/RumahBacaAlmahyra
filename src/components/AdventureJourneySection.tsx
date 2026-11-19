@@ -649,33 +649,32 @@ export function AdventureJourneySection({
           </div>
         </div>
 
-        {/* Right Interactive Photo Showcase: All 3 Uploaded Photos (5 cols) */}
+        {/* Right Interactive Photo Showcase: All 3 Uploaded Portrait Photos (5 cols) */}
         <div className="lg:col-span-5 space-y-3">
-          <div className="mx-auto max-w-[330px] overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
-            <div className="relative aspect-3/4 w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
+          <div className="mx-auto max-w-[300px] sm:max-w-[320px] overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2.5 spatial-depth-shadow">
+            <div className="aspect-9/16 max-h-[420px] w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#FFFDF6] to-[#EAF5EE] flex items-center justify-center">
               <ResilientImage
                 src={activePhoto.src}
                 fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                 alt={activePhoto.name}
                 loading="eager"
-                className="h-full w-full object-cover object-center"
+                className="h-full w-full object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
-              <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white space-y-1">
-                <p className="text-[11px] font-semibold text-white/85 flex items-center gap-1.5">
-                  <Star className="h-3 w-3 fill-current text-amber-300" aria-hidden="true" />
-                  {activePhoto.name}
-                </p>
-                <p className="font-display text-sm font-bold leading-snug">
-                  &ldquo;{activePhoto.greeting}&rdquo;
-                </p>
-                <p className="text-[11px] text-white/80">{activePhoto.caption}</p>
-              </div>
+            </div>
+            <div className="pt-3 px-1.5 pb-1 space-y-1">
+              <p className="text-[11px] font-bold text-[#087C3B] dark:text-[#6EE7B7] flex items-center gap-1.5">
+                <Star className="h-3 w-3 fill-current text-[#FFC51B]" aria-hidden="true" />
+                {activePhoto.name}
+              </p>
+              <p className="font-display text-sm font-bold leading-snug text-[#111C17]">
+                &ldquo;{activePhoto.greeting}&rdquo;
+              </p>
+              <p className="text-[11px] leading-relaxed text-[#4A5D54]">{activePhoto.caption}</p>
             </div>
           </div>
 
-          {/* 3 Clickable Portrait Thumbnails so all 3 real photos are always visible & interactive */}
-          <div className="mx-auto grid max-w-[330px] grid-cols-3 gap-2.5">
+          {/* 3 Clickable Portrait Thumbnails so all 3 real photos are always visible & uncropped */}
+          <div className="mx-auto grid max-w-[300px] sm:max-w-[320px] grid-cols-3 gap-2.5">
             {SAHABAT_GALLERY_PHOTOS.map((photo, idx) => {
               const active = idx === selectedPhotoIdx;
               return (
@@ -690,12 +689,12 @@ export function AdventureJourneySection({
                       : 'border-[#DCE4DF] bg-white hover:border-[#BFD0C7]'
                   }`}
                 >
-                  <div className="aspect-3/4 w-full overflow-hidden rounded-lg bg-[#EEF3F0]">
+                  <div className="aspect-9/16 w-full overflow-hidden rounded-lg bg-[#FFFDF6] flex items-center justify-center">
                     <ResilientImage
                       src={photo.src}
                       fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                       alt={photo.name}
-                      className="h-full w-full object-cover object-top transition-transform duration-200 group-hover:scale-105"
+                      className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
                     />
                   </div>
                   <p className="mt-1.5 px-1 pb-0.5 font-display text-[11px] font-bold text-[#111C17] truncate">

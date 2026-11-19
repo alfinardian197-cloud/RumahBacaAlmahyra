@@ -5,6 +5,7 @@ import {
   buildBorrowWhatsAppMessage,
   buildDonationWhatsAppMessage,
   buildWhatsAppShareHref,
+  DEFAULT_MANAGER_WHATSAPP_DISPLAY,
 } from '../utils/almahyra';
 
 interface BorrowDonationPanelProps {
@@ -80,9 +81,12 @@ export function BorrowDonationPanel({
     donationNotes,
   ]);
 
+  const managerPhoneDisplay =
+    db.config.whatsappNumber?.trim() || DEFAULT_MANAGER_WHATSAPP_DISPLAY;
+
   const waHref = useMemo(
-    () => buildWhatsAppShareHref(composedMessage),
-    [composedMessage],
+    () => buildWhatsAppShareHref(composedMessage, managerPhoneDisplay),
+    [composedMessage, managerPhoneDisplay],
   );
 
   const handleCopyMessage = async () => {
@@ -116,7 +120,8 @@ export function BorrowDonationPanel({
             Formulir Peminjaman & Donasi Buku Instan
           </h2>
           <p className="text-xs sm:text-sm text-[#4A5D54]">
-            Susun otomatis ringkasan pesan siap kirim ke WhatsApp pengurus Rumah Baca Almahyra.
+            Susun otomatis ringkasan pesan siap kirim ke WhatsApp pengelola Rumah Baca Almahyra (
+            <strong className="font-mono-tabular text-[#111C17]">{managerPhoneDisplay}</strong>).
           </p>
         </div>
 
@@ -318,9 +323,11 @@ export function BorrowDonationPanel({
 
         {/* Right Live WhatsApp Preview & Actions */}
         <div className="lg:col-span-6 rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-4 space-y-3.5">
-          <div className="flex items-center justify-between text-xs font-semibold text-[#111C17]">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#111C17]">
             <span>Pratinjau Pesan WhatsApp Siap Kirim</span>
-            <span className="text-[11px] font-medium text-[#4A5D54]">Otomatis terformat</span>
+            <span className="font-mono-tabular text-[11px] font-bold text-[#087C3B] dark:text-[#6EE7B7]">
+              WA Pengelola: {managerPhoneDisplay}
+            </span>
           </div>
           <pre className="whitespace-pre-wrap rounded-lg border border-[#E2E8E5] bg-white p-3.5 font-sans text-xs leading-relaxed text-[#4A5D54]">
             {composedMessage}
@@ -334,7 +341,7 @@ export function BorrowDonationPanel({
               className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold text-white hover:opacity-95 whitespace-nowrap"
             >
               <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
-              Kirim via WhatsApp
+              Kirim via WhatsApp ({managerPhoneDisplay})
             </a>
             <button
               type="button"

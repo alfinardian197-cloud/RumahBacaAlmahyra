@@ -16,6 +16,7 @@ export interface LandingConfig {
   slogan: string;
   location: string;
   coordinator: string;
+  whatsappNumber?: string;
   logoUrl: string;
   primaryColor: string;
   secondaryColor: string;
@@ -225,6 +226,7 @@ export interface TestimonialItem {
   komunitas: string;
   kutipan: string;
   rating: number;
+  tanggal?: string;
 }
 
 export interface AlmahyraDatabase {

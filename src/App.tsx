@@ -19,24 +19,50 @@ import type {
   AuthSession,
   Book,
   CreationCategory,
+  TestimonialItem,
   ThemeMode,
 } from './types/almahyra';
 import {
   claimBookStampInLocalPassport,
   claimRealActionMissionInLocalPassport,
+  createValidatedTestimonial,
   getBookReadablePages,
   hydrateDatabaseWithDefaults,
   loadLocalPassportState,
+  mergeTestimonialsLists,
   recordBookReadingAction,
   resolveThemeMode,
   saveLocalPassportState,
   toggleThemeMode,
+  type CreateTestimonialInput,
   type LocalDigitalPassportState,
 } from './utils/almahyra';
 
 const SESSION_STORAGE_KEY = 'almahyra_user_session_v1';
 const THEME_STORAGE_KEY = 'almahyra_theme_v1';
 const SPLASH_SEEN_KEY = 'almahyra_splash_seen_v1';
+const LOCAL_TESTIMONIALS_KEY = 'almahyra_user_testimonials_v1';
+
+function loadLocalTestimonials(): TestimonialItem[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_TESTIMONIALS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as TestimonialItem[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalTestimonial(item: TestimonialItem): void {
+  try {
+    const current = loadLocalTestimonials();
+    const next = mergeTestimonialsLists([item], current).slice(0, 50);
+    localStorage.setItem(LOCAL_TESTIMONIALS_KEY, JSON.stringify(next));
+  } catch {
+    // Ignore storage quota issues
+  }
+}
 
 export default function App() {
   const [db, setDb] = useState<AlmahyraDatabase>(DEFAULT_DB);
@@ -169,11 +195,25 @@ export default function App() {
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Failed to load'))))
       .then((data: Partial<AlmahyraDatabase>) => {
         if (active && data?.config && Array.isArray(data.members)) {
-          setDb(hydrateDatabaseWithDefaults(data, DEFAULT_DB));
+          const hydrated = hydrateDatabaseWithDefaults(data, DEFAULT_DB);
+          const localExtras = loadLocalTestimonials();
+          setDb({
+            ...hydrated,
+            testimonials: mergeTestimonialsLists(localExtras, hydrated.testimonials ?? []),
+          });
         }
       })
       .catch(() => {
-        // Keep current/DEFAULT_DB fallback if offline
+        // Keep current/DEFAULT_DB fallback with any locally saved testimonials if offline
+        if (active) {
+          const localExtras = loadLocalTestimonials();
+          if (localExtras.length > 0) {
+            setDb((prev) => ({
+              ...prev,
+              testimonials: mergeTestimonialsLists(localExtras, prev.testimonials ?? []),
+            }));
+          }
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -380,6 +420,72 @@ export default function App() {
     [authHeaders],
   );
 
+  const handleSubmitTestimonial = useCallback(
+    async (payload: CreateTestimonialInput) => {
+      const validated = createValidatedTestimonial(payload);
+      if (!validated.ok) {
+        return { ok: false, message: validated.error };
+      }
+
+      try {
+        const res = await fetch('/api/testimonials', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = (await res.json()) as {
+          ok?: boolean;
+          error?: string;
+          testimonial?: TestimonialItem;
+          db?: Partial<AlmahyraDatabase>;
+        };
+
+        if (res.ok && data.testimonial) {
+          saveLocalTestimonial(data.testimonial);
+          if (data.db) {
+            const hydrated = hydrateDatabaseWithDefaults(data.db, DEFAULT_DB);
+            setDb({
+              ...hydrated,
+              testimonials: mergeTestimonialsLists(
+                loadLocalTestimonials(),
+                hydrated.testimonials ?? [],
+              ),
+            });
+          } else {
+            setDb((prev) => ({
+              ...prev,
+              testimonials: mergeTestimonialsLists([data.testimonial!], prev.testimonials ?? []),
+            }));
+          }
+          return {
+            ok: true,
+            message: 'Terima kasih! Testimoni Anda telah tersimpan dan tampil di halaman ini.',
+          };
+        }
+
+        if (res.status >= 400 && res.status < 500 && data.error) {
+          return { ok: false, message: data.error };
+        }
+      } catch {
+        // Fallback to local persistence when offline or on read-only static host
+      }
+
+      saveLocalTestimonial(validated.testimonial);
+      setDb((prev) => ({
+        ...prev,
+        testimonials: mergeTestimonialsLists([validated.testimonial], prev.testimonials ?? []),
+      }));
+      return {
+        ok: true,
+        message: 'Terima kasih! Testimoni Anda telah tersimpan di perangkat ini dan langsung tampil.',
+      };
+    },
+    [authHeaders],
+  );
+
   const readingBook = useMemo(
     () => (readingBookId ? db.books.find((b) => b.id === readingBookId) ?? null : null),
     [db.books, readingBookId],
@@ -525,6 +631,7 @@ export default function App() {
           onReadBook={(book) => setReadingBookId(book.id)}
           onToggleFavorite={handleToggleFavorite}
           onSubmitCreation={handleSubmitCreation}
+          onSubmitTestimonial={handleSubmitTestimonial}
         />
       ) : session.role === 'anggota' ? (
         <MemberPortal

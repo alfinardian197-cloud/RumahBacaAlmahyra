@@ -13,7 +13,9 @@ import {
   Heart,
   Home,
   MapPin,
+  MessageCircle,
   MessageSquareQuote,
+  Phone,
   RotateCcw,
   Search,
   Sparkles,
@@ -37,11 +39,14 @@ import type {
   ReadingProgress,
 } from '../types/almahyra';
 import {
+  buildWhatsAppShareHref,
   computeBookShelves,
   computeLibraryStats,
   DEFAULT_CATEGORIES,
+  DEFAULT_MANAGER_WHATSAPP_DISPLAY,
   DEFAULT_READER_LEVELS,
   filterBooksAdvanced,
+  type CreateTestimonialInput,
   type LocalDigitalPassportState,
 } from '../utils/almahyra';
 import { AdventureJourneySection } from './AdventureJourneySection';
@@ -63,6 +68,7 @@ import { HomepageShowcaseStage } from './HomepageShowcaseStage';
 import { LeaderboardAndStoryStudio } from './LeaderboardAndStoryStudio';
 import { PassportAndQuizHub } from './PassportAndQuizHub';
 import { ResilientImage } from './ResilientImage';
+import { TestimonialsSection } from './TestimonialsSection';
 import type { PublicPageId, PublicRoleMode } from './TopBar';
 
 interface PublicLandingProps {
@@ -85,6 +91,9 @@ interface PublicLandingProps {
     ringkasan: string;
     konten: string;
   }) => Promise<{ ok: boolean; message: string }>;
+  onSubmitTestimonial: (
+    payload: CreateTestimonialInput,
+  ) => Promise<{ ok: boolean; message: string }>;
 }
 
 const TELAGA_PILLARS = [
@@ -201,10 +210,20 @@ export function PublicLanding({
   onOpenLogin,
   onReadBook,
   onToggleFavorite,
-  onSubmitCreation,
+  onSubmitTestimonial,
 }: PublicLandingProps) {
   const { config, books, schedules, members } = db;
   const stats = useMemo(() => computeLibraryStats(db), [db]);
+  const managerPhoneDisplay =
+    config.whatsappNumber?.trim() || DEFAULT_MANAGER_WHATSAPP_DISPLAY;
+  const managerDirectWaHref = useMemo(
+    () =>
+      buildWhatsAppShareHref(
+        'Halo Pengelola Rumah Baca Almahyra, saya ingin bertanya tentang kegiatan dan layanan literasi di Dusun Grontol.',
+        managerPhoneDisplay,
+      ),
+    [managerPhoneDisplay],
+  );
 
   const resolvedHeroPhoto =
     config.heroImageUrl && !config.heroImageUrl.includes('hero_reading_terrace_')
@@ -930,13 +949,13 @@ export function PublicLanding({
                       </div>
                     </div>
                     <div className="lg:col-span-5 flex justify-center">
-                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
-                        <div className="aspect-16/10 w-full overflow-hidden">
+                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-[#FFFDF6] p-1 shadow-2xl preserve-light">
+                        <div className="aspect-9/16 h-[300px] sm:h-[330px] lg:h-[350px] max-w-full overflow-hidden rounded-2xl">
                           <ResilientImage
                             src={resolvedHeroPhoto}
                             fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                             alt="Suasana Teras Rumah Baca Almahyra"
-                            className="h-full w-full object-cover object-top"
+                            className="h-full w-full object-contain"
                           />
                         </div>
                       </div>
@@ -979,13 +998,13 @@ export function PublicLanding({
                       </div>
                     </div>
                     <div className="lg:col-span-5 flex justify-center">
-                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-white shadow-2xl w-full max-w-sm preserve-light">
-                        <div className="aspect-16/10 w-full overflow-hidden">
+                      <div className="overflow-hidden rounded-3xl border-4 border-white bg-[#FFFDF6] p-1 shadow-2xl preserve-light">
+                        <div className="aspect-9/16 h-[300px] sm:h-[330px] lg:h-[350px] max-w-full overflow-hidden rounded-2xl">
                           <ResilientImage
                             src="/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__2__1caa94d4.jpeg"
                             fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                             alt="Kegiatan literasi anak-anak Dusun Grontol"
-                            className="h-full w-full object-cover object-top"
+                            className="h-full w-full object-contain"
                           />
                         </div>
                       </div>
@@ -1237,6 +1256,15 @@ export function PublicLanding({
                       <Award className="h-4 w-4" aria-hidden="true" />
                       E-Paspor &amp; Kuis ({localPassport.points} Poin)
                     </button>
+                    <a
+                      href={managerDirectWaHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#087C3B] px-4 py-2.5 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap"
+                    >
+                      <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                      WA Pengelola: {managerPhoneDisplay}
+                    </a>
                   </div>
 
                   {/* 4-COLUMN KPI STRIP */}
@@ -1296,14 +1324,16 @@ export function PublicLanding({
                       {config.page1IntroBody}
                     </p>
                   </div>
-                  <div className="lg:col-span-5">
-                    <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-[#EEF3F0]">
-                      <ResilientImage
-                        src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
-                        fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                        alt="Ilustrasi Komunitas TELAGA Rumah Baca Almahyra"
-                        className="aspect-4/3 w-full object-cover object-top"
-                      />
+                  <div className="lg:col-span-5 flex justify-center">
+                    <div className="w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#DCE4DF] bg-gradient-to-b from-[#FFFDF6] to-[#EAF5EE] p-2">
+                      <div className="flex h-[320px] sm:h-[360px] w-full items-center justify-center overflow-hidden rounded-xl">
+                        <ResilientImage
+                          src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
+                          fallbackSrc={DEFAULT_HERO_IMAGE_URL}
+                          alt="Ilustrasi Komunitas TELAGA Rumah Baca Almahyra"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1334,50 +1364,10 @@ export function PublicLanding({
 
             <BorrowDonationPanel db={db} defaultTab="borrow" />
 
-            {(db.testimonials?.length ?? 0) > 0 && (
-              <section aria-label="Testimoni Orang Tua, Relawan, dan Anak" className="space-y-5">
-                <div>
-                  <p className="text-xs font-bold tracking-wide text-[#087C3B] dark:text-[#6EE7B7] flex items-center gap-1.5">
-                    <MessageSquareQuote className="h-4 w-4" aria-hidden="true" />
-                    Suara Hangat Warga &amp; Keluarga Dusun Grontol
-                  </p>
-                  <h2 className="font-display text-2xl font-bold text-[#111C17]">
-                    Cerita Mereka Bersama Rumah Baca Almahyra
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                  {(db.testimonials ?? []).map((t) => (
-                    <article
-                      key={t.id}
-                      className="flex flex-col justify-between rounded-2xl border border-[#E2E8E5] bg-white p-5 space-y-4"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-1" aria-label={`Rating ${t.rating} dari 5`}>
-                          {Array.from({ length: Math.min(5, Math.max(1, t.rating)) }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className="h-4 w-4 fill-[#FFC51B] text-[#B45309]"
-                              aria-hidden="true"
-                            />
-                          ))}
-                        </div>
-                        <p className="text-sm leading-relaxed text-[#4A5D54]">
-                          &ldquo;{t.kutipan}&rdquo;
-                        </p>
-                      </div>
-
-                      <div className="border-t border-[#EEF3F0] pt-3">
-                        <p className="font-display text-sm font-bold text-[#111C17]">{t.nama}</p>
-                        <p className="text-xs text-[#4A5D54]">
-                          {t.peran} · {t.komunitas}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            )}
+            <TestimonialsSection
+              testimonials={db.testimonials ?? []}
+              onSubmitTestimonial={onSubmitTestimonial}
+            />
           </div>
         )}
 
@@ -1514,14 +1504,14 @@ export function PublicLanding({
                       {config.page1IntroBody}
                     </p>
                   </div>
-                  <div className="lg:col-span-5">
-                    <div className="card-3d-tilt overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
-                      <div className="aspect-4/3 w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
+                  <div className="lg:col-span-5 flex justify-center">
+                    <div className="card-3d-tilt w-full max-w-[320px] overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
+                      <div className="flex h-[320px] sm:h-[360px] w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-[#FFFDF6] to-[#EAF5EE] p-1.5">
                         <ResilientImage
                           src={ILLUSTRATION_TELAGA_COMMUNITY_URL}
                           fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                           alt="Ilustrasi komunitas Rumah Baca Almahyra"
-                          className="h-full w-full object-cover object-top"
+                          className="h-full w-full object-contain"
                         />
                       </div>
                     </div>
@@ -1572,21 +1562,20 @@ export function PublicLanding({
                   </p>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-2 spatial-depth-shadow">
-                  <div className="relative aspect-16/9 max-h-[380px] w-full overflow-hidden rounded-xl bg-[#EEF3F0]">
+                <div className="overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white p-3 spatial-depth-shadow space-y-3">
+                  <div className="flex h-[320px] sm:h-[380px] w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-[#FFFDF6] to-[#EAF5EE] p-2">
                     <ResilientImage
                       src={ILLUSTRATION_READING_ADVENTURE_URL}
                       fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                       alt="Peta ilustrasi enam zona petualangan belajar Rumah Baca Almahyra"
-                      className="h-full w-full object-cover object-top"
+                      className="h-full w-full object-contain"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <p className="text-xs font-medium text-white/85">Peta Visual Ekosistem Belajar</p>
-                      <p className="font-display text-lg font-bold">
-                        Imajinasi · Pengetahuan · Kreativitas · Eksplorasi · Sahabat Bumi · Panggung Cerita
-                      </p>
-                    </div>
+                  </div>
+                  <div className="rounded-xl bg-[#087C3B] px-4 py-3 text-white">
+                    <p className="text-xs font-medium text-white/85">Peta Visual Ekosistem Belajar</p>
+                    <p className="font-display text-base sm:text-lg font-bold">
+                      Imajinasi · Pengetahuan · Kreativitas · Eksplorasi · Sahabat Bumi · Panggung Cerita
+                    </p>
                   </div>
                 </div>
 
@@ -1750,12 +1739,21 @@ export function PublicLanding({
               </button>
               <button
                 type="button"
-                onClick={() => onChangePage('keluarga', 'formulir-pinjam-donasi')}
+                onClick={() => onChangePage('keluarga', 'bagian-testimoni')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-                Kontak
+                <MessageSquareQuote className="h-3.5 w-3.5" aria-hidden="true" />
+                Tulis Testimoni
               </button>
+              <a
+                href={managerDirectWaHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
+              >
+                <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                WA Pengelola: {managerPhoneDisplay}
+              </a>
             </div>
 
             <button

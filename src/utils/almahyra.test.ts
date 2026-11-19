@@ -18,8 +18,11 @@ import {
   computeLibraryStats,
   computeTopReadersLeaderboard,
   computeZoneAdventureStats,
+  createValidatedTestimonial,
   CREATION_CATEGORIES,
   DEFAULT_CATEGORIES,
+  DEFAULT_MANAGER_WHATSAPP_DISPLAY,
+  DEFAULT_MANAGER_WHATSAPP_INTL,
   DEFAULT_READER_LEVELS,
   evaluateMiniQuiz,
   extractSpreadsheetId,
@@ -35,8 +38,10 @@ import {
   getFlipbookSpreadNarrationText,
   getFlipbookVisibleIndices,
   hydrateDatabaseWithDefaults,
+  mergeTestimonialsLists,
   MINI_QUIZ_TEBAK_CERITA,
   normalizeAssetUrl,
+  normalizeIndonesianWhatsAppNumber,
   parseBulkBooksCsv,
   REAL_ACTION_BADGE_NAME,
   recordBookReadingAction,
@@ -538,7 +543,7 @@ test('filterBooksAdvanced onlyAvailable, computeTopReadersLeaderboard, WhatsApp 
 
   const waHref = buildWhatsAppShareHref(borrowMsg, '+62 812-3456-7890');
   assert.ok(waHref.startsWith('https://wa.me/6281234567890?text='));
-  assert.ok(buildWhatsAppShareHref(donateMsg).startsWith('https://wa.me/?text='));
+  assert.ok(buildWhatsAppShareHref(donateMsg).startsWith('https://wa.me/628813145186?text='));
 
   const story = generateBedtimeStoryAndPrompts({
     characterId: 'kancil',
@@ -782,6 +787,50 @@ test('Batch 1 books expose authentic source covers and preserve live BUDI image 
   const hydrated = hydrateDatabaseWithDefaults(staleSaved, DEFAULT_DB);
   const upgraded = hydrated.books.find((b) => b.kodeBuku === 'ALM-001');
   assert.equal(upgraded?.coverUrl, lraBook?.coverUrl);
+});
+
+test('Official manager WhatsApp 08813145186 normalization and interactive testimonial validation work accurately', () => {
+  assert.equal(DEFAULT_DB.config.whatsappNumber, '08813145186');
+  assert.equal(DEFAULT_MANAGER_WHATSAPP_DISPLAY, '08813145186');
+  assert.equal(DEFAULT_MANAGER_WHATSAPP_INTL, '628813145186');
+
+  assert.equal(normalizeIndonesianWhatsAppNumber('08813145186'), '628813145186');
+  assert.equal(normalizeIndonesianWhatsAppNumber('0881-3145-186'), '628813145186');
+  assert.equal(normalizeIndonesianWhatsAppNumber('+62 881 3145 186'), '628813145186');
+  assert.equal(normalizeIndonesianWhatsAppNumber(''), '628813145186');
+
+  const href = buildWhatsAppShareHref('Halo Almahyra', '08813145186');
+  assert.ok(href.startsWith('https://wa.me/628813145186?text=Halo%20Almahyra'));
+
+  const badName = createValidatedTestimonial({ nama: 'A', kutipan: 'Aplikasi ini sangat bagus.' });
+  assert.equal(badName.ok, false);
+
+  const badQuote = createValidatedTestimonial({ nama: 'Ibu Dewi', kutipan: 'Bagus' });
+  assert.equal(badQuote.ok, false);
+
+  const valid = createValidatedTestimonial(
+    {
+      nama: '  Ibu Dewi Lestari  ',
+      peran: 'Orang Tua / Wali',
+      komunitas: 'Desa Tlogosari',
+      kutipan: 'Anak saya suka sekali membaca flipbook dan menonton video edukasi di aplikasi ini!',
+      rating: 6,
+    },
+    '2026-11-19',
+  );
+  assert.equal(valid.ok, true);
+  if (valid.ok) {
+    assert.equal(valid.testimonial.nama, 'Ibu Dewi Lestari');
+    assert.equal(valid.testimonial.rating, 5);
+    assert.equal(valid.testimonial.tanggal, '2026-11-19');
+
+    const merged = mergeTestimonialsLists(
+      [valid.testimonial],
+      [valid.testimonial, ...(DEFAULT_DB.testimonials ?? [])],
+    );
+    assert.equal(merged.length, (DEFAULT_DB.testimonials?.length ?? 0) + 1);
+    assert.equal(merged[0].id, valid.testimonial.id);
+  }
 });
 
 

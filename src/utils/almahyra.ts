@@ -992,6 +992,9 @@ export function hydrateDatabaseWithDefaults(
   const rawConfig = { ...fallback.config, ...(incoming.config ?? {}) };
   rawConfig.logoUrl = normalizeAssetUrl(rawConfig.logoUrl) || fallback.config.logoUrl;
   rawConfig.heroImageUrl = normalizeAssetUrl(rawConfig.heroImageUrl) || fallback.config.heroImageUrl;
+  if (!rawConfig.whatsappNumber || !rawConfig.whatsappNumber.trim()) {
+    rawConfig.whatsappNumber = fallback.config.whatsappNumber || DEFAULT_MANAGER_WHATSAPP_DISPLAY;
+  }
   if (!rawConfig.appName || rawConfig.appName === 'ALMAHYRA App') {
     rawConfig.appName = 'Rumah Baca Almahyra';
   }
@@ -1475,12 +1478,100 @@ export function buildDonationWhatsAppMessage(params: {
   );
 }
 
-export function buildWhatsAppShareHref(message: string, phoneDigits = ''): string {
-  const cleanPhone = phoneDigits.replace(/[^0-9]/g, '');
+export const DEFAULT_MANAGER_WHATSAPP_DISPLAY = '08813145186';
+export const DEFAULT_MANAGER_WHATSAPP_INTL = '628813145186';
+
+export function normalizeIndonesianWhatsAppNumber(raw?: string): string {
+  const digits = (raw ?? '').replace(/[^0-9]/g, '');
+  if (!digits) return DEFAULT_MANAGER_WHATSAPP_INTL;
+  if (digits.startsWith('0')) {
+    return `62${digits.slice(1)}`;
+  }
+  if (digits.startsWith('62')) {
+    return digits;
+  }
+  if (digits.startsWith('8')) {
+    return `62${digits}`;
+  }
+  return digits;
+}
+
+export function buildWhatsAppShareHref(
+  message: string,
+  phoneDigits: string = DEFAULT_MANAGER_WHATSAPP_INTL,
+): string {
+  const cleanPhone = normalizeIndonesianWhatsAppNumber(phoneDigits);
   const encoded = encodeURIComponent(message);
   return cleanPhone
     ? `https://wa.me/${cleanPhone}?text=${encoded}`
     : `https://wa.me/?text=${encoded}`;
+}
+
+export interface CreateTestimonialInput {
+  nama: string;
+  peran?: string;
+  komunitas?: string;
+  kutipan: string;
+  rating?: number;
+}
+
+export type CreateTestimonialResult =
+  | { ok: true; testimonial: import('../types/almahyra').TestimonialItem }
+  | { ok: false; error: string };
+
+export function createValidatedTestimonial(
+  input: CreateTestimonialInput,
+  nowDate = new Date().toISOString().slice(0, 10),
+): CreateTestimonialResult {
+  const nama = String(input.nama ?? '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  const peran =
+    String(input.peran ?? '').replace(/\s+/g, ' ').trim().slice(0, 60) ||
+    'Orang Tua / Pengunjung';
+  const komunitas =
+    String(input.komunitas ?? '').replace(/\s+/g, ' ').trim().slice(0, 80) ||
+    'Sahabat Rumah Baca Almahyra';
+  const kutipan = String(input.kutipan ?? '').replace(/\s+/g, ' ').trim().slice(0, 400);
+  const parsedRating = Number(input.rating ?? 5);
+  const rating = Number.isFinite(parsedRating)
+    ? Math.min(5, Math.max(1, Math.round(parsedRating)))
+    : 5;
+
+  if (nama.length < 2) {
+    return { ok: false, error: 'Nama wajib diisi minimal 2 huruf.' };
+  }
+  if (kutipan.length < 10) {
+    return {
+      ok: false,
+      error: 'Tuliskan testimoni minimal 10 karakter agar bermanfaat bagi pembaca lain.',
+    };
+  }
+
+  return {
+    ok: true,
+    testimonial: {
+      id: `testi-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      nama,
+      peran,
+      komunitas,
+      kutipan,
+      rating,
+      tanggal: nowDate,
+    },
+  };
+}
+
+export function mergeTestimonialsLists(
+  primary: import('../types/almahyra').TestimonialItem[] = [],
+  secondary: import('../types/almahyra').TestimonialItem[] = [],
+): import('../types/almahyra').TestimonialItem[] {
+  const seen = new Set<string>();
+  const merged: import('../types/almahyra').TestimonialItem[] = [];
+  for (const item of [...primary, ...secondary]) {
+    if (!item || !item.id || seen.has(item.id)) continue;
+    seen.add(item.id);
+    merged.push(item);
+  }
+  return merged;
 }
 
 export const STORY_GENERATOR_CHARACTERS = [

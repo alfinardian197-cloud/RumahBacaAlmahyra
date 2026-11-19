@@ -122,14 +122,14 @@ export function FamilyLiteracySection({
           {SAHABAT_GALLERY_PHOTOS.map((photo) => (
             <figure
               key={photo.id}
-              className="overflow-hidden rounded-2xl border border-[#E2E8E5] bg-[#F8FAF9]"
+              className="flex flex-col overflow-hidden rounded-2xl border border-[#E2E8E5] bg-[#F8FAF9]"
             >
-              <div className="aspect-4/3 w-full overflow-hidden bg-[#E7EEEA]">
+              <div className="flex h-[320px] sm:h-[300px] lg:h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFFDF6] to-[#EAF5EE] p-2">
                 <ResilientImage
                   src={photo.src}
                   fallbackSrc={DEFAULT_HERO_IMAGE_URL}
                   alt={photo.name}
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full rounded-xl object-contain"
                 />
               </div>
               <figcaption className="p-3.5 space-y-1">

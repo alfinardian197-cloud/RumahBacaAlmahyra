@@ -12,6 +12,7 @@ import type {
 import {
   authenticateUser,
   clampValidatedReadingPoints,
+  createValidatedTestimonial,
   CREATION_CATEGORIES,
   extractSpreadsheetId,
   hydrateDatabaseWithDefaults,
@@ -406,6 +407,40 @@ export function createApiApp(): Express {
     } catch (error) {
       console.error('POST /api/creations error:', error);
       res.status(500).json({ error: 'Gagal mengirim karya.' });
+    }
+  });
+
+  app.post('/api/testimonials', async (req, res) => {
+    try {
+      const caller = verifyBearerSession(req.headers.authorization);
+      const body = req.body ?? {};
+      const result = createValidatedTestimonial({
+        nama: String(body.nama ?? ''),
+        peran: typeof body.peran === 'string' ? body.peran : undefined,
+        komunitas: typeof body.komunitas === 'string' ? body.komunitas : undefined,
+        kutipan: String(body.kutipan ?? ''),
+        rating: typeof body.rating === 'number' ? body.rating : Number(body.rating ?? 5),
+      });
+
+      if (!result.ok) {
+        res.status(400).json({ error: result.error });
+        return;
+      }
+
+      const db = await ensureDb();
+      const updated: AlmahyraDatabase = {
+        ...db,
+        testimonials: [result.testimonial, ...(db.testimonials ?? [])],
+      };
+      await saveDb(updated);
+      res.status(201).json({
+        ok: true,
+        testimonial: result.testimonial,
+        db: sanitizeDatabaseForClient(updated, caller),
+      });
+    } catch (error) {
+      console.error('POST /api/testimonials error:', error);
+      res.status(500).json({ error: 'Gagal menyimpan testimoni.' });
     }
   });
 

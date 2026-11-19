@@ -37,6 +37,7 @@ export const DEFAULT_DB: AlmahyraDatabase = {
     slogan: 'Dari Rumah Kecil, Lahir Penjelajah Dunia',
     location: 'Kediaman Ananda Almahyra, Dusun Grontol, Desa Tlogosari, Kabupaten Pasuruan',
     coordinator: 'Mohammad Alfin Ardiansyah, S.Pd.',
+    whatsappNumber: '08813145186',
     logoUrl: DEFAULT_LOGO_URL,
     primaryColor: '#087C3B',
     secondaryColor: '#075A32',
