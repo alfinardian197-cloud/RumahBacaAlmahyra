@@ -55,8 +55,8 @@ import { BerandaShowcase } from './BerandaShowcase';
 import { BookCard } from './BookCard';
 import { BorrowDonationPanel } from './BorrowDonationPanel';
 import { Card3DPassport } from './Card3DPassport';
-import { CreationGallerySection } from './CreationGallerySection';
 import { DigitalCertificateModal } from './DigitalCertificateModal';
+import { EducationalVideosSection } from './EducationalVideosSection';
 import { FamilyLiteracySection } from './FamilyLiteracySection';
 import { FourPillarsSection } from './FourPillarsSection';
 import { HomepageShowcaseStage } from './HomepageShowcaseStage';
@@ -224,6 +224,14 @@ export function PublicLanding({
   const [journeyStep, setJourneyStep] = useState(1);
   const [heroSlide, setHeroSlide] = useState(0);
   const [certModalOpen, setCertModalOpen] = useState(false);
+  const [selectedVideoZoneId, setSelectedVideoZoneId] = useState<string>('all');
+  const [selectedVideoId, setSelectedVideoId] = useState<string | undefined>(undefined);
+
+  const handleOpenVideos = (zoneId: string = 'all', videoId?: string) => {
+    setSelectedVideoZoneId(zoneId);
+    setSelectedVideoId(videoId);
+    onChangePage('video-edukasi');
+  };
 
   const progressMap = useMemo(() => {
     const map = new Map<string, ReadingProgress>();
@@ -950,7 +958,7 @@ export function PublicLanding({
                         Program TELAGA &amp; Aksi Nyata!
                       </h1>
                       <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base font-bold text-[#0D2E1B] dark:text-[#EEF7F2]">
-                        Kolaborasi warga Dusun Grontol menghadirkan pojok dongeng, pinjam buku cetak, donasi Satu Rumah Satu Buku, dan galeri karya anak.
+                        Kolaborasi warga Dusun Grontol menghadirkan pojok dongeng, pinjam buku cetak, donasi Satu Rumah Satu Buku, dan video edukasi 6 zona belajar.
                       </p>
                       <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                         <button
@@ -963,10 +971,10 @@ export function PublicLanding({
                         </button>
                         <button
                           type="button"
-                          onClick={() => onChangePage('galeri-karya')}
+                          onClick={() => handleOpenVideos('all')}
                           className="inline-flex items-center gap-2 rounded-full border-2 border-[#FFF3B0] bg-gradient-to-b from-[#FFD633] to-[#F4A615] px-5 py-2.5 text-sm font-extrabold text-[#10281B] shadow-md"
                         >
-                          Lihat Galeri Karya Anak
+                          Tonton Video Edukasi
                         </button>
                       </div>
                     </div>
@@ -1010,14 +1018,13 @@ export function PublicLanding({
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 -mt-5 pb-4 space-y-5">
               <FourPillarsSection
                 onExploreRead={() => onChangePage('jelajahi-buku')}
-                onExploreCreate={() => onChangePage('galeri-karya')}
+                onExploreVideos={() => handleOpenVideos('all')}
                 onExploreAdventure={() => onChangePage('petualangan')}
                 onExploreAchievement={() => onChangePage('prestasi')}
               />
 
               <HomepageShowcaseStage
                 books={books}
-                creations={db.creations ?? []}
                 featuredBook={dailyFeaturedBook}
                 dailyMissionDone={dailyMissionDone}
                 onReadBook={onReadBook}
@@ -1026,7 +1033,7 @@ export function PublicLanding({
                   onChangePage('jelajahi-buku');
                 }}
                 onOpenPassportQuiz={() => onChangePage('prestasi')}
-                onOpenGallery={() => onChangePage('galeri-karya')}
+                onOpenVideos={handleOpenVideos}
               />
             </div>
           </div>
@@ -1146,6 +1153,7 @@ export function PublicLanding({
                 setVisibleBookCount(24);
                 onChangePage('jelajahi-buku');
               }}
+              onWatchZoneVideos={(zoneId) => handleOpenVideos(zoneId)}
             />
 
             <AdventureJourneySection
@@ -1164,19 +1172,18 @@ export function PublicLanding({
           </div>
         )}
 
-        {/* PAGE 4: GALERI KARYA (GALERI ANAK + PAPAN PERINGKAT & STUDIO DONGENG) */}
-        {audienceMode === 'petualang' && activePage === 'galeri-karya' && (
+        {/* PAGE 4: VIDEO EDUKASI (KURASI 10 KANAL EDUKASI BERDASARKAN 6 ZONA ALMAHIRA) */}
+        {audienceMode === 'petualang' && activePage === 'video-edukasi' && (
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10">
             {renderPageHeader(
-              'Pilar Berkarya · Kreativitas Sahabat Almahyra',
-              'Galeri Karya Anak & Studio Cerita Keluarga',
-              'Apresiasi gambar, puisi, komik, dan resensi buku sahabat Almahyra serta buat dongeng keluarga bersama.',
+              'Video Edukasi · 10 Kanal Pilihan Indonesia (TK – SMA)',
+              'Video Edukasi 6 Zona Belajar Almahyra',
+              'Tonton video pilihan dari Kok Bisa?, Hujan Tanda Tanya, Neuron, Sepulang Sekolah, Kejarcita, Ruangguru, Marbel, Nussa Official, Riri, dan SISI TERANG yang diklasifikasikan sesuai 6 zona petualangan.',
             )}
 
-            <CreationGallerySection
-              db={db}
-              session={session}
-              onSubmitCreation={onSubmitCreation}
+            <EducationalVideosSection
+              initialZoneId={selectedVideoZoneId}
+              initialVideoId={selectedVideoId}
             />
 
             <LeaderboardAndStoryStudio db={db} onOpenLogin={onOpenLogin} />
@@ -1735,11 +1742,11 @@ export function PublicLanding({
               </button>
               <button
                 type="button"
-                onClick={() => onChangePage('galeri-karya')}
+                onClick={() => handleOpenVideos('all')}
                 className="inline-flex items-center gap-1.5 hover:text-[#FFC51B]"
               >
                 <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-                Berita &amp; Informasi
+                Video Edukasi
               </button>
               <button
                 type="button"

@@ -8,7 +8,7 @@ import {
   Compass,
   Heart,
   NotebookPen,
-  Palette,
+  PlayCircle,
   Search,
   ShieldCheck,
   Sparkles,
@@ -38,9 +38,9 @@ import {
 import { LevelProgressionInfographic } from './AlmahyraInfographics';
 import { BookCard } from './BookCard';
 import { Card3DPassport } from './Card3DPassport';
-import { CreationGallerySection } from './CreationGallerySection';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { DigitalCertificateModal } from './DigitalCertificateModal';
+import { EducationalVideosSection } from './EducationalVideosSection';
 import { ResilientImage } from './ResilientImage';
 
 interface MemberPortalProps {
@@ -952,17 +952,13 @@ export function MemberPortal({
             </section>
           </div>
 
-          {/* Galeri & Kirim Karya untuk Anggota */}
+          {/* Video Edukasi 6 Zona (10 Kanal Pilihan) untuk Anggota */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#F58220]">
-              <Palette className="h-4 w-4" aria-hidden="true" />
-              <span>Berkarya &amp; Kirim Karyamu</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-[#DC2626]">
+              <PlayCircle className="h-4 w-4" aria-hidden="true" />
+              <span>Video Edukasi 6 Zona · 10 Kanal Pilihan Indonesia</span>
             </div>
-            <CreationGallerySection
-              db={db}
-              session={session}
-              onSubmitCreation={onSubmitCreation}
-            />
+            <EducationalVideosSection compact />
           </div>
         </div>
       )}

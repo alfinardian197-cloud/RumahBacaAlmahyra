@@ -438,7 +438,7 @@ export default function App() {
           { id: 'beranda', label: 'Beranda' },
           { id: 'jelajahi-buku', label: 'Jelajahi Buku' },
           { id: 'petualangan', label: 'Petualangan' },
-          { id: 'galeri-karya', label: 'Galeri Karya' },
+          { id: 'video-edukasi', label: 'Video Edukasi' },
           { id: 'keluarga', label: 'Dunia Keluarga' },
           { id: 'prestasi', label: 'Prestasi' },
         ];
@@ -452,11 +452,11 @@ export default function App() {
       return [
         { id: 'passport', label: 'Dasbor & E-Paspor' },
         { id: 'catalog', label: 'Katalog & Misi' },
-        { id: 'schedule', label: 'Jadwal & Karya' },
+        { id: 'schedule', label: 'Jadwal & Video' },
       ];
     }
     return [
-      { id: 'data', label: 'Data, Katalog & Moderasi' },
+      { id: 'data', label: 'Data & Katalog' },
       { id: 'reports', label: 'Kegiatan & Laporan' },
       { id: 'appearance', label: 'Tampilan & Spreadsheet' },
     ];

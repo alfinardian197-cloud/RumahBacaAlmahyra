@@ -1,9 +1,9 @@
-import { ArrowRight, BookOpen, Compass, Palette, Trophy } from 'lucide-react';
+import { ArrowRight, BookOpen, Compass, PlayCircle, Trophy } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface FourPillarsSectionProps {
   onExploreRead: () => void;
-  onExploreCreate: () => void;
+  onExploreVideos: () => void;
   onExploreAdventure: () => void;
   onExploreAchievement: () => void;
 }
@@ -23,17 +23,17 @@ const PILLARS = [
     Icon: BookOpen,
   },
   {
-    id: 'berkarya',
-    title: 'BERKARYA',
-    subtitle: 'Tulis, gambar, dan bagikan karyamu.',
-    actionLabel: 'Lihat Galeri Karya',
+    id: 'video',
+    title: 'VIDEO EDUKASI',
+    subtitle: 'Tonton 10 kanal edukasi pilihan di 6 zona belajar.',
+    actionLabel: 'Buka Video Edukasi',
     color: '#C2410C',
     darkTitle: '#FDBA74',
     bgClass: 'bg-gradient-to-br from-[#FFF1E6] to-[#FFE1CC] dark:from-[#361D12] dark:to-[#432415]',
     borderClass: 'border-[#FDC89B] dark:border-[#6E3B21]',
-    iconBgClass: 'bg-white text-[#EA580C] dark:bg-[#4A2717] dark:text-[#FDBA74]',
-    arrowBgClass: 'bg-[#EA580C] text-white',
-    Icon: Palette,
+    iconBgClass: 'bg-white text-[#DC2626] dark:bg-[#4A2717] dark:text-[#FCA5A5]',
+    arrowBgClass: 'bg-[#DC2626] text-white',
+    Icon: PlayCircle,
   },
   {
     id: 'bertualang',
@@ -65,13 +65,13 @@ const PILLARS = [
 
 export function FourPillarsSection({
   onExploreRead,
-  onExploreCreate,
+  onExploreVideos,
   onExploreAdventure,
   onExploreAchievement,
 }: FourPillarsSectionProps) {
   const actionHandlers: Record<(typeof PILLARS)[number]['id'], () => void> = {
     baca: onExploreRead,
-    berkarya: onExploreCreate,
+    video: onExploreVideos,
     bertualang: onExploreAdventure,
     prestasi: onExploreAchievement,
   };

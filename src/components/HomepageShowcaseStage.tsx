@@ -1,32 +1,34 @@
-import { ArrowRight, BookOpen, Image as ImageIcon, Star, Target, Trophy } from 'lucide-react';
-import { DEFAULT_HERO_IMAGE_URL } from '../data/defaultDb';
-import type { Book, CreationWork } from '../types/almahyra';
+import { ArrowRight, BookOpen, Play, PlayCircle, Star, Target, Trophy } from 'lucide-react';
+import {
+  EDUCATIONAL_CHANNELS,
+  EDUCATIONAL_VIDEOS,
+  getYouTubeThumbnailUrl,
+} from '../data/educationalVideos';
+import type { Book } from '../types/almahyra';
 import { isBookActive } from '../utils/almahyra';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
 import { ResilientImage } from './ResilientImage';
 
 interface HomepageShowcaseStageProps {
   books: Book[];
-  creations: CreationWork[];
   featuredBook?: Book;
   dailyMissionDone: boolean;
   onReadBook: (book: Book) => void;
   onOpenAllBooks: () => void;
   onOpenPassportQuiz: () => void;
-  onOpenGallery: () => void;
+  onOpenVideos: (zoneId?: string, videoId?: string) => void;
 }
 
 const SAMPLE_RATINGS = ['4.8', '4.7', '4.9'];
 
 export function HomepageShowcaseStage({
   books,
-  creations,
   featuredBook,
   dailyMissionDone,
   onReadBook,
   onOpenAllBooks,
   onOpenPassportQuiz,
-  onOpenGallery,
+  onOpenVideos,
 }: HomepageShowcaseStageProps) {
   const activeBooks = books.filter(isBookActive);
   const topThreeBooks = [
@@ -34,34 +36,11 @@ export function HomepageShowcaseStage({
     ...activeBooks.filter((b) => !b.pilihanAlmahyra),
   ].slice(0, 3);
 
-  const approvedCreations = creations
-    .filter((c) => c.moderationStatus === 'approved' && c.parentApproved !== false && c.imageUrl)
-    .slice(0, 3);
-
-  const polaroids =
-    approvedCreations.length >= 3
-      ? approvedCreations
-      : [
-          ...approvedCreations,
-          {
-            id: 'fallback-1',
-            judul: 'Teras Membaca Almahyra',
-            imageUrl: DEFAULT_HERO_IMAGE_URL,
-            namaSamaran: 'Sahabat Grontol',
-          },
-          {
-            id: 'fallback-2',
-            judul: 'Komik Kebun Hijau',
-            imageUrl: '/images/covers/bk-05-kapten-pilah.jpg',
-            namaSamaran: 'Tim Komik',
-          },
-          {
-            id: 'fallback-3',
-            judul: 'Eksperimen Sains Dapur',
-            imageUrl: '/images/covers/bk-03-sains-dapur.jpg',
-            namaSamaran: 'Klub Sains',
-          },
-        ].slice(0, 3);
+  const featuredVideos = [
+    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-imajinasi-riri-toba'),
+    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-pengetahuan-kokbisa-langit'),
+    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-eksplorasi-marbel-tatasurya'),
+  ].filter((v): v is (typeof EDUCATIONAL_VIDEOS)[number] => Boolean(v));
 
   return (
     <section
@@ -240,18 +219,18 @@ export function HomepageShowcaseStage({
         </div>
       </div>
 
-      {/* Card 3: Galeri Karya Sahabat (4 cols on lg) */}
+      {/* Card 3: Video Edukasi 6 Zona — SISI TERANG (4 cols on lg) */}
       <div className="lg:col-span-4 flex flex-col overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white shadow-sm">
         <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-4 py-2.5 text-white">
           <div className="flex items-center gap-2 min-w-0">
-            <ImageIcon className="h-4 w-4 text-[#FFC51B] shrink-0" aria-hidden="true" />
+            <PlayCircle className="h-4 w-4 text-[#FFC51B] shrink-0" aria-hidden="true" />
             <h2 className="font-display text-sm sm:text-base font-bold truncate">
-              Galeri Karya Sahabat
+              Video Edukasi 6 Zona
             </h2>
           </div>
           <button
             type="button"
-            onClick={onOpenGallery}
+            onClick={() => onOpenVideos('all')}
             className="inline-flex items-center gap-1 text-xs font-bold text-white/95 hover:text-[#FFC51B] whitespace-nowrap shrink-0"
           >
             Lihat Semua
@@ -259,52 +238,55 @@ export function HomepageShowcaseStage({
           </button>
         </div>
 
-        <div className="relative flex flex-1 items-center justify-center bg-[#FFF8E8]/60 p-4">
-          {/* Decorative floating stars */}
-          <Star
-            className="pointer-events-none absolute left-4 top-4 h-4 w-4 fill-[#FFC51B] text-[#FFC51B]"
-            aria-hidden="true"
-          />
-          <Star
-            className="pointer-events-none absolute right-5 top-5 h-3.5 w-3.5 fill-[#08A9EF] text-[#08A9EF]"
-            aria-hidden="true"
-          />
-          <Star
-            className="pointer-events-none absolute bottom-3 left-1/3 h-3.5 w-3.5 fill-[#F58220] text-[#F58220]"
-            aria-hidden="true"
-          />
-
-          <div className="grid w-full grid-cols-3 items-center gap-2 sm:gap-3">
-            {polaroids.map((item, idx) => {
-              const tiltClass =
-                idx === 0
-                  ? 'sm:-rotate-3'
-                  : idx === 1
-                    ? 'sm:rotate-1 sm:-translate-y-1 z-10'
-                    : 'sm:rotate-3';
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={onOpenGallery}
-                  title={`${item.judul} · ${item.namaSamaran}`}
-                  className={`preserve-light group rounded-xl border border-[#E7DEC6] bg-white p-1.5 pb-3 text-left shadow-md transition-transform hover:scale-105 ${tiltClass}`}
-                >
-                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-[#E7EEEA]">
-                    <ResilientImage
-                      src={item.imageUrl || DEFAULT_HERO_IMAGE_URL}
-                      fallbackSrc={DEFAULT_HERO_IMAGE_URL}
-                      alt={item.judul}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <p className="mt-1.5 truncate text-[10px] font-bold text-[#10281B]">
-                    {item.judul}
+        <div className="flex flex-1 flex-col justify-between gap-2.5 bg-[#FFF8E8]/60 p-3.5">
+          <div className="space-y-2">
+            {featuredVideos.map((video) => (
+              <button
+                key={video.id}
+                type="button"
+                onClick={() => onOpenVideos(video.zoneId, video.id)}
+                className="group flex w-full items-center gap-2.5 rounded-xl border border-[#E7DEC6] bg-white p-1.5 text-left transition-all hover:border-[#087C3B]/45 hover:shadow-xs"
+              >
+                <div className="relative aspect-video w-20 shrink-0 overflow-hidden rounded-lg bg-[#10281B]">
+                  <ResilientImage
+                    src={getYouTubeThumbnailUrl(video.youtubeId)}
+                    alt={`Thumbnail ${video.title}`}
+                    className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    renderFallback={() => (
+                      <div className="flex h-full w-full items-center justify-center bg-[#087C3B] text-white">
+                        <Play className="h-4 w-4 fill-current" aria-hidden="true" />
+                      </div>
+                    )}
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center justify-center bg-black/25"
+                  >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DC2626] text-white shadow-xs">
+                      <Play className="h-3 w-3 fill-current ml-0.5" />
+                    </span>
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-bold text-[#087C3B] dark:text-[#6EE7B7] truncate">
+                    {video.zoneName} · {video.channelName}
                   </p>
-                </button>
-              );
-            })}
+                  <p className="font-display text-xs font-bold leading-snug text-[#111C17] line-clamp-2">
+                    {video.title}
+                  </p>
+                </div>
+              </button>
+            ))}
           </div>
+
+          <button
+            type="button"
+            onClick={() => onOpenVideos('all')}
+            className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#DC2626] px-3 py-2 text-xs font-bold text-white shadow-xs transition-opacity hover:opacity-95"
+          >
+            <PlayCircle className="h-4 w-4" aria-hidden="true" />
+            Jelajahi {EDUCATIONAL_VIDEOS.length} Video · {EDUCATIONAL_CHANNELS.length} Kanal
+          </button>
         </div>
       </div>
     </section>

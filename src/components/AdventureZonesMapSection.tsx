@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BookOpen, CheckCircle2, Compass, Sparkles, Star } from 'lucide-react';
+import { BookOpen, CheckCircle2, Compass, PlayCircle, Sparkles, Star } from 'lucide-react';
 import type { AlmahyraDatabase, Book } from '../types/almahyra';
 import { computeZoneAdventureStats } from '../utils/almahyra';
 import { CustomBookCoverSvg } from './CustomBookCoverSvg';
@@ -9,12 +9,14 @@ interface AdventureZonesMapSectionProps {
   db: AlmahyraDatabase;
   onReadBook: (book: Book) => void;
   onFilterByZone: (zoneName: string) => void;
+  onWatchZoneVideos?: (zoneId: string) => void;
 }
 
 export function AdventureZonesMapSection({
   db,
   onReadBook,
   onFilterByZone,
+  onWatchZoneVideos,
 }: AdventureZonesMapSectionProps) {
   const zones = useMemo(
     () => computeZoneAdventureStats(db.books, db.missions, db.passportLogs),
@@ -58,14 +60,26 @@ export function AdventureZonesMapSection({
             Klik setiap zona untuk melihat target bacaan, aktivitas langsung, lencana zona, dan buku yang siap dibaca.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => activeZone && onFilterByZone(activeZone.name)}
-          className="inline-flex items-center gap-1.5 self-start rounded-xl bg-[#087C3B] px-4 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap shrink-0"
-        >
-          <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-          Cari Buku {activeZone?.name}
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start shrink-0">
+          {onWatchZoneVideos && activeZone && (
+            <button
+              type="button"
+              onClick={() => onWatchZoneVideos(activeZone.id)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#DC2626] px-4 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap shrink-0"
+            >
+              <PlayCircle className="h-3.5 w-3.5" aria-hidden="true" />
+              Video {activeZone.name}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => activeZone && onFilterByZone(activeZone.name)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#087C3B] px-4 py-2 text-xs font-bold text-white hover:opacity-95 whitespace-nowrap shrink-0"
+          >
+            <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+            Cari Buku {activeZone?.name}
+          </button>
+        </div>
       </div>
 
       {/* Interactive 6-Zone Selector Grid */}

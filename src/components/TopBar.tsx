@@ -8,7 +8,7 @@ import {
   LogOut,
   Menu,
   Moon,
-  Palette,
+  PlayCircle,
   Sun,
   Trophy,
   Users,
@@ -32,7 +32,7 @@ export type PublicPageId =
   | 'beranda'
   | 'jelajahi-buku'
   | 'petualangan'
-  | 'galeri-karya'
+  | 'video-edukasi'
   | 'keluarga'
   | 'prestasi'
   | 'telaga-program'
@@ -61,11 +61,11 @@ export const PUBLIC_ECOSYSTEM_NAV: Array<{
     iconColor: '#D97706',
   },
   {
-    id: 'galeri-karya',
-    label: 'Galeri Karya',
-    pageId: 'galeri-karya',
-    icon: Palette,
-    iconColor: '#EA580C',
+    id: 'video-edukasi',
+    label: 'Video Edukasi',
+    pageId: 'video-edukasi',
+    icon: PlayCircle,
+    iconColor: '#DC2626',
   },
   {
     id: 'keluarga',
