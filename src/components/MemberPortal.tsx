@@ -75,7 +75,6 @@ export function MemberPortal({
   activePage,
   onReadBook,
   onToggleFavorite,
-  onSubmitCreation,
   onModerateCreation,
   onUpdateMemberProfile,
 }: MemberPortalProps) {

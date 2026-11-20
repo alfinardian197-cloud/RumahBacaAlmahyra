@@ -98,20 +98,20 @@ export function LoginModal({
         </div>
 
         {/* Interactive Segmented Role Switcher */}
-        <div className="mt-5 grid grid-cols-2 gap-1 rounded-xl bg-[#F2F6F4] p-1">
+        <div className="mt-5 grid grid-cols-2 gap-1 rounded-xl bg-[#EEF3F0] p-1">
           <button
             type="button"
             onClick={() => {
               setMode('anggota');
               setError('');
             }}
-            className={`flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-colors whitespace-nowrap ${
+            className={`flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-bold transition-colors whitespace-nowrap ${
               mode === 'anggota'
                 ? 'bg-white text-[#111C17] shadow-xs'
                 : 'text-[#4A5D54] hover:text-[#111C17]'
             }`}
           >
-            <UserCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            <UserCheck className="h-4 w-4" aria-hidden="true" />
             Anggota / Anak
           </button>
           <button
@@ -120,14 +120,14 @@ export function LoginModal({
               setMode('pengelola');
               setError('');
             }}
-            className={`flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-colors whitespace-nowrap ${
+            className={`flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-bold transition-colors whitespace-nowrap ${
               mode === 'pengelola'
                 ? 'bg-white text-[#111C17] shadow-xs'
                 : 'text-[#4A5D54] hover:text-[#111C17]'
             }`}
           >
-            <Shield className="h-3.5 w-3.5" aria-hidden="true" />
-            Admin / Superadmin
+            <Shield className="h-4 w-4" aria-hidden="true" />
+            Pengelola / Admin
           </button>
         </div>
 
@@ -135,7 +135,7 @@ export function LoginModal({
           <div>
             <label
               htmlFor="login-username"
-              className="block text-xs font-semibold text-[#111C17]"
+              className="block text-xs font-bold text-[#111C17]"
             >
               {mode === 'anggota' ? 'Nomor Induk Anggota' : 'Username Pengelola'}
             </label>
@@ -146,14 +146,14 @@ export function LoginModal({
               onChange={(e) => setUsername(e.target.value)}
               placeholder={mode === 'anggota' ? 'Contoh: ALMA-001' : 'admin'}
               autoComplete="username"
-              className="mt-1.5 w-full rounded-lg border border-[#DCE4DF] bg-white px-3.5 py-2.5 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#1B4332] focus:outline-none"
+              className="mt-1.5 w-full rounded-xl border border-[#DCE4DF] bg-white px-3.5 py-2.5 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#087C3B] focus:outline-none"
             />
           </div>
 
           <div>
             <label
               htmlFor="login-password"
-              className="block text-xs font-semibold text-[#111C17]"
+              className="block text-xs font-bold text-[#111C17]"
             >
               Kata Sandi
             </label>
@@ -165,13 +165,13 @@ export function LoginModal({
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={mode === 'anggota' ? 'Sandi anggota (default: 123)' : 'Masukkan kata sandi'}
                 autoComplete="current-password"
-                className="w-full rounded-lg border border-[#DCE4DF] bg-white px-3.5 py-2.5 pr-10 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#1B4332] focus:outline-none"
+                className="w-full rounded-xl border border-[#DCE4DF] bg-white px-3.5 py-2.5 pr-11 text-sm text-[#111C17] placeholder:text-[#8A9B92] focus:border-[#087C3B] focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Sembunyikan karakter sandi' : 'Tampilkan karakter sandi'}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-[#4A5D54] hover:text-[#111C17]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-[#4A5D54] hover:bg-[#F2F6F4] hover:text-[#111C17]"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -181,7 +181,7 @@ export function LoginModal({
           {error && (
             <div
               role="alert"
-              className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-700"
+              className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-semibold text-red-700"
             >
               {error}
             </div>
@@ -190,22 +190,29 @@ export function LoginModal({
           <button
             type="submit"
             disabled={submitting}
-            style={{ backgroundColor: 'var(--brand-primary)' }}
-            className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-95 disabled:opacity-60"
+            style={{ backgroundColor: config.primaryColor }}
+            className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-95 disabled:opacity-60"
           >
             <KeyRound className="h-4 w-4" aria-hidden="true" />
             {submitting ? 'Memeriksa Akun...' : 'Masuk Sekarang'}
           </button>
         </form>
 
-        <div className="mt-4 rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-3 text-xs text-[#4A5D54] leading-relaxed">
+        <div className="mt-4 rounded-xl border border-[#E2E8E5] bg-[#F8FAF9] p-3.5 text-xs text-[#4A5D54] leading-relaxed">
           {mode === 'anggota' ? (
             <p>
-              Anak tidak perlu email atau ponsel pribadi. Gunakan <span className="font-mono-tabular font-semibold text-[#111C17]">Nomor Induk (mis. ALMA-001)</span> dan sandi default <span className="font-mono-tabular font-semibold text-[#111C17]">123</span>.
+              Anak tidak perlu email atau ponsel pribadi. Cukup gunakan{' '}
+              <span className="font-mono-tabular font-bold text-[#111C17]">
+                Nomor Induk (mis. ALMA-001)
+              </span>{' '}
+              dan sandi default{' '}
+              <span className="font-mono-tabular font-bold text-[#111C17]">123</span>.
             </p>
           ) : (
             <p>
-              Masuk sebagai <span className="font-semibold text-[#111C17]">Admin</span> atau <span className="font-semibold text-[#111C17]">Superadmin</span> menggunakan username <span className="font-mono-tabular font-semibold text-[#111C17]">admin</span> untuk mengelola database spreadsheet dan tampilan landing page.
+              Masuk sebagai <span className="font-bold text-[#111C17]">Admin</span> atau{' '}
+              <span className="font-bold text-[#111C17]">Superadmin</span> menggunakan username{' '}
+              <span className="font-mono-tabular font-bold text-[#111C17]">admin</span> untuk mengelola anggota, katalog buku, kegiatan, dan sinkronisasi spreadsheet.
             </p>
           )}
         </div>

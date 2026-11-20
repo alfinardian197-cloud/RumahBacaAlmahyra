@@ -7869,14 +7869,14 @@
   ],
   "readingProgress": [
     {
-      "id": "rp-guest-alm-029",
+      "id": "rp-guest-alm-001",
       "viewerKey": "guest",
-      "bookId": "alm-029",
+      "bookId": "alm-001",
       "lastPage": 0,
-      "totalPages": 10,
+      "totalPages": 6,
       "isFavorite": false,
       "completedCount": 0,
-      "lastReadAt": "2026-11-17T12:17:02.983Z"
+      "lastReadAt": "2026-11-20T03:19:29.436Z"
     },
     {
       "id": "rp-ALMA-001-alm-001",

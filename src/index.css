@@ -3,43 +3,52 @@
 
 :root {
   --brand-primary: #087c3b;
-  --brand-dark: #075a32;
+  --brand-dark: #06612d;
+  --brand-soft: #e6f7ed;
   --brand-secondary: #7ed321;
   --brand-accent: #ffc51b;
   --brand-sky: #08a9ef;
   --brand-orange: #f58220;
   --brand-primary-ink: #087c3b;
-  --brand-accent-ink: #b45309;
-  --surface-canvas: #fff8e8;
+  --brand-accent-ink: #c26508;
+  --surface-canvas: #fffdf6;
   --surface-card: #ffffff;
-  --surface-subtle: #fff2d6;
-  --surface-muted: #f5ebd2;
-  --border-subtle: #e7dec6;
-  --border-strong: #d4c7a7;
+  --surface-subtle: #fff8e8;
+  --surface-cream: #fff8e8;
+  --surface-muted: #eef3f0;
+  --border-subtle: #e2e8e5;
+  --border-strong: #dce4df;
   --ink-primary: #10281b;
-  --ink-secondary: #3e5b4c;
+  --ink-secondary: #4a5d54;
 }
 
 html.dark {
   color-scheme: dark;
   --brand-primary-ink: #6ee7b7;
-  --brand-accent-ink: #ffd75e;
-  --surface-canvas: #07130e;
-  --surface-card: #0e2018;
-  --surface-subtle: #142b21;
-  --surface-muted: #1a372a;
-  --border-subtle: #204233;
-  --border-strong: #2c5744;
-  --ink-primary: #eef7f2;
-  --ink-secondary: #a5c0b4;
+  --brand-accent-ink: #fcd34d;
+  --brand-soft: #132b20;
+  --surface-canvas: #091410;
+  --surface-card: #10211a;
+  --surface-subtle: #152b22;
+  --surface-cream: #1b2820;
+  --surface-muted: #1b362b;
+  --border-subtle: #203d30;
+  --border-strong: #2d5242;
+  --ink-primary: #edf5f0;
+  --ink-secondary: #a2bcb0;
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--surface-canvas);
     color: var(--ink-primary);
     transition: background-color 180ms ease, color 180ms ease;
+    overflow-x: clip;
   }
 
   h1,
@@ -87,6 +96,205 @@ html.dark {
 
 .animate-confetti-float {
   animation: confetti-float 2.4s ease-in-out infinite;
+}
+
+/* Storybook Hero Motion Graphics (Frameless Floating & Ambient Life) */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0px, 0) rotate(-1deg) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(1.3deg) scale(1.028);
+  }
+}
+
+@keyframes hero-halo-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.92;
+  }
+}
+
+@keyframes hero-shadow-breath {
+  0%,
+  100% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 0.34;
+  }
+  50% {
+    transform: scaleX(0.84) scaleY(0.85);
+    opacity: 0.18;
+  }
+}
+
+@keyframes hero-sparkle-twinkle {
+  0%,
+  100% {
+    transform: scale(0.75) rotate(0deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.22) rotate(22deg);
+    opacity: 1;
+  }
+}
+
+@keyframes hero-orbit-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0px, 0) rotate(-4deg);
+  }
+  50% {
+    transform: translate3d(6px, -14px, 0) rotate(6deg);
+  }
+}
+
+@keyframes hero-cloud-drift {
+  0%,
+  100% {
+    transform: translate3d(-12px, 0, 0);
+  }
+  50% {
+    transform: translate3d(16px, -4px, 0);
+  }
+}
+
+@keyframes hero-mote-rise {
+  0% {
+    transform: translate3d(0, 14px, 0) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(8px, -36px, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-sheen-sweep {
+  0%,
+  60% {
+    transform: translateX(-140%) skewX(-22deg);
+    opacity: 0;
+  }
+  72% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateX(180%) skewX(-22deg);
+    opacity: 0;
+  }
+}
+
+.animate-hero-float {
+  animation: hero-float 4.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-halo {
+  animation: hero-halo-pulse 4.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-hero-shadow {
+  animation: hero-shadow-breath 4.8s ease-in-out infinite;
+}
+
+.animate-hero-sparkle {
+  animation: hero-sparkle-twinkle 2.8s ease-in-out infinite;
+}
+
+.animate-hero-sparkle-delayed {
+  animation: hero-sparkle-twinkle 3.4s ease-in-out 0.9s infinite;
+}
+
+.animate-hero-orbit {
+  animation: hero-orbit-bob 4.2s ease-in-out infinite;
+}
+
+.animate-hero-orbit-reverse {
+  animation: hero-orbit-bob 5.1s ease-in-out 1.2s infinite reverse;
+}
+
+.animate-hero-cloud {
+  animation: hero-cloud-drift 9s ease-in-out infinite;
+}
+
+.animate-hero-cloud-slow {
+  animation: hero-cloud-drift 13s ease-in-out 2s infinite reverse;
+}
+
+.animate-hero-mote {
+  animation: hero-mote-rise 4.4s ease-in-out infinite;
+}
+
+.animate-hero-mote-delayed {
+  animation: hero-mote-rise 5.2s ease-in-out 1.8s infinite;
+}
+
+.animate-hero-sheen {
+  animation: hero-sheen-sweep 4.4s ease-in-out infinite;
+}
+
+@keyframes hero-rays-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.06);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.animate-hero-rays {
+  animation: hero-rays-spin 22s linear infinite;
+  will-change: transform;
+}
+
+.hero-artwork-blend {
+  -webkit-mask-image: radial-gradient(
+    95% 95% at 50% 50%,
+    #000 82%,
+    rgba(0, 0, 0, 0.85) 90%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    95% 95% at 50% 50%,
+    #000 82%,
+    rgba(0, 0, 0, 0.85) 90%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-float,
+  .animate-hero-halo,
+  .animate-hero-shadow,
+  .animate-hero-sparkle,
+  .animate-hero-sparkle-delayed,
+  .animate-hero-orbit,
+  .animate-hero-orbit-reverse,
+  .animate-hero-cloud,
+  .animate-hero-cloud-slow,
+  .animate-hero-mote,
+  .animate-hero-mote-delayed,
+  .animate-hero-sheen,
+  .animate-hero-rays {
+    animation: none !important;
+  }
 }
 
 /* Semantic Warm Cream, Emerald & Night Mode Surface Mapping */

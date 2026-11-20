@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { DEFAULT_LOGO_URL } from '../data/defaultDb';
 import type { AuthSession, LandingConfig, ThemeMode } from '../types/almahyra';
-import { PWAInstallButton } from './PWAInstallButton';
 import { ResilientImage } from './ResilientImage';
 
 export interface NavTabItem {
@@ -38,94 +37,79 @@ export type PublicPageId =
   | 'telaga-program'
   | 'telaga-katalog';
 
-export const PUBLIC_ECOSYSTEM_NAV: Array<{
-  id: string;
-  label: string;
-  pageId: PublicPageId;
-  icon: LucideIcon;
-  iconColor: string;
-}> = [
-  { id: 'beranda', label: 'Beranda', pageId: 'beranda', icon: Home, iconColor: '#087C3B' },
-  {
-    id: 'jelajahi-buku',
-    label: 'Jelajahi Buku',
-    pageId: 'jelajahi-buku',
-    icon: BookOpen,
-    iconColor: '#0284C7',
-  },
-  {
-    id: 'petualangan',
-    label: 'Petualangan',
-    pageId: 'petualangan',
-    icon: Compass,
-    iconColor: '#D97706',
-  },
-  {
-    id: 'video-edukasi',
-    label: 'Video Edukasi',
-    pageId: 'video-edukasi',
-    icon: PlayCircle,
-    iconColor: '#DC2626',
-  },
-  {
-    id: 'keluarga',
-    label: 'Dunia Keluarga',
-    pageId: 'keluarga',
-    icon: Users,
-    iconColor: '#2563EB',
-  },
-  {
-    id: 'prestasi',
-    label: 'Prestasi',
-    pageId: 'prestasi',
-    icon: Trophy,
-    iconColor: '#D97706',
-  },
-];
-
 interface TopBarProps {
   config: LandingConfig;
   session: AuthSession | null;
   tabs: NavTabItem[];
   activeTab: string;
+  audienceMode: PublicRoleMode;
+  activePublicPage: PublicPageId;
   theme: ThemeMode;
-  publicRoleMode?: PublicRoleMode;
-  onChangePublicRoleMode?: (mode: PublicRoleMode) => void;
-  onSelectPublicPage?: (pageId: PublicPageId, anchorId?: string) => void;
+  onChangeAudienceMode: (mode: PublicRoleMode) => void;
+  onSelectPublicPage: (pageId: PublicPageId, anchorId?: string) => void;
   onToggleTheme: () => void;
   onSelectTab: (id: string) => void;
   onOpenLogin: () => void;
   onLogout: () => void;
 }
 
+const PETUALANG_MENU: Array<{
+  id: PublicPageId;
+  label: string;
+  icon: LucideIcon;
+  iconColor: string;
+}> = [
+  { id: 'beranda', label: 'Beranda', icon: Home, iconColor: 'text-[#087C3B]' },
+  { id: 'jelajahi-buku', label: 'Jelajahi Buku', icon: BookOpen, iconColor: 'text-[#08A9EF]' },
+  { id: 'petualangan', label: 'Petualangan', icon: Compass, iconColor: 'text-[#F58220]' },
+  { id: 'video-edukasi', label: 'Video Edukasi', icon: PlayCircle, iconColor: 'text-[#DC2626]' },
+  { id: 'keluarga', label: 'Dunia Keluarga', icon: Users, iconColor: 'text-[#1D4ED8]' },
+  { id: 'prestasi', label: 'Prestasi', icon: Trophy, iconColor: 'text-[#D97706]' },
+];
+
+const TELAGA_MENU: Array<{
+  id: PublicPageId;
+  label: string;
+  icon: LucideIcon;
+  iconColor: string;
+}> = [
+  { id: 'telaga-program', label: 'Program TELAGA', icon: HeartHandshake, iconColor: 'text-[#087C3B]' },
+  { id: 'telaga-katalog', label: 'Katalog Buku', icon: BookOpen, iconColor: 'text-[#08A9EF]' },
+  { id: 'keluarga', label: 'Jadwal & Donasi', icon: Users, iconColor: 'text-[#F58220]' },
+];
+
 export function TopBar({
   config,
   session,
   tabs,
   activeTab,
+  audienceMode,
+  activePublicPage,
   theme,
-  publicRoleMode = 'petualang',
-  onChangePublicRoleMode,
+  onChangeAudienceMode,
   onSelectPublicPage,
   onToggleTheme,
   onSelectTab,
   onOpenLogin,
   onLogout,
 }: TopBarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const publicMenu = audienceMode === 'telaga' ? TELAGA_MENU : PETUALANG_MENU;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#E7DEC6] bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
-        {/* Zone 1: Official App Icon Logo + Brand Title & Tagline */}
+    <header className="sticky top-0 z-40 border-b border-[#E7E3D4] bg-white/95 backdrop-blur-md shadow-xs dark:border-[#203D30] dark:bg-[#0E1E17]/95">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        {/* Brand Logo & Tagline */}
         <button
           type="button"
           onClick={() => {
-            if (!session && onSelectPublicPage) {
+            if (!session) {
               onSelectPublicPage('beranda');
             } else {
               onSelectTab(tabs[0]?.id ?? 'passport');
             }
+            setMobileMenuOpen(false);
           }}
           className="flex items-center gap-2.5 text-left whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2"
         >
@@ -138,35 +122,38 @@ export function TopBar({
             className="h-10 w-10 rounded-xl border-2 border-[#FFC51B] object-cover bg-white preserve-light shrink-0 shadow-xs"
           />
           <div className="leading-tight">
-            <span className="block font-display text-base font-extrabold tracking-tight text-[#087C3B] dark:text-[#6EE7B7] whitespace-nowrap">
+            <span className="block font-display text-base sm:text-lg font-extrabold tracking-tight text-[#087C3B] dark:text-[#6EE7B7]">
               {config.appName}
             </span>
-            <span className="hidden 2xl:block text-[10px] font-bold text-[#4A5D54] whitespace-nowrap">
-              {config.tagline}
+            <span className="hidden sm:block text-[10px] font-bold text-[#4A5D54] dark:text-[#A2BCB0]">
+              Baca, Berkarya, Bertualang, Raih Prestasi!
             </span>
           </div>
         </button>
 
-        {/* Zone 2: Single-line Multi-Page Navigation */}
-        {!session && onSelectPublicPage && publicRoleMode === 'petualang' ? (
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="Navigasi utama">
-            {PUBLIC_ECOSYSTEM_NAV.map((item) => {
-              const isActive = activeTab === item.pageId;
-              const NavIcon = item.icon;
+        {/* Center Desktop Navigation */}
+        {!session ? (
+          <nav
+            className="hidden xl:flex items-center gap-1"
+            aria-label="Navigasi utama Rumah Baca Almahyra"
+          >
+            {publicMenu.map((item) => {
+              const isActive = activePublicPage === item.id;
+              const Icon = item.icon;
               return (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => onSelectPublicPage(item.pageId)}
-                  className={`relative inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
+                  onClick={() => onSelectPublicPage(item.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold transition-all whitespace-nowrap shrink-0 ${
                     isActive
-                      ? 'bg-[#087C3B] text-white shadow-xs'
-                      : 'text-[#3E5B4C] hover:bg-[#FFF2D6] hover:text-[#10281B] dark:text-[#A5C0B4] dark:hover:bg-[#142b21] dark:hover:text-white'
+                      ? 'bg-[#087C3B] text-white shadow-sm'
+                      : 'text-[#1F3A2C] hover:bg-[#FFF8E8] hover:text-[#087C3B] dark:text-[#CBE0D6] dark:hover:bg-[#152B22]'
                   }`}
                 >
-                  <NavIcon
-                    className="h-3.5 w-3.5 shrink-0"
-                    style={{ color: isActive ? '#FFFFFF' : item.iconColor }}
+                  <Icon
+                    className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-white' : item.iconColor}`}
                     aria-hidden="true"
                   />
                   <span>{item.label}</span>
@@ -175,7 +162,10 @@ export function TopBar({
             })}
           </nav>
         ) : (
-          <nav className="hidden md:flex items-center gap-4" aria-label="Navigasi portal">
+          <nav
+            className="hidden md:flex items-center gap-1.5"
+            aria-label="Navigasi portal"
+          >
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -183,70 +173,62 @@ export function TopBar({
                   key={tab.id}
                   type="button"
                   onClick={() => onSelectTab(tab.id)}
-                  className={`relative py-2 text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`inline-flex items-center rounded-full px-4 py-2 text-xs font-extrabold transition-colors whitespace-nowrap shrink-0 ${
                     isActive
-                      ? 'text-[#111C17] font-bold'
-                      : 'text-[#4A5D54] hover:text-[#111C17]'
+                      ? 'bg-[#087C3B] text-white shadow-xs'
+                      : 'text-[#3B5246] hover:bg-[#FFF8E8] hover:text-[#10281B] dark:text-[#A2BCB0] dark:hover:bg-[#152B22]'
                   }`}
                 >
                   {tab.label}
-                  {isActive && (
-                    <span
-                      className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"
-                      style={{ backgroundColor: 'var(--brand-primary-ink)' }}
-                    />
-                  )}
                 </button>
               );
             })}
           </nav>
         )}
 
-        {/* Zone 3: Role Switcher + Theme + PWA Install + Masuk + Mobile Hamburger */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {!session && onChangePublicRoleMode && (
+        {/* Right Controls: Role Mode Pill (Guest), Theme Toggle, Masuk/Keluar, Mobile Drawer */}
+        <div className="flex items-center gap-2 shrink-0">
+          {!session && (
             <div
               role="group"
-              aria-label="Pengalih Mode Utama"
-              className="hidden xl:inline-flex items-center rounded-xl border border-[#DCE4DF] bg-[#FFF8E8] p-0.5 shrink-0"
+              aria-label="Pilih mode Petualang atau TELAGA"
+              className="hidden lg:inline-flex items-center rounded-full border border-[#DCE4DF] bg-[#FFF8E8] p-0.5 dark:border-[#244536] dark:bg-[#132920]"
             >
               <button
                 type="button"
-                onClick={() => onChangePublicRoleMode('petualang')}
-                aria-pressed={publicRoleMode === 'petualang'}
-                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-bold transition-colors whitespace-nowrap ${
-                  publicRoleMode === 'petualang'
+                onClick={() => onChangeAudienceMode('petualang')}
+                aria-pressed={audienceMode === 'petualang'}
+                className={`rounded-full px-3 py-1 text-[11px] font-extrabold transition-colors whitespace-nowrap ${
+                  audienceMode === 'petualang'
                     ? 'bg-[#087C3B] text-white shadow-xs'
-                    : 'text-[#3E5B4C] hover:text-[#10281B] dark:text-[#A5C0B4] dark:hover:text-white'
+                    : 'text-[#4A5D54] hover:text-[#10281B] dark:text-[#A2BCB0]'
                 }`}
               >
-                <Compass className="h-3.5 w-3.5" aria-hidden="true" />
                 Petualang
               </button>
               <button
                 type="button"
-                onClick={() => onChangePublicRoleMode('telaga')}
-                aria-pressed={publicRoleMode === 'telaga'}
-                className={`inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-bold transition-colors whitespace-nowrap ${
-                  publicRoleMode === 'telaga'
+                onClick={() => onChangeAudienceMode('telaga')}
+                aria-pressed={audienceMode === 'telaga'}
+                className={`rounded-full px-3 py-1 text-[11px] font-extrabold transition-colors whitespace-nowrap ${
+                  audienceMode === 'telaga'
                     ? 'bg-[#F58220] text-white shadow-xs'
-                    : 'text-[#3E5B4C] hover:text-[#10281B] dark:text-[#A5C0B4] dark:hover:text-white'
+                    : 'text-[#4A5D54] hover:text-[#10281B] dark:text-[#A2BCB0]'
                 }`}
               >
-                <HeartHandshake className="h-3.5 w-3.5" aria-hidden="true" />
                 TELAGA
               </button>
             </div>
           )}
 
-          {/* Compact Theme Switcher */}
           <button
             type="button"
             onClick={onToggleTheme}
             aria-label={theme === 'dark' ? 'Beralih ke tampilan siang' : 'Beralih ke tampilan malam'}
             aria-pressed={theme === 'dark'}
             title={theme === 'dark' ? 'Mode Malam Aktif' : 'Mode Siang Aktif'}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#FFF2D6] shrink-0"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE4DF] bg-white text-[#3B5246] transition-colors hover:bg-[#FFF8E8] dark:border-[#244536] dark:bg-[#12261E] dark:text-[#DCECE4] shrink-0"
           >
             {theme === 'dark' ? (
               <Sun className="h-4 w-4 text-amber-400" aria-hidden="true" />
@@ -255,148 +237,140 @@ export function TopBar({
             )}
           </button>
 
-          <div className="hidden sm:block">
-            <PWAInstallButton />
-          </div>
-
           {session ? (
             <button
               type="button"
               onClick={onLogout}
-              className="hidden md:inline-flex items-center gap-1.5 rounded-xl border border-[#DCE4DF] bg-white px-3 py-2 text-xs font-bold text-[#111C17] transition-colors hover:bg-[#F2F6F4] whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full border border-[#DCE4DF] bg-white px-4 text-xs font-extrabold text-[#10281B] transition-colors hover:bg-[#FFF8E8] whitespace-nowrap shrink-0 dark:border-[#244536] dark:bg-[#12261E] dark:text-[#EDF5F0]"
             >
-              <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-              Keluar ({session.role === 'superadmin' ? 'Superadmin' : session.role === 'admin' ? 'Admin' : session.nomorInduk})
+              <LogOut className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>Keluar</span>
             </button>
           ) : (
             <button
               type="button"
               onClick={onOpenLogin}
-              className="hidden md:inline-flex items-center gap-1.5 rounded-xl bg-[#087C3B] px-3.5 py-2 text-xs font-bold text-white transition-opacity hover:opacity-95 whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full bg-[#087C3B] px-4 text-xs font-extrabold text-white shadow-sm transition-colors hover:bg-[#06612D] whitespace-nowrap shrink-0"
             >
-              <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
-              Masuk
+              <LogIn className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>Masuk</span>
             </button>
           )}
 
+          {/* Mobile/Tablet Menu Toggle */}
           <button
             type="button"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label={mobileOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-            aria-expanded={mobileOpen}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE4DF] text-[#111C17] lg:hidden"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE4DF] bg-white text-[#10281B] hover:bg-[#FFF8E8] dark:border-[#244536] dark:bg-[#12261E] dark:text-white ${
+              session ? 'md:hidden' : 'xl:hidden'
+            }`}
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden="true" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile & Tablet Drawer */}
-      {mobileOpen && (
-        <div className="border-t border-[#E2E8E5] bg-white px-4 py-4 lg:hidden">
-          <nav className="flex flex-col gap-2" aria-label="Navigasi seluler">
-            {!session && onSelectPublicPage
-              ? PUBLIC_ECOSYSTEM_NAV.map((item) => {
-                  const isActive = activeTab === item.pageId;
-                  const NavIcon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        onSelectPublicPage(item.pageId);
-                        setMobileOpen(false);
-                      }}
-                      className={`flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-left text-sm font-bold ${
-                        isActive
-                          ? 'bg-[#087C3B] text-white'
-                          : 'text-[#111C17] hover:bg-[#FFF2D6]'
-                      }`}
-                    >
-                      <NavIcon
-                        className="h-4 w-4 shrink-0"
-                        style={{ color: isActive ? '#FFFFFF' : item.iconColor }}
-                        aria-hidden="true"
-                      />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })
-              : tabs.map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => {
-                        onSelectTab(tab.id);
-                        setMobileOpen(false);
-                      }}
-                      style={isActive ? { backgroundColor: 'var(--brand-primary)' } : undefined}
-                      className={`w-full rounded-xl px-4 py-2.5 text-left text-sm font-semibold ${
-                        isActive
-                          ? 'text-white font-bold'
-                          : 'text-[#111C17] hover:bg-[#F2F6F4]'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-
-            {!session && onChangePublicRoleMode && (
-              <div className="rounded-xl border border-[#E7EEEA] bg-[#F8FAF9] p-2.5 space-y-2 mt-1">
-                <p className="text-xs font-bold text-[#4A5D54]">Pengalih Mode Ruang Baca</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChangePublicRoleMode('petualang');
-                      setMobileOpen(false);
-                    }}
-                    aria-pressed={publicRoleMode === 'petualang'}
-                    className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold ${
-                      publicRoleMode === 'petualang'
-                        ? 'bg-[#087C3B] text-white'
-                        : 'border border-[#DCE4DF] bg-white text-[#111C17]'
-                    }`}
-                  >
-                    <Compass className="h-3.5 w-3.5" aria-hidden="true" />
-                    Mode Petualang
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChangePublicRoleMode('telaga');
-                      setMobileOpen(false);
-                    }}
-                    aria-pressed={publicRoleMode === 'telaga'}
-                    className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold ${
-                      publicRoleMode === 'telaga'
-                        ? 'bg-[#F58220] text-white'
-                        : 'border border-[#DCE4DF] bg-white text-[#111C17]'
-                    }`}
-                  >
-                    <HeartHandshake className="h-3.5 w-3.5" aria-hidden="true" />
-                    Sahabat TELAGA
-                  </button>
-                </div>
+      {/* Collapsible Mobile / Tablet Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="border-t border-[#E7E3D4] bg-white px-4 py-4 shadow-lg dark:border-[#203D30] dark:bg-[#0E1E17] xl:hidden">
+          <div className="mx-auto max-w-7xl space-y-3">
+            {!session && (
+              <div className="grid grid-cols-2 gap-1.5 rounded-xl bg-[#FFF8E8] p-1 dark:bg-[#132920]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChangeAudienceMode('petualang');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`rounded-lg py-2 text-xs font-extrabold ${
+                    audienceMode === 'petualang'
+                      ? 'bg-[#087C3B] text-white'
+                      : 'text-[#4A5D54]'
+                  }`}
+                >
+                  Mode Petualang
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChangeAudienceMode('telaga');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`rounded-lg py-2 text-xs font-extrabold ${
+                    audienceMode === 'telaga'
+                      ? 'bg-[#F58220] text-white'
+                      : 'text-[#4A5D54]'
+                  }`}
+                >
+                  Mode TELAGA
+                </button>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2 sm:hidden">
-              <PWAInstallButton />
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {!session
+                ? publicMenu.map((item) => {
+                    const isActive = activePublicPage === item.id;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectPublicPage(item.id);
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-sm font-bold ${
+                          isActive
+                            ? 'bg-[#087C3B] text-white'
+                            : 'bg-[#FFFDF6] text-[#10281B] hover:bg-[#FFF8E8] dark:bg-[#12261E] dark:text-[#EDF5F0]'
+                        }`}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${isActive ? 'text-white' : item.iconColor}`}
+                          aria-hidden="true"
+                        />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })
+                : tabs.map((tab) => {
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectTab(tab.id);
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`flex items-center rounded-xl px-3.5 py-2.5 text-left text-sm font-bold ${
+                          isActive
+                            ? 'bg-[#087C3B] text-white'
+                            : 'bg-[#FFFDF6] text-[#10281B] hover:bg-[#FFF8E8] dark:bg-[#12261E] dark:text-[#EDF5F0]'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    );
+                  })}
             </div>
 
-            <div className="pt-2 border-t border-[#E2E8E5] md:hidden">
+            <div className="border-t border-[#EEF3F0] pt-3 sm:hidden">
               {session ? (
                 <button
                   type="button"
                   onClick={() => {
-                    setMobileOpen(false);
+                    setMobileMenuOpen(false);
                     onLogout();
                   }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#DCE4DF] px-4 py-2.5 text-sm font-bold text-[#111C17]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 py-2.5 text-sm font-bold text-red-700"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Keluar ({session.displayName})
@@ -405,17 +379,17 @@ export function TopBar({
                 <button
                   type="button"
                   onClick={() => {
-                    setMobileOpen(false);
+                    setMobileMenuOpen(false);
                     onOpenLogin();
                   }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#087C3B] px-4 py-2.5 text-sm font-bold text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#087C3B] py-2.5 text-sm font-bold text-white"
                 >
                   <LogIn className="h-4 w-4" aria-hidden="true" />
-                  Masuk Akun Almahyra
+                  Masuk Akun Anggota / Admin
                 </button>
               )}
             </div>
-          </nav>
+          </div>
         </div>
       )}
     </header>

@@ -100,7 +100,6 @@ export default function App() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [readingBookId, setReadingBookId] = useState<string | null>(null);
 
-  // Page states respecting clean multi-page flow
   const [publicPage, setPublicPage] = useState<PublicPageId>('beranda');
   const [memberPage, setMemberPage] = useState<'passport' | 'catalog' | 'schedule'>('passport');
   const [adminPage, setAdminPage] = useState<'data' | 'reports' | 'appearance'>('data');
@@ -186,7 +185,6 @@ export default function App() {
     setTheme((prev) => toggleThemeMode(prev));
   }, []);
 
-  // Load database with optional auth Bearer token (refetches automatically on login/logout)
   useEffect(() => {
     let active = true;
     fetch('/api/db', {
@@ -204,7 +202,6 @@ export default function App() {
         }
       })
       .catch(() => {
-        // Keep current/DEFAULT_DB fallback with any locally saved testimonials if offline
         if (active) {
           const localExtras = loadLocalTestimonials();
           if (localExtras.length > 0) {
@@ -223,7 +220,6 @@ export default function App() {
     };
   }, [session?.token]);
 
-  // Apply theme colors dynamically from config
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--brand-primary', db.config.primaryColor || '#087C3B');
@@ -539,26 +535,13 @@ export default function App() {
 
   const navTabs: NavTabItem[] = useMemo(() => {
     if (!session) {
-      if (audienceMode === 'petualang') {
-        return [
-          { id: 'beranda', label: 'Beranda' },
-          { id: 'jelajahi-buku', label: 'Jelajahi Buku' },
-          { id: 'petualangan', label: 'Petualangan' },
-          { id: 'video-edukasi', label: 'Video Edukasi' },
-          { id: 'keluarga', label: 'Dunia Keluarga' },
-          { id: 'prestasi', label: 'Prestasi' },
-        ];
-      }
-      return [
-        { id: 'telaga-program', label: 'Program TELAGA' },
-        { id: 'telaga-katalog', label: 'Katalog & Pinjaman' },
-      ];
+      return [];
     }
     if (session.role === 'anggota') {
       return [
-        { id: 'passport', label: 'Dasbor & E-Paspor' },
+        { id: 'passport', label: 'E-Paspor Saya' },
         { id: 'catalog', label: 'Katalog & Misi' },
-        { id: 'schedule', label: 'Jadwal & Video' },
+        { id: 'schedule', label: 'Riwayat & Jadwal' },
       ];
     }
     return [
@@ -566,7 +549,7 @@ export default function App() {
       { id: 'reports', label: 'Kegiatan & Laporan' },
       { id: 'appearance', label: 'Tampilan & Spreadsheet' },
     ];
-  }, [audienceMode, session]);
+  }, [session]);
 
   const activeTab = !session
     ? publicPage
@@ -576,7 +559,7 @@ export default function App() {
 
   const handleSelectTab = (id: string) => {
     if (!session) {
-      setPublicPage(id as PublicPageId);
+      handleSelectPublicPage(id as PublicPageId);
     } else if (session.role === 'anggota') {
       setMemberPage(id as 'passport' | 'catalog' | 'schedule');
     } else {
@@ -586,7 +569,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] text-[#111C17]">
+    <div className="min-h-screen bg-[#FFFDF6] text-[#10281B] dark:bg-[#091410] dark:text-[#EDF5F0]">
       {showSplash && (
         <SplashScreen
           config={db.config}
@@ -601,9 +584,10 @@ export default function App() {
           session={session}
           tabs={navTabs}
           activeTab={activeTab}
+          audienceMode={audienceMode}
+          activePublicPage={publicPage}
           theme={theme}
-          publicRoleMode={audienceMode}
-          onChangePublicRoleMode={handleChangePublicRoleMode}
+          onChangeAudienceMode={handleChangePublicRoleMode}
           onSelectPublicPage={handleSelectPublicPage}
           onToggleTheme={handleToggleTheme}
           onSelectTab={handleSelectTab}
@@ -613,7 +597,14 @@ export default function App() {
       )}
 
       {loading ? (
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 space-y-6">
+        <div
+          className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-6"
+          role="status"
+          aria-live="polite"
+        >
+          <p className="text-sm font-semibold text-[#4A5D54]">
+            Memuat data Rumah Baca Almahyra...
+          </p>
           <div className="h-12 w-2/3 animate-pulse rounded-xl bg-[#E7EEEA]" />
           <div className="h-64 w-full animate-pulse rounded-2xl bg-[#E7EEEA]" />
         </div>

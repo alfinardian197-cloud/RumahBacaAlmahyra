@@ -151,12 +151,12 @@ export function BookCard({
           </p>
         )}
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => onRead(book)}
             style={{ backgroundColor: config.primaryColor }}
-            className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
+            className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-white transition-opacity hover:opacity-95 whitespace-nowrap"
           >
             <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>{hasBookmark ? 'Lanjut Baca' : 'Baca Sekarang'}</span>
@@ -172,7 +172,7 @@ export function BookCard({
                 : `Dengarkan ringkasan ${book.judul}`
             }
             title="Dengar Ringkasan (Read-Aloud)"
-            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+            className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors ${
               speakingSummary
                 ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
                 : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
@@ -189,14 +189,15 @@ export function BookCard({
             type="button"
             onClick={() => onToggleFavorite(book)}
             aria-pressed={isFav}
-            className={`inline-flex h-9 items-center gap-1 rounded-xl border px-2.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 ${
+            aria-label={isFav ? `Hapus ${book.judul} dari favorit` : `Simpan ${book.judul} ke favorit`}
+            className={`inline-flex h-10 items-center gap-1 rounded-xl border px-3 text-xs font-bold transition-colors whitespace-nowrap shrink-0 ${
               isFav
                 ? 'border-rose-300 bg-rose-50 text-rose-700'
                 : 'border-[#DCE4DF] bg-white text-[#111C17] hover:bg-[#F2F6F4]'
             }`}
           >
             <Heart className={`h-3.5 w-3.5 ${isFav ? 'fill-current' : ''}`} aria-hidden="true" />
-            Favorit
+            <span className="hidden sm:inline">Favorit</span>
           </button>
         </div>
       </div>

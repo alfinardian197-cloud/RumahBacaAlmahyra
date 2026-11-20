@@ -1,6 +1,13 @@
-import { ArrowRight, BookOpen, Play, PlayCircle, Star, Target, Trophy } from 'lucide-react';
 import {
-  EDUCATIONAL_CHANNELS,
+  ArrowRight,
+  BookOpen,
+  Play,
+  PlayCircle,
+  Star,
+  Target,
+  Trophy,
+} from 'lucide-react';
+import {
   EDUCATIONAL_VIDEOS,
   getYouTubeThumbnailUrl,
 } from '../data/educationalVideos';
@@ -19,8 +26,6 @@ interface HomepageShowcaseStageProps {
   onOpenVideos: (zoneId?: string, videoId?: string) => void;
 }
 
-const SAMPLE_RATINGS = ['4.8', '4.7', '4.9'];
-
 export function HomepageShowcaseStage({
   books,
   featuredBook,
@@ -30,82 +35,72 @@ export function HomepageShowcaseStage({
   onOpenPassportQuiz,
   onOpenVideos,
 }: HomepageShowcaseStageProps) {
-  const activeBooks = books.filter(isBookActive);
-  const topThreeBooks = [
-    ...activeBooks.filter((b) => b.pilihanAlmahyra),
-    ...activeBooks.filter((b) => !b.pilihanAlmahyra),
-  ].slice(0, 3);
+  const topBooks = books
+    .filter((b) => isBookActive(b) && b.pilihanAlmahyra)
+    .slice(0, 3);
+  const displayBooks = topBooks.length >= 3 ? topBooks : books.filter(isBookActive).slice(0, 3);
 
-  const featuredVideos = [
-    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-imajinasi-riri-toba'),
-    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-pengetahuan-kokbisa-langit'),
-    EDUCATIONAL_VIDEOS.find((v) => v.id === 'vid-eksplorasi-marbel-tatasurya'),
-  ].filter((v): v is (typeof EDUCATIONAL_VIDEOS)[number] => Boolean(v));
+  // Pick 3 diverse featured videos from different channels
+  const previewVideos = [
+    EDUCATIONAL_VIDEOS.find((v) => v.channelId === 'kok-bisa') ?? EDUCATIONAL_VIDEOS[0],
+    EDUCATIONAL_VIDEOS.find((v) => v.channelId === 'nussa-official') ?? EDUCATIONAL_VIDEOS[1],
+    EDUCATIONAL_VIDEOS.find((v) => v.channelId === 'sisi-terang') ?? EDUCATIONAL_VIDEOS[2],
+  ].filter(Boolean);
 
   return (
     <section
-      aria-label="Ringkasan Dunia Almahyra"
-      className="grid grid-cols-1 gap-4 lg:grid-cols-12"
+      aria-label="Sorotan Buku, Misi Hari Ini, dan Video Edukasi"
+      className="grid grid-cols-1 gap-5 lg:grid-cols-3"
     >
-      {/* Card 1: Jelajahi Buku Pilihan (4 cols on lg) */}
-      <div className="lg:col-span-4 flex flex-col overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-4 py-2.5 text-white">
+      {/* Card 1: Jelajahi Buku Pilihan */}
+      <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-[#DCE8DF] bg-[#FFFDF8] shadow-sm dark:border-[#213E31] dark:bg-[#10211A]">
+        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-5 py-3 text-white">
           <div className="flex items-center gap-2 min-w-0">
-            <BookOpen className="h-4 w-4 text-[#FFC51B] shrink-0" aria-hidden="true" />
-            <h2 className="font-display text-sm sm:text-base font-bold truncate">
+            <BookOpen className="h-4 w-4 shrink-0 text-[#FFC51B]" aria-hidden="true" />
+            <h2 className="font-display text-base font-bold truncate">
               Jelajahi Buku Pilihan
             </h2>
           </div>
           <button
             type="button"
             onClick={onOpenAllBooks}
-            className="inline-flex items-center gap-1 text-xs font-bold text-white/95 hover:text-[#FFC51B] whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#FFF2B2] hover:text-white whitespace-nowrap shrink-0"
           >
             Lihat Semua
             <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="grid flex-1 grid-cols-3 gap-2.5 p-3.5">
-          {topThreeBooks.map((book, idx) => (
+        <div className="grid flex-1 grid-cols-3 gap-2.5 p-4">
+          {displayBooks.map((book, idx) => (
             <button
               key={book.id}
               type="button"
               onClick={() => onReadBook(book)}
-              className="group flex flex-col justify-between rounded-xl border border-[#E7DEC6] bg-[#FFFDF6] p-2 text-left transition-all hover:-translate-y-0.5 hover:border-[#087C3B]/45 hover:shadow-xs"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-[#E5EAE6] bg-white p-2 text-left transition-transform hover:-translate-y-1 hover:border-[#087C3B] dark:border-[#223F32] dark:bg-[#132920]"
             >
-              <div>
-                <div
-                  className={`aspect-4/3 w-full overflow-hidden rounded-lg ${
-                    book.coverUrl ? 'bg-[#EDF3EF] p-1' : 'bg-[#E7EEEA]'
-                  }`}
-                >
-                  {book.coverUrl ? (
-                    <ResilientImage
-                      src={book.coverUrl}
-                      alt={`Sampul ${book.judul}`}
-                      className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
-                      renderFallback={() => <CustomBookCoverSvg book={book} />}
-                    />
-                  ) : (
-                    <CustomBookCoverSvg
-                      book={book}
-                      className="h-full w-full transition-transform duration-200 group-hover:scale-105"
-                    />
-                  )}
-                </div>
-                <p className="mt-2 font-display text-[11px] sm:text-xs font-bold leading-snug text-[#111C17] line-clamp-2">
-                  {book.judul}
-                </p>
+              <div className="aspect-3/4 w-full overflow-hidden rounded-xl bg-[#F4F8F5] p-1">
+                {book.coverUrl ? (
+                  <ResilientImage
+                    src={book.coverUrl}
+                    alt={`Sampul ${book.judul}`}
+                    className="h-full w-full object-contain"
+                    renderFallback={() => <CustomBookCoverSvg book={book} />}
+                  />
+                ) : (
+                  <CustomBookCoverSvg book={book} />
+                )}
               </div>
-
-              <div className="mt-2 flex items-center justify-between gap-1 text-[10px]">
-                <span className="inline-flex items-center gap-0.5 font-mono-tabular font-bold text-[#B45309] dark:text-[#FCD34D]">
-                  <Star className="h-3 w-3 fill-[#FFC51B] text-[#FFC51B]" aria-hidden="true" />
-                  {SAMPLE_RATINGS[idx] ?? '4.8'}
+              <p className="mt-2 font-display text-xs font-bold leading-snug text-[#10281B] line-clamp-2 group-hover:text-[#087C3B] dark:text-[#EDF5F0]">
+                {book.judul}
+              </p>
+              <div className="mt-auto flex items-center justify-between gap-1 pt-2">
+                <span className="inline-flex items-center gap-0.5 font-mono-tabular text-[10px] font-bold text-[#D97706]">
+                  <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+                  {(4.9 - idx * 0.1).toFixed(1)}
                 </span>
-                <span className="rounded-md bg-[#E4F7EA] px-1.5 py-0.5 font-bold text-[#087C3B] dark:bg-emerald-950/60 dark:text-[#6EE7B7] truncate">
-                  {book.status === 'Tersedia' ? 'Tersedia' : 'Baca'}
+                <span className="rounded-md bg-[#E4F7EA] px-1.5 py-0.5 text-[9px] font-extrabold text-[#087C3B] dark:bg-[#153526] dark:text-[#6EE7B7]">
+                  Tersedia
                 </span>
               </div>
             </button>
@@ -113,180 +108,129 @@ export function HomepageShowcaseStage({
         </div>
       </div>
 
-      {/* Card 2: Misi Hari Ini (4 cols on lg) */}
-      <div className="lg:col-span-4 flex flex-col overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-4 py-2.5 text-white">
-          <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-[#FFC51B] shrink-0" aria-hidden="true" />
-            <h2 className="font-display text-sm sm:text-base font-bold">Misi Hari Ini</h2>
+      {/* Card 2: Misi Hari Ini */}
+      <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-[#DCE8DF] bg-[#FFFBF0] shadow-sm dark:border-[#213E31] dark:bg-[#10211A]">
+        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-5 py-3 text-white">
+          <div className="flex items-center gap-2 min-w-0">
+            <Target className="h-4 w-4 shrink-0 text-[#FFC51B]" aria-hidden="true" />
+            <h2 className="font-display text-base font-bold truncate">Misi Hari Ini</h2>
           </div>
-          <span className="font-mono-tabular text-[11px] font-bold text-[#FFC51B]">
+          <span className="rounded-full bg-[#FFC51B] px-2.5 py-0.5 font-mono-tabular text-[11px] font-extrabold text-[#10281B]">
             +10 Poin
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col justify-between p-4 space-y-3">
-          <div className="flex items-center gap-3.5">
-            {/* Illustrated Open Book + Ascending Stars SVG */}
-            <div className="flex h-20 w-24 shrink-0 items-center justify-center rounded-2xl border border-[#E7DEC6] bg-gradient-to-b from-[#E6F7FE] to-[#FFF8DF] p-2 preserve-light">
-              <svg
-                viewBox="0 0 96 76"
-                className="h-full w-full"
-                aria-hidden="true"
-              >
-                <defs>
-                  <radialGradient id="bookGlow" cx="50%" cy="45%" r="50%">
-                    <stop offset="0%" stopColor="#FFE67A" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#FFE67A" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-                <circle cx="48" cy="34" r="28" fill="url(#bookGlow)" />
-                {/* 3 Ascending Stars */}
-                <path
-                  d="M48 8 L51.2 14.5 L58.4 15.5 L53.2 20.6 L54.4 27.8 L48 24.4 L41.6 27.8 L42.8 20.6 L37.6 15.5 L44.8 14.5 Z"
-                  fill="#FFC51B"
-                  stroke="#B45309"
-                  strokeWidth="1.2"
-                />
-                <path
-                  d="M28 19 L30.2 23.4 L35 24.1 L31.5 27.5 L32.3 32.3 L28 30 L23.7 32.3 L24.5 27.5 L21 24.1 L25.8 23.4 Z"
-                  fill="#FFD54F"
-                />
-                <path
-                  d="M68 19 L70.2 23.4 L75 24.1 L71.5 27.5 L72.3 32.3 L68 30 L63.7 32.3 L64.5 27.5 L61 24.1 L65.8 23.4 Z"
-                  fill="#FFD54F"
-                />
-                {/* Open Book */}
-                <path
-                  d="M14 42 C24 38, 38 40, 48 46 C58 40, 72 38, 82 42 L82 64 C72 60, 58 62, 48 68 C38 62, 24 60, 14 64 Z"
-                  fill="#087C3B"
-                />
-                <path
-                  d="M18 40 C27 36, 39 38, 48 44 C57 38, 69 36, 78 40 L78 60 C69 56, 57 58, 48 64 C39 58, 27 56, 18 60 Z"
-                  fill="#FFFDF6"
-                  stroke="#D4C7A7"
-                  strokeWidth="1.2"
-                />
-                <line x1="48" y1="44" x2="48" y2="64" stroke="#CBD6D0" strokeWidth="1.4" />
-              </svg>
+        <div className="flex flex-1 flex-col justify-between p-5 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FFF3C4] via-[#FFE28A] to-[#D6F5E3] border border-[#F5D67B] shadow-xs">
+              <div className="relative flex items-center justify-center">
+                <BookOpen className="h-10 w-10 text-[#087C3B]" aria-hidden="true" />
+                <Star className="absolute -top-2 -right-2 h-5 w-5 fill-[#FFC51B] text-[#D97706]" aria-hidden="true" />
+              </div>
             </div>
-
-            <div className="space-y-1.5 min-w-0">
-              <h3 className="font-display text-base font-extrabold text-[#111C17] leading-snug">
+            <div className="space-y-1">
+              <h3 className="font-display text-lg font-extrabold leading-tight text-[#10281B] dark:text-white">
                 Baca satu cerita favoritmu!
               </h3>
-              <p className="text-xs text-[#4A5D54] leading-snug">
-                Selesaikan bacaan dan jawab kuisnya.
+              <p className="text-xs font-medium text-[#4A5D54] dark:text-[#A2BCB0]">
+                Selesaikan bacaan dan jawab kuis singkatnya untuk stempel E-Paspor.
               </p>
-              <div className="inline-flex items-center gap-1 rounded-lg bg-[#FFC51B] px-2.5 py-0.5 text-xs font-extrabold text-[#10281B]">
-                <Star className="h-3 w-3 fill-current" aria-hidden="true" />
-                +10 Poin
-              </div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#FFF2CC] px-2.5 py-0.5 font-mono-tabular text-xs font-extrabold text-[#9A5B08]">
+                <Star className="h-3.5 w-3.5 fill-[#FFC51B] text-[#D97706]" aria-hidden="true" />
+                +10 Poin Bintang
+              </span>
             </div>
           </div>
 
           <div className="space-y-2.5">
-            <div className="flex items-center gap-2.5">
-              <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[#E7EEEA]">
+            <div className="flex items-center gap-2">
+              <div className="h-3 flex-1 overflow-hidden rounded-full bg-[#E5EDE8] dark:bg-[#193328]">
                 <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: dailyMissionDone ? '100%' : '35%',
-                    background: 'linear-gradient(90deg, #087C3B 0%, #7ED321 75%, #FFC51B 100%)',
-                  }}
+                  className="h-full rounded-full bg-gradient-to-r from-[#087C3B] to-[#7ED321] transition-all duration-300"
+                  style={{ width: dailyMissionDone ? '100%' : '35%' }}
                 />
               </div>
-              <span className="font-mono-tabular text-xs font-bold text-[#111C17]">
+              <span className="font-mono-tabular text-xs font-extrabold text-[#10281B] dark:text-[#EDF5F0]">
                 {dailyMissionDone ? '1 / 1' : '0 / 1'}
               </span>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (!dailyMissionDone && featuredBook) {
-                  onReadBook(featuredBook);
-                } else {
-                  onOpenPassportQuiz();
-                }
-              }}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-[#0C9448] to-[#075A32] px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-sm hover:opacity-95"
-            >
-              <Trophy className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
-              {dailyMissionDone ? 'Lanjut Main Mini Kuis' : 'Selesaikan Misi'}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => (featuredBook ? onReadBook(featuredBook) : onOpenPassportQuiz())}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#087C3B] px-4 py-2.5 text-xs font-extrabold text-white shadow-sm hover:bg-[#06612D]"
+              >
+                <Trophy className="h-4 w-4 text-[#FFC51B]" aria-hidden="true" />
+                Selesaikan Misi
+              </button>
+              <button
+                type="button"
+                onClick={onOpenPassportQuiz}
+                className="inline-flex items-center justify-center rounded-full border border-[#DCE4DF] bg-white px-3.5 py-2.5 text-xs font-extrabold text-[#10281B] hover:bg-[#FFF8E8] dark:border-[#244536] dark:bg-[#142C22] dark:text-white"
+              >
+                Kuis
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Card 3: Video Edukasi 6 Zona — SISI TERANG (4 cols on lg) */}
-      <div className="lg:col-span-4 flex flex-col overflow-hidden rounded-2xl border border-[#DCE4DF] bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-4 py-2.5 text-white">
+      {/* Card 3: Video Edukasi 6 Zona */}
+      <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-[#DCE8DF] bg-[#FFFDF8] shadow-sm dark:border-[#213E31] dark:bg-[#10211A]">
+        <div className="flex items-center justify-between gap-2 bg-[#087C3B] px-5 py-3 text-white">
           <div className="flex items-center gap-2 min-w-0">
-            <PlayCircle className="h-4 w-4 text-[#FFC51B] shrink-0" aria-hidden="true" />
-            <h2 className="font-display text-sm sm:text-base font-bold truncate">
+            <PlayCircle className="h-4 w-4 shrink-0 text-[#FFC51B]" aria-hidden="true" />
+            <h2 className="font-display text-base font-bold truncate">
               Video Edukasi 6 Zona
             </h2>
           </div>
           <button
             type="button"
             onClick={() => onOpenVideos('all')}
-            className="inline-flex items-center gap-1 text-xs font-bold text-white/95 hover:text-[#FFC51B] whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#FFF2B2] hover:text-white whitespace-nowrap shrink-0"
           >
             Lihat Semua
             <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col justify-between gap-2.5 bg-[#FFF8E8]/60 p-3.5">
-          <div className="space-y-2">
-            {featuredVideos.map((video) => (
+        <div className="flex flex-1 flex-col justify-between p-4 space-y-3">
+          <div className="grid grid-cols-3 gap-2.5">
+            {previewVideos.map((vid, idx) => (
               <button
-                key={video.id}
+                key={vid.id}
                 type="button"
-                onClick={() => onOpenVideos(video.zoneId, video.id)}
-                className="group flex w-full items-center gap-2.5 rounded-xl border border-[#E7DEC6] bg-white p-1.5 text-left transition-all hover:border-[#087C3B]/45 hover:shadow-xs"
+                onClick={() => onOpenVideos(vid.zoneId, vid.id)}
+                className={`group flex flex-col overflow-hidden rounded-2xl border-2 border-white bg-white p-1.5 text-left shadow-sm transition-transform hover:-translate-y-1 hover:border-[#087C3B] dark:border-[#223F32] dark:bg-[#132920] ${
+                  idx === 0 ? '-rotate-1' : idx === 2 ? 'rotate-1' : ''
+                }`}
               >
-                <div className="relative aspect-video w-20 shrink-0 overflow-hidden rounded-lg bg-[#10281B]">
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-[#10281B]">
                   <ResilientImage
-                    src={getYouTubeThumbnailUrl(video.youtubeId)}
-                    alt={`Thumbnail ${video.title}`}
-                    className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                    renderFallback={() => (
-                      <div className="flex h-full w-full items-center justify-center bg-[#087C3B] text-white">
-                        <Play className="h-4 w-4 fill-current" aria-hidden="true" />
-                      </div>
-                    )}
+                    src={getYouTubeThumbnailUrl(vid.youtubeId)}
+                    alt={vid.title}
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 flex items-center justify-center bg-black/25"
-                  >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DC2626] text-white shadow-xs">
-                      <Play className="h-3 w-3 fill-current ml-0.5" />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/25">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600 text-white shadow-sm">
+                      <Play className="h-3.5 w-3.5 fill-current ml-0.5" aria-hidden="true" />
                     </span>
                   </span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-bold text-[#087C3B] dark:text-[#6EE7B7] truncate">
-                    {video.zoneName} · {video.channelName}
-                  </p>
-                  <p className="font-display text-xs font-bold leading-snug text-[#111C17] line-clamp-2">
-                    {video.title}
-                  </p>
-                </div>
+                <p className="mt-1.5 text-[10px] font-extrabold text-[#087C3B] truncate dark:text-[#6EE7B7]">
+                  {vid.channelName}
+                </p>
+                <p className="text-[11px] font-bold leading-tight text-[#10281B] line-clamp-2 dark:text-[#EDF5F0]">
+                  {vid.title}
+                </p>
               </button>
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={() => onOpenVideos('all')}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#DC2626] px-3 py-2 text-xs font-bold text-white shadow-xs transition-opacity hover:opacity-95"
-          >
-            <PlayCircle className="h-4 w-4" aria-hidden="true" />
-            Jelajahi {EDUCATIONAL_VIDEOS.length} Video · {EDUCATIONAL_CHANNELS.length} Kanal
-          </button>
+          <p className="text-center text-[11px] font-semibold text-[#4A5D54] dark:text-[#A2BCB0]">
+            10 kanal edukasi Indonesia pilihan terbagi dalam 6 zona petualangan.
+          </p>
         </div>
       </div>
     </section>
