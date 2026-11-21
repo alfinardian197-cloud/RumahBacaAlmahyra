@@ -3,9 +3,12 @@ import assert from 'node:assert/strict';
 import {
   ADVENTURE_JOURNEY_STEPS,
   authenticateUser,
+  buildAccountRegistrationWhatsAppMessage,
+  buildAdminContactWhatsAppMessage,
   buildBorrowWhatsAppMessage,
   buildDonationWhatsAppMessage,
   buildFlipbookPages,
+  buildLoginHelpWhatsAppMessage,
   buildSahabatInvitationText,
   buildWhatsAppShareHref,
   calculateLevelInfo,
@@ -52,6 +55,7 @@ import {
   sanitizeDatabaseForClient,
   sheetRowsToRecords,
   toggleThemeMode,
+  validateAccountRegistration,
 } from './almahyra';
 import { getStorySoundtrackProfile } from './storyAudioEngine';
 import { DEFAULT_DB } from '../data/defaultDb';
@@ -833,6 +837,52 @@ test('Official manager WhatsApp 08813145186 normalization and interactive testim
   }
 });
 
+test('Account registration validation and WhatsApp Admin confirmation messages work accurately', () => {
+  const invalidName = validateAccountRegistration({
+    role: 'anggota',
+    fullName: 'A',
+    whatsappNumber: '081234567890',
+  });
+  assert.equal(invalidName.ok, false);
 
+  const invalidWa = validateAccountRegistration({
+    role: 'pengelola',
+    fullName: 'Budi Santoso',
+    whatsappNumber: '12345',
+  });
+  assert.equal(invalidWa.ok, false);
 
+  const validMember = validateAccountRegistration({
+    role: 'anggota',
+    fullName: '  Rafa Pratama  ',
+    parentOrOrg: 'Ibu Sari',
+    ageLevel: 'SD',
+    whatsappNumber: '081234567890',
+    notes: 'Ingin bergabung Sabtu Dongeng',
+  });
+  assert.equal(validMember.ok, true);
+  if (validMember.ok) {
+    const regMsg = buildAccountRegistrationWhatsAppMessage(validMember.data);
+    assert.ok(regMsg.includes('Anggota / Anak'));
+    assert.ok(regMsg.includes('Rafa Pratama'));
+    assert.ok(regMsg.includes('Ibu Sari'));
+    assert.ok(regMsg.includes('081234567890'));
+    const href = buildWhatsAppShareHref(regMsg, DEFAULT_MANAGER_WHATSAPP_DISPLAY);
+    assert.ok(href.startsWith('https://wa.me/628813145186?text='));
+  }
 
+  const helpMsg = buildLoginHelpWhatsAppMessage({
+    role: 'pengelola',
+    identifier: 'admin-grontol',
+  });
+  assert.ok(helpMsg.includes('Pengelola / Admin'));
+  assert.ok(helpMsg.includes('admin-grontol'));
+
+  const contactMsg = buildAdminContactWhatsAppMessage({
+    role: 'anggota',
+    topic: 'Aktivasi Akun Baru',
+    customNote: 'Mohon cek pendaftaran anak saya',
+  });
+  assert.ok(contactMsg.includes('Aktivasi Akun Baru'));
+  assert.ok(contactMsg.includes('Mohon cek pendaftaran anak saya'));
+});

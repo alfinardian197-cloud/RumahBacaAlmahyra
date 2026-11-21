@@ -2192,6 +2192,128 @@ export function sanitizeDatabaseForClient(
   };
 }
 
+export interface AccountRegistrationRequest {
+  role: 'pengelola' | 'anggota';
+  fullName: string;
+  parentOrOrg?: string;
+  ageLevel?: string;
+  whatsappNumber: string;
+  notes?: string;
+}
+
+export type AccountRegistrationValidationResult =
+  | { ok: true; data: Required<AccountRegistrationRequest> }
+  | { ok: false; error: string };
+
+export function validateAccountRegistration(
+  input: AccountRegistrationRequest,
+): AccountRegistrationValidationResult {
+  const role: 'pengelola' | 'anggota' = input.role === 'pengelola' ? 'pengelola' : 'anggota';
+  const fullName = String(input.fullName ?? '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  const parentOrOrg = String(input.parentOrOrg ?? '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  const ageLevel =
+    String(input.ageLevel ?? '').replace(/\s+/g, ' ').trim().slice(0, 30) ||
+    (role === 'anggota' ? 'SD' : 'Pengelola / Relawan');
+  const rawWa = String(input.whatsappNumber ?? '').trim();
+  const waDigits = rawWa.replace(/[^0-9]/g, '');
+  const notes = String(input.notes ?? '').replace(/\s+/g, ' ').trim().slice(0, 240);
+
+  if (fullName.length < 2) {
+    return { ok: false, error: 'Mohon isi nama lengkap minimal 2 huruf.' };
+  }
+  if (waDigits.length < 9 || waDigits.length > 16) {
+    return {
+      ok: false,
+      error: 'Mohon isi nomor WhatsApp aktif yang valid (minimal 9 digit angka).',
+    };
+  }
+
+  return {
+    ok: true,
+    data: {
+      role,
+      fullName,
+      parentOrOrg:
+        parentOrOrg ||
+        (role === 'anggota' ? 'Keluarga Dusun Grontol' : 'Relawan Rumah Baca Almahyra'),
+      ageLevel,
+      whatsappNumber: rawWa,
+      notes,
+    },
+  };
+}
+
+export function buildAccountRegistrationWhatsAppMessage(
+  data: AccountRegistrationRequest,
+  appName = 'Rumah Baca Almahyra',
+): string {
+  const roleLabel =
+    data.role === 'pengelola' ? 'Pengelola / Admin' : 'Anggota / Anak';
+  const lines = [
+    `Halo Admin ${appName},`,
+    '',
+    `Saya ingin mengajukan pendaftaran & konfirmasi akun baru (${roleLabel}):`,
+    `• Nama Lengkap: ${data.fullName}`,
+    data.role === 'anggota'
+      ? `• Orang Tua / Wali: ${data.parentOrOrg || '-'}`
+      : `• Instansi / Peran: ${data.parentOrOrg || '-'}`,
+    data.role === 'anggota'
+      ? `• Jenjang Usia: ${data.ageLevel || 'SD'}`
+      : `• Kategori Akses: ${data.ageLevel || 'Pengelola / Relawan'}`,
+    `• Nomor WhatsApp Pemohon: ${data.whatsappNumber}`,
+  ];
+  if (data.notes?.trim()) {
+    lines.push(`• Catatan: ${data.notes.trim()}`);
+  }
+  lines.push(
+    '',
+    'Mohon bantuannya untuk verifikasi dan aktivasi akun. Terima kasih!',
+  );
+  return lines.join('\n');
+}
+
+export function buildLoginHelpWhatsAppMessage(params: {
+  role: 'pengelola' | 'anggota';
+  identifier?: string;
+  appName?: string;
+}): string {
+  const appName = params.appName || 'Rumah Baca Almahyra';
+  const roleLabel =
+    params.role === 'pengelola' ? 'Pengelola / Admin' : 'Anggota / Anak';
+  const idText = params.identifier?.trim() || '(belum ingat / belum punya)';
+  return [
+    `Halo Admin ${appName},`,
+    '',
+    `Saya membutuhkan bantuan login akun ${roleLabel}:`,
+    `• ID / Username: ${idText}`,
+    '• Kendala: Lupa sandi / kesulitan masuk aplikasi',
+    '',
+    'Mohon konfirmasi dan bantuannya ya. Terima kasih!',
+  ].join('\n');
+}
+
+export function buildAdminContactWhatsAppMessage(params: {
+  role: 'pengelola' | 'anggota';
+  topic: string;
+  customNote?: string;
+  appName?: string;
+}): string {
+  const appName = params.appName || 'Rumah Baca Almahyra';
+  const roleLabel =
+    params.role === 'pengelola' ? 'Pengelola / Admin' : 'Anggota / Anak';
+  const lines = [
+    `Halo Admin ${appName},`,
+    '',
+    `Konfirmasi layanan akun (${roleLabel}):`,
+    `• Keperluan: ${params.topic}`,
+  ];
+  if (params.customNote?.trim()) {
+    lines.push(`• Pesan Tambahan: ${params.customNote.trim()}`);
+  }
+  lines.push('', 'Terima kasih atas bantuannya!');
+  return lines.join('\n');
+}
+
 
 
 
