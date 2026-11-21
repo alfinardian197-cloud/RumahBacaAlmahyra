@@ -886,3 +886,19 @@ test('Account registration validation and WhatsApp Admin confirmation messages w
   assert.ok(contactMsg.includes('Aktivasi Akun Baru'));
   assert.ok(contactMsg.includes('Mohon cek pendaftaran anak saya'));
 });
+
+test('Transparent PNG app logo is default and legacy black-corner logo URL migrates automatically', () => {
+  assert.equal(DEFAULT_DB.config.logoUrl, '/assets/aistudio/Logo_Aplikasi_Almahyra_036c9e38.png');
+
+  const migrated = hydrateDatabaseWithDefaults(
+    {
+      config: {
+        ...DEFAULT_DB.config,
+        logoUrl: '/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png',
+      },
+    },
+    DEFAULT_DB,
+  );
+  assert.equal(migrated.config.logoUrl, '/assets/aistudio/Logo_Aplikasi_Almahyra_036c9e38.png');
+});
+

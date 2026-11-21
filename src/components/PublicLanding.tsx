@@ -944,19 +944,19 @@ export function PublicLanding({
 
                     {/* Frameless Floating Almahyra App Mascot Illustration */}
                     <div className="relative z-10 animate-hero-float">
-                      <div className="relative h-[255px] w-[255px] sm:h-[305px] sm:w-[305px] overflow-hidden rounded-[25%] drop-shadow-[0_20px_30px_rgba(6,82,40,0.34)] hero-artwork-blend">
+                      <div className="relative h-[255px] w-[255px] sm:h-[305px] sm:w-[305px] overflow-hidden rounded-[24%] drop-shadow-[0_18px_28px_rgba(6,82,40,0.3)]">
                         <ResilientImage
-                          src="/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png"
+                          src="/assets/aistudio/Logo_Aplikasi_Almahyra_036c9e38.png"
                           fallbackSrc={DEFAULT_LOGO_URL}
                           alt="Ikon Aplikasi Rumah Baca Almahyra — Baca, Berkarya, Bertualang, Raih Prestasi"
                           loading="eager"
                           fetchPriority="high"
-                          className="h-full w-full scale-[1.06] object-cover"
+                          className="h-full w-full object-contain"
                         />
                         {/* Diagonal Sunlight Motion Sheen */}
                         <div
                           aria-hidden="true"
-                          className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/45 to-transparent animate-hero-sheen"
+                          className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-hero-sheen"
                         />
                       </div>
                     </div>
@@ -1515,7 +1515,7 @@ export function PublicLanding({
               src={config.logoUrl}
               fallbackSrc={DEFAULT_LOGO_URL}
               alt={config.appName}
-              className="h-12 w-12 rounded-2xl border-2 border-[#FFC51B] object-cover bg-white shrink-0 preserve-light"
+              className="h-12 w-12 object-contain shrink-0 drop-shadow-sm"
             />
             <div>
               <p className="font-display text-lg font-extrabold text-white">

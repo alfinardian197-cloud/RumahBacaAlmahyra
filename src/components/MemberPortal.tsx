@@ -246,7 +246,7 @@ export function MemberPortal({
               src={db.config.logoUrl}
               fallbackSrc={DEFAULT_LOGO_URL}
               alt="Maskot Almahyra"
-              className="h-16 w-16 rounded-2xl border-2 border-[#FFC51B] object-cover bg-white preserve-light shrink-0"
+              className="h-16 w-16 object-contain drop-shadow-sm shrink-0"
             />
             <div>
               <p className="font-mono-tabular text-xs font-semibold text-[#087C3B] dark:text-[#6EE7B7]">

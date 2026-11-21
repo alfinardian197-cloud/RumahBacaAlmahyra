@@ -990,7 +990,11 @@ export function hydrateDatabaseWithDefaults(
   };
 
   const rawConfig = { ...fallback.config, ...(incoming.config ?? {}) };
-  rawConfig.logoUrl = normalizeAssetUrl(rawConfig.logoUrl) || fallback.config.logoUrl;
+  const normalizedLogo = normalizeAssetUrl(rawConfig.logoUrl);
+  rawConfig.logoUrl =
+    !normalizedLogo || normalizedLogo.includes('Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang')
+      ? fallback.config.logoUrl
+      : normalizedLogo;
   rawConfig.heroImageUrl = normalizeAssetUrl(rawConfig.heroImageUrl) || fallback.config.heroImageUrl;
   if (!rawConfig.whatsappNumber || !rawConfig.whatsappNumber.trim()) {
     rawConfig.whatsappNumber = fallback.config.whatsappNumber || DEFAULT_MANAGER_WHATSAPP_DISPLAY;

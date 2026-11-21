@@ -3,7 +3,7 @@ import { DEFAULT_CATEGORIES, DEFAULT_READER_LEVELS } from '../utils/almahyra';
 import { BATCH_1_BOOKS } from './batch1Catalog';
 
 export const DEFAULT_LOGO_URL =
-  '/assets/aistudio/Ikon_Aplikasi_Almahyra__Baca_dan_Bertualang_853eac65.png';
+  '/assets/aistudio/Logo_Aplikasi_Almahyra_036c9e38.png';
 export const DEFAULT_HERO_IMAGE_URL =
   '/assets/aistudio/WhatsApp_Image_2026-11-16_at_10.49.14__1__65c278f8.jpeg';
 export const DEFAULT_ZONE_IMAGE_URL =

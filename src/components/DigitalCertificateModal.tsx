@@ -48,7 +48,7 @@ export function DigitalCertificateModal({
               src={config.logoUrl}
               fallbackSrc={DEFAULT_LOGO_URL}
               alt={config.appName}
-              className="h-11 w-11 rounded-xl border border-[#DCE4DF] object-cover bg-white"
+              className="h-11 w-11 object-contain drop-shadow-xs shrink-0"
             />
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#087C3B] dark:text-[#6EE7B7]">

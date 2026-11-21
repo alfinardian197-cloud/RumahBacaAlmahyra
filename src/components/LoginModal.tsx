@@ -196,13 +196,13 @@ export function LoginModal({
 
         {/* Centered Brand Logo & Greeting Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="h-16 w-16 overflow-hidden rounded-[22%] drop-shadow-[0_4px_10px_rgba(8,124,59,0.2)]">
+          <div className="h-18 w-18 drop-shadow-[0_4px_10px_rgba(8,124,59,0.22)]">
             <ResilientImage
               src={config.logoUrl}
               fallbackSrc={DEFAULT_LOGO_URL}
               alt={appBrandName}
               loading="eager"
-              className="h-full w-full scale-[1.06] object-cover"
+              className="h-full w-full object-contain"
             />
           </div>
           <h2

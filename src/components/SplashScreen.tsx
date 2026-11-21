@@ -42,14 +42,14 @@ export function SplashScreen({ config, ready, onDismiss }: SplashScreenProps) {
       }`}
     >
       <div className="w-full max-w-md rounded-3xl border border-[#D6CCB4] bg-white p-7 text-center spatial-depth-shadow space-y-5">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border-2 border-[#EAB308] bg-white preserve-light shadow-sm">
+        <div className="mx-auto flex h-28 w-28 items-center justify-center animate-hero-float">
           <ResilientImage
             src={config.logoUrl}
             fallbackSrc={DEFAULT_LOGO_URL}
             alt={config.appName}
             loading="eager"
             fetchPriority="high"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain drop-shadow-[0_8px_18px_rgba(8,124,59,0.22)]"
           />
         </div>
 

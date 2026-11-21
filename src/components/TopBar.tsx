@@ -119,7 +119,7 @@ export function TopBar({
             alt={config.appName}
             loading="eager"
             fetchPriority="high"
-            className="h-10 w-10 rounded-xl border-2 border-[#FFC51B] object-cover bg-white preserve-light shrink-0 shadow-xs"
+            className="h-11 w-11 object-contain shrink-0 drop-shadow-xs"
           />
           <div className="leading-tight">
             <span className="block font-display text-base sm:text-lg font-extrabold tracking-tight text-[#087C3B] dark:text-[#6EE7B7]">

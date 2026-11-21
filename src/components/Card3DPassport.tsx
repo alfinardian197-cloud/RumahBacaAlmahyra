@@ -59,13 +59,13 @@ export function Card3DPassport({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="preserve-light h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white shadow-xs">
+                <div className="h-11 w-11 shrink-0">
                   <ResilientImage
                     src={config.logoUrl}
                     fallbackSrc={DEFAULT_LOGO_URL}
                     alt={config.appName}
                     loading="eager"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain drop-shadow-sm"
                   />
                 </div>
                 <div className="min-w-0">
